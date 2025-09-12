@@ -130,7 +130,6 @@ namespace HashTests {
             std::bitset<8> bits2{static_cast<unsigned long long>(hash2[i])};
             for (int j = 0; j < 8; j++) {
                 if (bits1[j] == bits2[j]) {
-                    std::cout<<bits1[j]<<" "<<bits2[j]<<"\n";
                     identicalBits++;
                 }
             }
