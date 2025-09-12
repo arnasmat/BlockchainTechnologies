@@ -9,10 +9,13 @@
 #include <sstream>
 #include <string>
 
+#include "HashGenInterface.h"
+
 // TODO: this is a random stupid hash idea that hasn't been tested lmso
-class HumanHash {
-    std::string humanHash(const std::string input) {
-        int hash[64] = {0};
+class HumanHash: public HashGenInterface {
+public:
+     std::string generateHash(const std::string input){
+        /*int hash[64] = {0};
         for (const char c : input) {
             std::string bin = std::bitset<8>(c).to_string();
             for (int i=0; i<8; i++) {
@@ -34,8 +37,8 @@ class HumanHash {
         }
 
         return output;
+        */
     }
-
 };
 
 

@@ -8,8 +8,20 @@
 // todo: better naming lol
 
 namespace TestingFileGenerator {
+
+    void generateAllFiles() {
+        removeOldTestFiles();
+
+        static std::mt19937 rng(std::random_device{}());
+
+        generateOneSymbolFiles();
+        generateManyRandomSymbolsFiles(rng);
+        generateSimilarSymbolsFiles(rng);
+        generateEmptyFile();
+    }
+
     // File names shortened to OSF - One Symbol Files
-    void oneSymbolFiles(const std::string &symbols) {
+    void generateOneSymbolFiles(const std::string &symbols) {
         std::filesystem::path testDir("../data/input/test/OSF/");
         ensureTestFolders(testDir);
         for (char c: symbols) {
@@ -19,11 +31,9 @@ namespace TestingFileGenerator {
     }
 
     // File names shortened to MRS - Many Random Symbols
-    void manyRandomSymbolsFiles(const std::string& validSymbols) {
+    void generateManyRandomSymbolsFiles(std::mt19937& rng, const std::string& validSymbols) {
         std::filesystem::path testDir("../data/input/test/MRS/");
         ensureTestFolders(testDir);
-
-        static std::mt19937 rng(std::random_device{}());
 
         for (int i = 0; i < 10; i++) {
             manyRandomSymbolsFileGen(rng, testDir, validSymbols);
@@ -31,11 +41,11 @@ namespace TestingFileGenerator {
     }
 
     // Similar to MRS, but it creates one MRS file and randomly modifies one symbol in it
-    void similarSymbolsFiles(const std::string& validSymbols) {
+    // File names shortened to SSM - Similar Symbols Modification
+    void generateSimilarSymbolsFiles(std::mt19937& rng, const std::string& validSymbols) {
         std::filesystem::path testDir("../data/input/test/SSM/");
         ensureTestFolders(testDir);
 
-        static std::mt19937 rng(std::random_device{}());
         std::filesystem::path baseFilePathNoTxt =  manyRandomSymbolsFileGen(rng, testDir, validSymbols);
 
         for (int i=0; i<10; i++) {
@@ -43,7 +53,7 @@ namespace TestingFileGenerator {
         }
     }
 
-    void emptyFile() {
+    void generateEmptyFile() {
         std::filesystem::path testDir("../data/input/test/EF/");
         ensureTestFolders(testDir);
         std::ofstream out(testDir.string() + "empty.txt");
@@ -51,7 +61,25 @@ namespace TestingFileGenerator {
         out.close();
     }
 
-    // PRIVATE
+    // Helper functions
+
+    void removeOldTestFiles() {
+        std::vector<std::filesystem::path> testDirs = {
+            "../data/input/test/OSF/",
+            "../data/input/test/MRS/",
+            "../data/input/test/SSM/",
+            "../data/input/test/EF/"
+        };
+        for (const auto& dir : testDirs) {
+            if (std::filesystem::exists(dir)) {
+                for (const auto& entry : std::filesystem::directory_iterator(dir)) {
+                    if (entry.is_regular_file()) {
+                        std::filesystem::remove(entry.path());
+                    }
+                }
+            }
+        }
+    }
 
     std::filesystem::path manyRandomSymbolsFileGen(std::mt19937 &rng,
                                                                          const std::filesystem::path &testDir,
