@@ -7,107 +7,109 @@
 #include <random>
 // todo: better naming lol
 
-// File names shortened to OSF - One Symbol Files
-void TestingFileGenerator::oneSymbolFiles(const std::string &symbols) {
-    std::filesystem::path testDir("../data/input/test/OSF/");
-    ensureTestFolders(testDir);
-    for (char c: symbols) {
-        std::ofstream out(testDir.string() + std::string(1, c) + ".txt");
-        out << c;
-    }
-}
-
-// File names shortened to MRS - Many Random Symbols
-void TestingFileGenerator::manyRandomSymbolsFiles(const std::string& validSymbols) {
-    std::filesystem::path testDir("../data/input/test/MRS/");
-    ensureTestFolders(testDir);
-
-    static std::mt19937 rng(std::random_device{}());
-
-    for (int i = 0; i < 10; i++) {
-        manyRandomSymbolsFileGen(rng, testDir, validSymbols);
-    }
-}
-
-// Similar to MRS, but it creates one MRS file and randomly modifies one symbol in it
-void TestingFileGenerator::similarSymbolsFiles(const std::string& validSymbols) {
-    std::filesystem::path testDir("../data/input/test/SSM/");
-    ensureTestFolders(testDir);
-
-    static std::mt19937 rng(std::random_device{}());
-    std::filesystem::path baseFilePathNoTxt =  manyRandomSymbolsFileGen(rng, testDir, validSymbols);
-
-    for (int i=0; i<10; i++) {
-        modifyRandomSymbol(rng, baseFilePathNoTxt, validSymbols);
-    }
-}
-
-void TestingFileGenerator::emptyFile() {
-    std::filesystem::path testDir("../data/input/test/EF/");
-    ensureTestFolders(testDir);
-    std::ofstream out(testDir.string() + "empty.txt");
-    out << "";
-    out.close();
-}
-
-// PRIVATE
-
-std::filesystem::path TestingFileGenerator::manyRandomSymbolsFileGen(std::mt19937 &rng,
-                                                                     const std::filesystem::path &testDir,
-                                                                     const std::string &validSymbols) {
-    std::string outputContent;
-    int fileLenght = std::uniform_int_distribution<int>(1000, 10000)(rng);
-    for (int i = 0; i < fileLenght; i++) {
-        outputContent += getRandomSymbol(validSymbols, rng);
-    }
-
-    std::filesystem::path testFileNameNoTxt = testDir.string() + std::to_string(fileLenght) + "_sz";
-    std::ofstream out;
-    openUniqueFile(testFileNameNoTxt, out);
-    out << outputContent;
-    out.close();
-    return testFileNameNoTxt;
-}
-
-void TestingFileGenerator::modifyRandomSymbol(std::mt19937 &rng, const std::filesystem::path &testFileNameNoTxt, const std::string &validSymbols) {
-    // this one is vibe coded i was too lazy
-    std::ifstream in(testFileNameNoTxt.string() + ".txt");
-    std::string content((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
-    in.close();
-    if (content.empty()) {
-        std::cerr << "File is empty, cannot modify symbol." << std::endl;
-        return;
-    }
-    std::uniform_int_distribution<size_t> dist(0, content.size() - 1);
-    size_t indexToModify = dist(rng);
-    content[indexToModify] = getRandomSymbol(validSymbols, rng);
-    std::ofstream out;
-    openUniqueFile(testFileNameNoTxt, out);
-    out << content;
-    out.close();
-}
-
-void TestingFileGenerator::ensureTestFolders(const std::filesystem::path &dirPath) {
-    if (!std::filesystem::exists(dirPath)) {
-        std::filesystem::create_directories(dirPath);
-    }
-}
-
-
-
-void TestingFileGenerator::openUniqueFile(const std::filesystem::path& testFileNameNoTxt, std::ofstream& out) {
-    if (!std::filesystem::exists(testFileNameNoTxt.string() + ".txt")) {
-        out.open(testFileNameNoTxt.string() + ".txt");
-    } else {
-        int i = 2;
-        while (std::filesystem::exists(testFileNameNoTxt.string() + std::to_string(i) + ".txt")) {
-            i++;
+namespace TestingFileGenerator {
+    // File names shortened to OSF - One Symbol Files
+    void oneSymbolFiles(const std::string &symbols) {
+        std::filesystem::path testDir("../data/input/test/OSF/");
+        ensureTestFolders(testDir);
+        for (char c: symbols) {
+            std::ofstream out(testDir.string() + std::string(1, c) + ".txt");
+            out << c;
         }
-        out.open(testFileNameNoTxt.string() + std::to_string(i) + ".txt");
     }
-}
 
-char TestingFileGenerator::getRandomSymbol(const std::string &validSymbols, std::mt19937 &rng) {
-    std::uniform_int_distribution<size_t> dist(0, validSymbols.size() - 1);
-    return validSymbols[dist(rng)];
+    // File names shortened to MRS - Many Random Symbols
+    void manyRandomSymbolsFiles(const std::string& validSymbols) {
+        std::filesystem::path testDir("../data/input/test/MRS/");
+        ensureTestFolders(testDir);
+
+        static std::mt19937 rng(std::random_device{}());
+
+        for (int i = 0; i < 10; i++) {
+            manyRandomSymbolsFileGen(rng, testDir, validSymbols);
+        }
+    }
+
+    // Similar to MRS, but it creates one MRS file and randomly modifies one symbol in it
+    void similarSymbolsFiles(const std::string& validSymbols) {
+        std::filesystem::path testDir("../data/input/test/SSM/");
+        ensureTestFolders(testDir);
+
+        static std::mt19937 rng(std::random_device{}());
+        std::filesystem::path baseFilePathNoTxt =  manyRandomSymbolsFileGen(rng, testDir, validSymbols);
+
+        for (int i=0; i<10; i++) {
+            modifyRandomSymbol(rng, baseFilePathNoTxt, validSymbols);
+        }
+    }
+
+    void emptyFile() {
+        std::filesystem::path testDir("../data/input/test/EF/");
+        ensureTestFolders(testDir);
+        std::ofstream out(testDir.string() + "empty.txt");
+        out << "";
+        out.close();
+    }
+
+    // PRIVATE
+
+    std::filesystem::path manyRandomSymbolsFileGen(std::mt19937 &rng,
+                                                                         const std::filesystem::path &testDir,
+                                                                         const std::string &validSymbols) {
+        std::string outputContent;
+        int fileLenght = std::uniform_int_distribution<int>(1000, 10000)(rng);
+        for (int i = 0; i < fileLenght; i++) {
+            outputContent += getRandomSymbol(validSymbols, rng);
+        }
+
+        std::filesystem::path testFileNameNoTxt = testDir.string() + std::to_string(fileLenght) + "_sz";
+        std::ofstream out;
+        openUniqueFile(testFileNameNoTxt, out);
+        out << outputContent;
+        out.close();
+        return testFileNameNoTxt;
+    }
+
+    void modifyRandomSymbol(std::mt19937 &rng, const std::filesystem::path &testFileNameNoTxt, const std::string &validSymbols) {
+        // this one is vibe coded i was too lazy
+        std::ifstream in(testFileNameNoTxt.string() + ".txt");
+        std::string content((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+        in.close();
+        if (content.empty()) {
+            std::cerr << "File is empty, cannot modify symbol." << std::endl;
+            return;
+        }
+        std::uniform_int_distribution<size_t> dist(0, content.size() - 1);
+        size_t indexToModify = dist(rng);
+        content[indexToModify] = getRandomSymbol(validSymbols, rng);
+        std::ofstream out;
+        openUniqueFile(testFileNameNoTxt, out);
+        out << content;
+        out.close();
+    }
+
+    void ensureTestFolders(const std::filesystem::path &dirPath) {
+        if (!std::filesystem::exists(dirPath)) {
+            std::filesystem::create_directories(dirPath);
+        }
+    }
+
+
+
+    void openUniqueFile(const std::filesystem::path& testFileNameNoTxt, std::ofstream& out) {
+        if (!std::filesystem::exists(testFileNameNoTxt.string() + ".txt")) {
+            out.open(testFileNameNoTxt.string() + ".txt");
+        } else {
+            int i = 2;
+            while (std::filesystem::exists(testFileNameNoTxt.string() + std::to_string(i) + ".txt")) {
+                i++;
+            }
+            out.open(testFileNameNoTxt.string() + std::to_string(i) + ".txt");
+        }
+    }
+
+    char getRandomSymbol(const std::string &validSymbols, std::mt19937 &rng) {
+        std::uniform_int_distribution<size_t> dist(0, validSymbols.size() - 1);
+        return validSymbols[dist(rng)];
+    }
 }
