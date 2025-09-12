@@ -65,6 +65,7 @@ namespace HashTests {
             double max{0};
         };
 
+        Similarity charSimilarity{};
         Similarity bitSimilarity{};
         Similarity hexSimilarity{};
 
@@ -81,6 +82,11 @@ namespace HashTests {
             std::string hash1{hashGen->generateHash(input)};
             std::string hash2{hashGen->generateHash(input2)};
 
+            double percentageSimilarityChar{calculateSimilarityPercentage(hash1, hash2)};
+            charSimilarity.total += percentageSimilarityChar;
+            charSimilarity.min = std::min(charSimilarity.min, percentageSimilarityChar);
+            charSimilarity.max = std::max(charSimilarity.max, percentageSimilarityChar);
+
             double percentageSimilarityBit{calculateSimilarityPercentageBit(hash1, hash2)};
             bitSimilarity.total += percentageSimilarityBit;
             bitSimilarity.min = std::min(bitSimilarity.min, percentageSimilarityBit);
@@ -93,6 +99,10 @@ namespace HashTests {
         }
 
         std::ostringstream ss;
+        ss<<"Average char similarity: "<<(charSimilarity.total/totalTests)<<"%\n";
+        ss<<"Min char similarity: "<<charSimilarity.min<<"%\n";
+        ss<<"Max char similarity: "<<charSimilarity.max<<"%\n";
+        ss<<"------------------------\n";
         ss<<"Average bit similarity: "<<(bitSimilarity.total/totalTests)<<"%\n";
         ss<<"Min bit similarity: "<<bitSimilarity.min<<"%\n";
         ss<<"Max bit similarity: "<<bitSimilarity.max<<"%\n";
@@ -114,6 +124,22 @@ namespace HashTests {
         }
 
         return result;
+    }
+
+    double calculateSimilarityPercentage(std::string hash1, std::string hash2) {
+        int identicalChars{0};
+        int totalChars{static_cast<int>(std::max(hash1.length(), hash2.length()))};
+        // ensure hash 1 is always the longer one -> go over hash2
+        // -> all chars 1 has that are longer are not in h2, so they can't be identical
+        if (hash1.length() < hash2.length()) {
+            swap(hash1, hash2);
+        }
+        for (int i = 0; i < hash2.length(); i++) {
+            if (hash1[i] == hash2[i]) {
+                identicalChars++;
+            }
+        }
+        return static_cast<double>(identicalChars) / totalChars * 100;
     }
 
     double calculateSimilarityPercentageBit(std::string hash1, std::string hash2) {
@@ -138,7 +164,7 @@ namespace HashTests {
     }
 
     double calculateSimilarityPercentageHex(std::string hash1, std::string hash2) {
-    // TODO:
+    // TODO
         return 0;
     }
 }

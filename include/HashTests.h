@@ -18,6 +18,7 @@ namespace HashTests {
     double calculateSimilarityPercentageBit(std::string hash1, std::string hash2);
     double calculateSimilarityPercentageHex(std::string hash1, std::string hash2);
     void avalancheEffect(const HashGenInterface *hashGen);
+    double calculateSimilarityPercentage(std::string hash1, std::string hash2);
 }
 
 #endif // HASHTESTS_H
