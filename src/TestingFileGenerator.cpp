@@ -1,7 +1,3 @@
-//
-// Created by arnas on 9/12/25.
-//
-
 #include "../include/TestingFileGenerator.h"
 
 #include <random>
@@ -46,7 +42,7 @@ namespace TestingFileGenerator {
         std::filesystem::path testDir("../data/input/test/SSM/");
         ensureTestFolders(testDir);
 
-        std::filesystem::path baseFilePathNoTxt =  manyRandomSymbolsFileGen(rng, testDir, validSymbols);
+        std::filesystem::path baseFilePathNoTxt{manyRandomSymbolsFileGen(rng, testDir, validSymbols)};
 
         for (int i=0; i<10; i++) {
             modifyRandomSymbol(rng, baseFilePathNoTxt, validSymbols);
@@ -84,14 +80,14 @@ namespace TestingFileGenerator {
     std::filesystem::path manyRandomSymbolsFileGen(std::mt19937 &rng,
                                                                          const std::filesystem::path &testDir,
                                                                          const std::string &validSymbols) {
-        std::string outputContent;
+        std::string outputContent{};
         int fileLenght = std::uniform_int_distribution<int>(1000, 10000)(rng);
         for (int i = 0; i < fileLenght; i++) {
             outputContent += getRandomSymbol(validSymbols, rng);
         }
 
         std::filesystem::path testFileNameNoTxt = testDir.string() + std::to_string(fileLenght) + "_sz";
-        std::ofstream out;
+        std::ofstream out{};
         openUniqueFile(testFileNameNoTxt, out);
         out << outputContent;
         out.close();
@@ -110,7 +106,7 @@ namespace TestingFileGenerator {
         std::uniform_int_distribution<size_t> dist(0, content.size() - 1);
         size_t indexToModify = dist(rng);
         content[indexToModify] = getRandomSymbol(validSymbols, rng);
-        std::ofstream out;
+        std::ofstream out{};
         openUniqueFile(testFileNameNoTxt, out);
         out << content;
         out.close();
@@ -128,7 +124,7 @@ namespace TestingFileGenerator {
         if (!std::filesystem::exists(testFileNameNoTxt.string() + ".txt")) {
             out.open(testFileNameNoTxt.string() + ".txt");
         } else {
-            int i = 2;
+            int i{2};
             while (std::filesystem::exists(testFileNameNoTxt.string() + std::to_string(i) + ".txt")) {
                 i++;
             }

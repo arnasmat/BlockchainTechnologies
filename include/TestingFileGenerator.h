@@ -1,7 +1,3 @@
-//
-// Created by arnas on 9/12/25.
-//
-
 #ifndef TESTINGFILEGENERATOR_H
 #define TESTINGFILEGENERATOR_H
 
