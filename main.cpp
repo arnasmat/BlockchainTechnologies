@@ -1,6 +1,11 @@
 #include <iostream>
 #include <string>
 #include <bitset>
+#include <sstream>
+
+#include "TestingFileGenerator.h"
+
+std::string humanHash(std::string);
 
 int main(int argc, char *argv[]){
     // Args to make:
@@ -10,5 +15,5 @@ int main(int argc, char *argv[]){
     // --help    : help
     // -h      : our (human) crytpo hashing algorithm version (default)
     // -v     : vibe coded (ai) crypto hashing algorithm
-
+    TestingFileGenerator::oneSymbolFiles();
 }

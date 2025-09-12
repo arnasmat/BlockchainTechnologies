@@ -3,4 +3,11 @@ project(BlockchainTechnologies)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(BlockchainTechnologies main.cpp)
+file(GLOB SRC_FILES src/*.cpp)
+add_executable(BlockchainTechnologies main.cpp ${SRC_FILES})
+
+target_include_directories(BlockchainTechnologies PRIVATE include)
+
+set_target_properties(BlockchainTechnologies PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/../bin"
+)
