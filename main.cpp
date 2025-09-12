@@ -17,4 +17,6 @@ int main(int argc, char *argv[]){
     // -v     : vibe coded (ai) crypto hashing algorithm
     TestingFileGenerator::oneSymbolFiles();
     TestingFileGenerator::manyRandomSymbolsFiles();
+    TestingFileGenerator::similarSymbolsFiles();
+    TestingFileGenerator::emptyFile();
 }

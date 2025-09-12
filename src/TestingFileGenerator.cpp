@@ -18,11 +18,9 @@ void TestingFileGenerator::oneSymbolFiles(const std::string &symbols) {
 }
 
 // File names shortened to MRS - Many Random Symbols
-void TestingFileGenerator::manyRandomSymbolsFiles() {
+void TestingFileGenerator::manyRandomSymbolsFiles(const std::string& validSymbols) {
     std::filesystem::path testDir("../data/input/test/MRS/");
     ensureTestFolders(testDir);
-    std::string validSymbols =
-            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:',.<>/?`~\"\\";
 
     static std::mt19937 rng(std::random_device{}());
 
@@ -31,7 +29,32 @@ void TestingFileGenerator::manyRandomSymbolsFiles() {
     }
 }
 
-void TestingFileGenerator::manyRandomSymbolsFileGen(std::mt19937& rng, const std::filesystem::path& testDir, const std::string& validSymbols) {
+// Similar to MRS, but it creates one MRS file and randomly modifies one symbol in it
+void TestingFileGenerator::similarSymbolsFiles(const std::string& validSymbols) {
+    std::filesystem::path testDir("../data/input/test/SSM/");
+    ensureTestFolders(testDir);
+
+    static std::mt19937 rng(std::random_device{}());
+    std::filesystem::path baseFilePathNoTxt =  manyRandomSymbolsFileGen(rng, testDir, validSymbols);
+
+    for (int i=0; i<10; i++) {
+        modifyRandomSymbol(rng, baseFilePathNoTxt, validSymbols);
+    }
+}
+
+void TestingFileGenerator::emptyFile() {
+    std::filesystem::path testDir("../data/input/test/EF/");
+    ensureTestFolders(testDir);
+    std::ofstream out(testDir.string() + "empty.txt");
+    out << "";
+    out.close();
+}
+
+// PRIVATE
+
+std::filesystem::path TestingFileGenerator::manyRandomSymbolsFileGen(std::mt19937 &rng,
+                                                                     const std::filesystem::path &testDir,
+                                                                     const std::string &validSymbols) {
     std::string outputContent;
     int fileLenght = std::uniform_int_distribution<int>(1000, 10000)(rng);
     for (int i = 0; i < fileLenght; i++) {
@@ -42,6 +65,26 @@ void TestingFileGenerator::manyRandomSymbolsFileGen(std::mt19937& rng, const std
     std::ofstream out;
     openUniqueFile(testFileNameNoTxt, out);
     out << outputContent;
+    out.close();
+    return testFileNameNoTxt;
+}
+
+void TestingFileGenerator::modifyRandomSymbol(std::mt19937 &rng, const std::filesystem::path &testFileNameNoTxt, const std::string &validSymbols) {
+    // this one is vibe coded i was too lazy
+    std::ifstream in(testFileNameNoTxt.string() + ".txt");
+    std::string content((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+    in.close();
+    if (content.empty()) {
+        std::cerr << "File is empty, cannot modify symbol." << std::endl;
+        return;
+    }
+    std::uniform_int_distribution<size_t> dist(0, content.size() - 1);
+    size_t indexToModify = dist(rng);
+    content[indexToModify] = getRandomSymbol(validSymbols, rng);
+    std::ofstream out;
+    openUniqueFile(testFileNameNoTxt, out);
+    out << content;
+    out.close();
 }
 
 void TestingFileGenerator::ensureTestFolders(const std::filesystem::path &dirPath) {
