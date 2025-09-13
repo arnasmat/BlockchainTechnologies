@@ -16,7 +16,7 @@ public:
 
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
-                    int index = i * j;
+                    const int index = i * j;
                     if (index >= 64) continue;
 
                     if (bin[i] == '1') {
