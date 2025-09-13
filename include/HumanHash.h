@@ -1,9 +1,7 @@
 #ifndef HUMANHASH_H
 #define HUMANHASH_H
 
-#include <bitset>
-#include <sstream>
-#include <string>
+#include <iomanip>
 
 #include "HashGenInterface.h"
 
@@ -30,13 +28,13 @@ public:
             }
         }
 
+        // goofy hex casting
         std::string output;
-        for (int i : hash) {
-            std::stringstream ss;
-            ss << std::hex << i;
-            output += ss.str();
+        for (const int i : hash) {
+            output += "0123456789abcdef"[i % 16];
         }
 
+        std::cout<<output.size()<<" "<<output<<"\n";
         return output;
     }
 };

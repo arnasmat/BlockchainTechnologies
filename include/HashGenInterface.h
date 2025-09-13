@@ -1,5 +1,9 @@
 #ifndef HASHGENINTERFACE_H
 #define HASHGENINTERFACE_H
+
+#include <bitset>
+#include <iostream>
+#include <sstream>
 #include <string>
 
 class HashGenInterface {
