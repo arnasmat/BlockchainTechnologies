@@ -10,17 +10,27 @@
 class MatrixHash: public HashGenInterface {
 public:
     std::string generateHash(const std::string &input) const override {
-        int arrayDimensions = input.size() * 8;
+        const int arrayDimensions = input.size() * 8;
         int tempArray[arrayDimensions]{};
+        int hashArray[64]{};
+
+        int oneSum{0};
 
         for (int i=0; i<input.size(); i++) {
             std::string bin = std::bitset<8>(static_cast<unsigned char>(input[i])).to_string();
             for (int j=0; j<8; j++) {
-                tempArray[i*8 + j] = (bin[j] == '1') ? 1 : 0;
+                if ((bin[j] == '1')) {
+                    tempArray[i * 8 + j] = 1;
+                    oneSum ++;
+                    hashArray[(i * 8 + j)%64] = oneSum;
+                }
+                else {
+                    tempArray[i * 8 + j] = 0;
+                    hashArray[(i * 8 + j)%64] = oneSum % 3;
+                }
             }
         }
 
-        int hashArray[64]{};
 
         for (int i = 0; i < 64; i++) {
             for (int j = 0; j < arrayDimensions; j++) {
@@ -28,11 +38,26 @@ public:
             }
         }
 
+        for (const int c : hashArray) {
+            std::string bin = std::bitset<8>(static_cast<unsigned char>(c)).to_string();
 
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    const int index = i * j;
+                    if (index >= 64) continue;
+
+                    if (bin[i] == '1') {
+                        hashArray[index] += 1;
+                    } else if (index > 0) {
+                        hashArray[index] += hashArray[index - 1];
+                    }
+                }
+            }
+        }
 
         std::string output;
         for (const int i : hashArray) {
-            output += "0123456789abcdef"[i % 16];
+            output += "0123456789abcdef"[abs(i) % 16];
         }
 
         return output;

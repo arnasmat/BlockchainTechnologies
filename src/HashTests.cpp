@@ -118,7 +118,6 @@ namespace HashTests {
 
                 if (input1==input2) {
                     j--;
-                    std::cout<<"Identical inputs!";
                     continue;
                 }
 
