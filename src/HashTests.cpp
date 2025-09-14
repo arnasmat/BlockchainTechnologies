@@ -129,8 +129,9 @@ namespace HashTests {
                     std::cout<<"Collision found for length "<<i<<": "<<input1<<" and "<<input2<<"\n";
                 }
             }
+            std::cout<<"Collisions rate for size "<<i<<": "<<static_cast<double>(collisions.size())/(totalTests)<<"\n";
+            collisions.clear();
         }
-        std::cout<<"Collisions rate: "<<collisions.size()/totalTests*4<<"\n";
     }
 
     // This test also relies on the way sets work, the logic is similar to determinismTest
