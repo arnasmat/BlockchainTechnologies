@@ -19,6 +19,14 @@ namespace HashTests {
 
     // This test uses properties of sets (see determinismTest)
     // also tests determinism with the input of files
+    void runAllTests(const HashGenInterface* hashGen) {
+        outputSizeTest(hashGen);
+        avalancheEffect(hashGen);
+        collisionSearchPairs(hashGen);
+        collisionSearchSets(hashGen);
+        determinismTest(hashGen, "bazinga!");
+    }
+
     void outputSizeTest(const HashGenInterface* hashgen) {
         std::filesystem::path testDir{"../data/input/test/"};
         std::set<size_t> outputSize{};

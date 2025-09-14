@@ -12,6 +12,8 @@
 #include <sstream>
 
 namespace HashTests {
+    void runAllTests(const HashGenInterface* hashGen);
+
     void determinismTest(const HashGenInterface* hashGen, const std::string& input);
     void collisionSearchPairs(const HashGenInterface* hashGen);
     void collisionSearchSets(const HashGenInterface *hashGen);

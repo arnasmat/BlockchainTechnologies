@@ -18,9 +18,5 @@ int main(int argc, char *argv[]) {
 
     TestingFileGenerator::generateAllFiles();
     HumanHash hash;
-    HashTests::outputSizeTest(&hash);
-    HashTests::avalancheEffect(&hash);
-    HashTests::collisionSearchPairs(&hash);
-    HashTests::collisionSearchSets(&hash);
-    HashTests::determinismTest(&hash, "bazinga!");
+    HashTests::runAllTests(&hash);
 }
