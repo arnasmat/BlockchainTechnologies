@@ -7,8 +7,6 @@
 #include "HumanHash.h"
 #include "TestingFileGenerator.h"
 
-std::string humanHash(std::string);
-
 int main(int argc, char *argv[]) {
     // Args to make:
     // galbut su cxxopts, idk kaip handlint args normaliai - https://www.v0rkath.com/blog/cxxopts-guide/

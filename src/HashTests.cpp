@@ -52,6 +52,7 @@ namespace HashTests {
                 }
             }
         }
+        std::cout<<"Collisions rate: "<<collisions.size()/totalTests*4<<"\n";
     }
 
     void avalancheEffect(const HashGenInterface *hashGen) {
@@ -117,7 +118,7 @@ namespace HashTests {
 
     std::string generateRandomString(const size_t length, const std::string &validSymbols, std::mt19937 &rng) {
         std::uniform_int_distribution<size_t> dist(0, validSymbols.size() - 1);
-        std::string result{"abs"};
+        std::string result{""};
 
         for (size_t i = 0; i < length; ++i) {
             result += validSymbols[dist(rng)];
