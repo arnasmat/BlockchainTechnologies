@@ -1,18 +1,18 @@
 #include "../include/HashTests.h"
 
-#include <set>
-
 #include "TestingFileGenerator.h"
 
 
 // TODO: test if these tests work lmao
+// TODO: Improve test naming lmao
 
 namespace HashTests {
+    // TODO: change to 100k
     // const int totalTests{100000};
     const int totalTests{100};
     // Patikrink išvedimo dydį – nepriklausomai nuo įvedimo, rezultatas visada tokio pat ilgio.
     // Patikrink deterministiškumą – tas pats failas duoda tą patį hash’ą.
-    // TODO: Išmatuok efektyvumą:
+    // TODO: Išmatuok efektyvumą: -> liko padaryt graph
     // Kolizijų paieška
     // Lavinos efektas
     // TODO: Negrįžtamumo demonstracija (hiding, puzzle-friendliness) - HASH(input + salt)
@@ -25,6 +25,7 @@ namespace HashTests {
         collisionSearchPairs(hashGen);
         collisionSearchSets(hashGen);
         determinismTest(hashGen, "bazinga!");
+        efficiencyTest(hashGen, "../data/input/test/konstitucija.txt");
     }
 
     void outputSizeTest(const HashGenInterface* hashgen) {
@@ -61,6 +62,45 @@ namespace HashTests {
         if (hashSet.size() != 1) {
             std::cout<<"Determinism test failed with input "<<input<<"\n";
         }
+    }
+
+    void efficiencyTest(const HashGenInterface* hashGen, const std::filesystem::path& inputFile) {
+        std::ifstream in(inputFile);
+        // std::ostringstream ss{};
+        // ss << in.rdbuf();
+        // in.close();
+        std::string input{};
+        std::string line{};
+
+        int lineCount{0};
+        //inefficient way of reading the file probably, but whatever. will fix later lmao
+
+        while (std::getline(in, line)) {
+            input += line + "\n";
+            lineCount++;
+            // https://stackoverflow.com/a/108360
+            // quite cool way of checking if linecount is a power of 2
+            if (lineCount>0 && (lineCount & (lineCount - 1)) == 0) {
+                std::cout<<"Lines: "<<lineCount<<" Average time: "<<effTestHelper(hashGen, input)<<"\n";
+                // std::cout<<input<<"\n\n\n";
+            }
+        }
+        std::cout<<"Full file average time "<<effTestHelper(hashGen, input)<<"\n";
+        in.close();
+    }
+
+    double effTestHelper(const HashGenInterface* hashGen, const std::string& input) {
+        std::chrono::duration<double> totalDuration{};
+        int testCount{3};
+        for (int i=0; i<testCount; i++) {
+            const auto start = std::chrono::high_resolution_clock::now();
+            std::string hash{hashGen->generateHash(input)};
+            const auto end = std::chrono::high_resolution_clock::now();
+            const std::chrono::duration<double> duration = end - start;
+            totalDuration += duration;
+        }
+
+        return totalDuration.count() / testCount;
     }
 
     void collisionSearchPairs(const HashGenInterface *hashGen) {
