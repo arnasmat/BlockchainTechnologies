@@ -5,6 +5,7 @@
 
 #include "HashTests.h"
 #include "HumanHash.h"
+#include "MatrixHash.h"
 #include "TestingFileGenerator.h"
 
 int main(int argc, char *argv[]) {
@@ -19,4 +20,7 @@ int main(int argc, char *argv[]) {
     TestingFileGenerator::generateAllFiles();
     HumanHash hash;
     HashTests::runAllTests(&hash);
+    std::cout<<"\n\n\n\n";
+    MatrixHash mhash{};
+    HashTests::runAllTests(&mhash);
 }
