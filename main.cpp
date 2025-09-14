@@ -18,9 +18,11 @@ int main(int argc, char *argv[]) {
     // -v     : vibe coded (ai) crypto hashing algorithm
 
     TestingFileGenerator::generateAllFiles();
-    // HumanHash hash;
-    // HashTests::runAllTests(&hash);
+    HumanHash hash;
+    HashTests::runAllTests(&hash);
     std::cout<<"\n\n\n\n";
     MatrixHash mhash{};
     HashTests::runAllTests(&mhash);
+    std::cout<<mhash.generateHash("Hello, World!")<<"\n";
+    std::cout<<mhash.generateHash("Hello, Wnrld!");
 }

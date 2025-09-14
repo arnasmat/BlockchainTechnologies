@@ -41,9 +41,9 @@ public:
         for (const int c : hashArray) {
             std::string bin = std::bitset<8>(static_cast<unsigned char>(c)).to_string();
 
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
-                    const int index = i * j;
+            for (int i = 1; i <= 8; i++) {
+                for (int j = 1; j <= 8; j++) {
+                    const int index = i * j - 1;
                     if (index >= 64) continue;
 
                     if (bin[i] == '1') {
