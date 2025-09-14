@@ -200,6 +200,10 @@ namespace HashTests {
             std::string hash1{hashGen->generateHash(input)};
             std::string hash2{hashGen->generateHash(input2)};
 
+            if (hash1 == hash2) {
+                std::cout<<"Collision with similar results!\n"<<input<<"\nand\n"<<input2<<"\n";
+            }
+
             double percentageSimilarityChar{calculateSimilarityPercentage(hash1, hash2)};
             charSimilarity.total += percentageSimilarityChar;
             charSimilarity.min = std::min(charSimilarity.min, percentageSimilarityChar);
