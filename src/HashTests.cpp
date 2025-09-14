@@ -1,5 +1,8 @@
 #include "../include/HashTests.h"
 
+#include <set>
+
+#include "TestingFileGenerator.h"
 
 
 // TODO: test if these tests work lmao
@@ -7,25 +10,52 @@
 namespace HashTests {
     // const int totalTests{100000};
     const int totalTests{100};
-    // TODO: Patikrink išvedimo dydį – nepriklausomai nuo įvedimo, rezultatas visada tokio pat ilgio.
+    // Patikrink išvedimo dydį – nepriklausomai nuo įvedimo, rezultatas visada tokio pat ilgio.
     // Patikrink deterministiškumą – tas pats failas duoda tą patį hash’ą.
     // TODO: Išmatuok efektyvumą:
     // Kolizijų paieška
-    // TODO: Lavinos efektas
+    // Lavinos efektas
     // TODO: Negrįžtamumo demonstracija (hiding, puzzle-friendliness) - HASH(input + salt)
 
-    // Not sure how else to test this besides run it like 10 times lol
-    void determinismTest(const HashGenInterface *hashGen, const std::string &input) {
-        for (int i = 0; i < 10; i++) {
-            std::string hash1{hashGen->generateHash(input)};
-            std::string hash2{hashGen->generateHash(input)};
-            if (hash1 != hash2) {
-                throw "Determinism failed :(";
+    // This test uses properties of sets (see determinismTest)
+    // also tests determinism with the input of files
+    void outputSizeTest(const HashGenInterface* hashgen) {
+        std::filesystem::path testDir{"../data/input/test/"};
+        std::set<size_t> outputSize{};
+        for (const auto& file: std::filesystem::recursive_directory_iterator(testDir)) {
+            std::ifstream in(file.path());
+            std::ostringstream ss;
+            ss << in.rdbuf();
+            std::string content = ss.str();
+
+            determinismTest(hashgen, content);
+            std::string hash{hashgen->generateHash(content)};
+            outputSize.insert(hash.size());
+            in.close();
+        }
+        if (outputSize.size() != 1) {
+            std::cout<<"Output size test failed\nFound output sizes:";
+            for (int i: outputSize) {
+                std::cout<<i<<" ";
             }
         }
     }
 
-    void collisionSearch(const HashGenInterface *hashGen) {
+    // The logic behind this test relies on the way sets work. If different hashes are inputted into the set,
+    // the size of the set will increase. Therefore if it's not equal to 1 after 100 times of doing it -> it fails,
+    // otherwise, our algorithm is deterministic.
+    void determinismTest(const HashGenInterface *hashGen, const std::string &input) {
+        std::set<std::string> hashSet{};
+        for (int i = 0; i < 10; i++) {
+            std::string hash1{hashGen->generateHash(input)};
+            hashSet.insert(hash1);
+        }
+        if (hashSet.size() != 1) {
+            std::cout<<"Determinism test failed with input "<<input<<"\n";
+        }
+    }
+
+    void collisionSearchPairs(const HashGenInterface *hashGen) {
         constexpr int pairStringLength[4] = {10, 100, 500, 1000};
         const std::string validSymbols{
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:',.<>/?`~\"\\"
@@ -55,6 +85,39 @@ namespace HashTests {
         std::cout<<"Collisions rate: "<<collisions.size()/totalTests*4<<"\n";
     }
 
+    // This test also relies on the way sets work, the logic is similar to determinismTest
+    void collisionSearchSets(const HashGenInterface *hashGen) {
+        constexpr int inputStringLength[4] = {10, 100, 500, 1000};
+        const std::string validSymbols{
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:',.<>/?`~\"\\"
+        };
+        static std::mt19937 rng(std::random_device{}());
+
+        std::set<std::string> inputs{};
+        std::set<std::string> hashes{};
+
+        for (int i: inputStringLength) {
+            for (int j = 0; j < totalTests; j++) {
+                std::string input{generateRandomString(i, validSymbols, rng)};
+
+                if (inputs.contains(input)) {
+                    j--;
+                    // If the input was already generated, skip this iteration
+                    continue;
+                }
+
+                inputs.insert(input);
+
+                std::string hash{hashGen->generateHash(input)};
+                if (hashes.contains(hash)) {
+                    std::cout<<"Collision found for input "<<input<<"\n";
+                } else {
+                    hashes.insert(hash);
+                }
+            }
+        }
+    }
+
     void avalancheEffect(const HashGenInterface *hashGen) {
         const std::string validSymbols{
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:',.<>/?`~\"\\"
@@ -74,11 +137,17 @@ namespace HashTests {
         for (int i=0; i < totalTests; i++) {
             std::string input{generateRandomString(100, validSymbols, rng)};
             std::string input2{input};
+
             //randomly change one character
             std::uniform_int_distribution<size_t> dist(0, input.size() - 1);
             size_t indexToChange{dist(rng)};
             std::uniform_int_distribution<size_t> charDist(0, validSymbols.size() - 1);
             input2[indexToChange] = validSymbols[charDist(rng)];
+
+            if (input==input2) {
+                // In case the characters are the same after the change
+                continue;
+            }
 
             std::string hash1{hashGen->generateHash(input)};
             std::string hash2{hashGen->generateHash(input2)};
@@ -115,6 +184,8 @@ namespace HashTests {
 
         std::cout<<ss.str();
     }
+
+    // Helpers
 
     std::string generateRandomString(const size_t length, const std::string &validSymbols, std::mt19937 &rng) {
         std::uniform_int_distribution<size_t> dist(0, validSymbols.size() - 1);

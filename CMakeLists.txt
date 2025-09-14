@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.31)
 project(BlockchainTechnologies)
 
 set(CMAKE_CXX_COMPILER "g++")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 set(CMAKE_CXX_STANDARD 20)
 
 file(GLOB SRC_FILES src/*.cpp)

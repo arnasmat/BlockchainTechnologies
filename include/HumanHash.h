@@ -34,7 +34,7 @@ public:
             output += "0123456789abcdef"[i % 16];
         }
 
-        std::cout<<output.size()<<" "<<output<<"\n";
+        // std::cout<<output.size()<<" "<<output<<"\n";
         return output;
     }
 };
