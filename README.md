@@ -2,6 +2,7 @@
 a repository for my university Blockchain technologies course 
 
 SETUP GUIDE (will be nicer later):
+(gal vietoj mingw msys2 siulyt whatever)
 1. Install g++/mingw (link)
 2. Install cmake
 3. Clone this repository

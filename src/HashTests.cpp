@@ -66,6 +66,12 @@ namespace HashTests {
 
     void efficiencyTest(const HashGenInterface* hashGen, const std::filesystem::path& inputFile) {
         std::ifstream in(inputFile);
+
+        if (!in) {
+            std::cerr << "Error: Could not open file " << inputFile << std::endl;
+            return;
+        }
+
         // std::ostringstream ss{};
         // ss << in.rdbuf();
         // in.close();
