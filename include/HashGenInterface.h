@@ -6,6 +6,8 @@
 #include <sstream>
 #include <string>
 
+// TODO: rule of 5
+// TODO: add input to change shit
 class HashGenInterface {
 public:
     virtual ~HashGenInterface() = default;

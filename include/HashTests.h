@@ -27,7 +27,6 @@ namespace HashTests {
     double effTestHelper(const HashGenInterface* hashGen, const std::string& input);
     std::string generateRandomString(const size_t length, const std::string& validSymbols, std::mt19937& rng);
     double calculateSimilarityPercentageBit(std::string hash1, std::string hash2);
-    double calculateSimilarityPercentageHex(std::string hash1, std::string hash2);
     void avalancheEffect(const HashGenInterface *hashGen);
     double calculateSimilarityPercentage(std::string hash1, std::string hash2);
 }

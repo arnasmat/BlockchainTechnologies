@@ -8,8 +8,8 @@
 
 namespace HashTests {
     // TODO: change to 100k
-    // const int totalTests{100000};
-    const int totalTests{100};
+    const int totalTests{100000};
+    // const int totalTests{100};
     // Patikrink išvedimo dydį – nepriklausomai nuo įvedimo, rezultatas visada tokio pat ilgio.
     // Patikrink deterministiškumą – tas pats failas duoda tą patį hash’ą.
     // TODO: Išmatuok efektyvumą: -> liko padaryt graph
@@ -19,7 +19,7 @@ namespace HashTests {
 
     // This test uses properties of sets (see determinismTest)
     // also tests determinism with the input of files
-    void runAllTests(const HashGenInterface* hashGen) {
+    void runAllTests(const HashGenInterface *hashGen) {
         outputSizeTest(hashGen);
         avalancheEffect(hashGen);
         collisionSearchPairs(hashGen);
@@ -29,10 +29,10 @@ namespace HashTests {
         efficiencyTest(hashGen, "../data/input/test/konstitucija.txt");
     }
 
-    void outputSizeTest(const HashGenInterface* hashgen) {
+    void outputSizeTest(const HashGenInterface *hashgen) {
         std::filesystem::path testDir{"../data/input/test/"};
         std::set<size_t> outputSize{};
-        for (const auto& file: std::filesystem::recursive_directory_iterator(testDir)) {
+        for (const auto &file: std::filesystem::recursive_directory_iterator(testDir)) {
             std::ifstream in(file.path());
             std::ostringstream ss;
             ss << in.rdbuf();
@@ -44,9 +44,9 @@ namespace HashTests {
             in.close();
         }
         if (outputSize.size() != 1) {
-            std::cout<<"Output size test failed\nFound output sizes:";
+            std::cout << "Output size test failed\nFound output sizes:";
             for (int i: outputSize) {
-                std::cout<<i<<" ";
+                std::cout << i << " ";
             }
         }
     }
@@ -61,11 +61,11 @@ namespace HashTests {
             hashSet.insert(hash1);
         }
         if (hashSet.size() != 1) {
-            std::cout<<"Determinism test failed with input "<<input<<"\n";
+            std::cout << "Determinism test failed with input " << input << "\n";
         }
     }
 
-    void efficiencyTest(const HashGenInterface* hashGen, const std::filesystem::path& inputFile) {
+    void efficiencyTest(const HashGenInterface *hashGen, const std::filesystem::path &inputFile) {
         std::ifstream in(inputFile);
 
         if (!in) {
@@ -87,19 +87,19 @@ namespace HashTests {
             lineCount++;
             // https://stackoverflow.com/a/108360
             // quite cool way of checking if linecount is a power of 2
-            if (lineCount>0 && (lineCount & (lineCount - 1)) == 0) {
-                std::cout<<"Lines: "<<lineCount<<" Average time: "<<effTestHelper(hashGen, input)<<"\n";
+            if (lineCount > 0 && (lineCount & (lineCount - 1)) == 0) {
+                std::cout << "Lines: " << lineCount << " Average time: " << effTestHelper(hashGen, input) << "\n";
                 // std::cout<<input<<"\n\n\n";
             }
         }
-        std::cout<<"Full file average time "<<effTestHelper(hashGen, input)<<"\n";
+        std::cout << "Full file average time " << effTestHelper(hashGen, input) << "\n";
         in.close();
     }
 
-    double effTestHelper(const HashGenInterface* hashGen, const std::string& input) {
+    double effTestHelper(const HashGenInterface *hashGen, const std::string &input) {
         std::chrono::duration<double> totalDuration{};
         int testCount{3};
-        for (int i=0; i<testCount; i++) {
+        for (int i = 0; i < testCount; i++) {
             const auto start = std::chrono::high_resolution_clock::now();
             std::string hash{hashGen->generateHash(input)};
             const auto end = std::chrono::high_resolution_clock::now();
@@ -117,13 +117,13 @@ namespace HashTests {
         };
         static std::mt19937 rng(std::random_device{}());
 
-        std::vector<std::pair<std::string, std::string>> collisions{};
+        std::vector<std::pair<std::string, std::string> > collisions{};
         for (int i: pairStringLength) {
             for (int j = 0; j < totalTests; j++) {
                 std::string input1{generateRandomString(i, validSymbols, rng)};
                 std::string input2{generateRandomString(i, validSymbols, rng)};
 
-                if (input1==input2) {
+                if (input1 == input2) {
                     j--;
                     continue;
                 }
@@ -132,10 +132,11 @@ namespace HashTests {
                 std::string hash2{hashGen->generateHash(input2)};
                 if (hash1 == hash2) {
                     collisions.emplace_back(input1, input2);
-                    std::cout<<"Collision found for length "<<i<<": "<<input1<<" and "<<input2<<"\n";
+                    std::cout << "Collision found for length " << i << ": " << input1 << " and " << input2 << "\n";
                 }
             }
-            std::cout<<"Collisions rate for size "<<i<<": "<<static_cast<double>(collisions.size())/(totalTests)<<"\n";
+            std::cout << "Collisions rate for size " << i << ": " << static_cast<double>(collisions.size()) / (
+                totalTests) << "\n";
             collisions.clear();
         }
     }
@@ -165,7 +166,7 @@ namespace HashTests {
 
                 std::string hash{hashGen->generateHash(input)};
                 if (hashes.contains(hash)) {
-                    std::cout<<"Collision found for input "<<input<<"\n";
+                    std::cout << "Collision found for input " << input << "\n";
                 } else {
                     hashes.insert(hash);
                 }
@@ -189,7 +190,7 @@ namespace HashTests {
         Similarity hexSimilarity{};
 
         static std::mt19937 rng(std::random_device{}());
-        for (int i=0; i < totalTests; i++) {
+        for (int i = 0; i < totalTests; i++) {
             std::string input{generateRandomString(100, validSymbols, rng)};
             std::string input2{input};
 
@@ -199,7 +200,7 @@ namespace HashTests {
             std::uniform_int_distribution<size_t> charDist(0, validSymbols.size() - 1);
             input2[indexToChange] = validSymbols[charDist(rng)];
 
-            if (input==input2) {
+            if (input == input2) {
                 // In case the characters are the same after the change
                 continue;
             }
@@ -208,7 +209,7 @@ namespace HashTests {
             std::string hash2{hashGen->generateHash(input2)};
 
             if (hash1 == hash2) {
-                std::cout<<"Collision with similar results!\n"<<input<<"\nand\n"<<input2<<"\n";
+                std::cout << "Collision with similar results!\n" << input << "\nand\n" << input2 << "\n";
             }
 
             double percentageSimilarityChar{calculateSimilarityPercentage(hash1, hash2)};
@@ -220,28 +221,19 @@ namespace HashTests {
             bitSimilarity.total += percentageSimilarityBit;
             bitSimilarity.min = std::min(bitSimilarity.min, percentageSimilarityBit);
             bitSimilarity.max = std::max(bitSimilarity.max, percentageSimilarityBit);
-
-            double percentageSimilarityHex{calculateSimilarityPercentageHex(hash1, hash2)};
-            hexSimilarity.total += percentageSimilarityHex;
-            hexSimilarity.min = std::min(hexSimilarity.min, percentageSimilarityHex);
-            hexSimilarity.max = std::max(hexSimilarity.max, percentageSimilarityHex);
         }
 
         std::ostringstream ss;
-        ss<<"Average char similarity: "<<(charSimilarity.total/totalTests)<<"%\n";
-        ss<<"Min char similarity: "<<charSimilarity.min<<"%\n";
-        ss<<"Max char similarity: "<<charSimilarity.max<<"%\n";
-        ss<<"------------------------\n";
-        ss<<"Average bit similarity: "<<(bitSimilarity.total/totalTests)<<"%\n";
-        ss<<"Min bit similarity: "<<bitSimilarity.min<<"%\n";
-        ss<<"Max bit similarity: "<<bitSimilarity.max<<"%\n";
-        ss<<"------------------------\n";
-        ss<<"Average hex similarity: "<<(hexSimilarity.total/totalTests)<<"%\n";
-        ss<<"Min hex similarity: "<<hexSimilarity.min<<"%\n";
-        ss<<"Max hex similarity: "<<hexSimilarity.max<<"%\n";
-        ss<<"------------------------\n";
+        ss << "Average char similarity: " << (charSimilarity.total / totalTests) << "%\n";
+        ss << "Min char similarity: " << charSimilarity.min << "%\n";
+        ss << "Max char similarity: " << charSimilarity.max << "%\n";
+        ss << "------------------------\n";
+        ss << "Average bit similarity: " << (bitSimilarity.total / totalTests) << "%\n";
+        ss << "Min bit similarity: " << bitSimilarity.min << "%\n";
+        ss << "Max bit similarity: " << bitSimilarity.max << "%\n";
+        ss << "------------------------\n";
 
-        std::cout<<ss.str();
+        std::cout << ss.str();
     }
 
     // Helpers
@@ -292,10 +284,5 @@ namespace HashTests {
             }
         }
         return static_cast<double>(identicalBits) / totalBits * 100;
-    }
-
-    double calculateSimilarityPercentageHex(std::string hash1, std::string hash2) {
-    // TODO
-        return 0;
     }
 }

@@ -1,6 +1,112 @@
-# BlockchainTechnologies
-a repository for my university Blockchain technologies course 
+# Hash! - BlockchainTechnologies
+A repository for a university blockchain technologies course. 
+This project implements two hashing algorithms: MatrixHash (a custom algorithm co-created by us)
+and VibeHash(an algorithm created using Claude AI).
 
+## MatrixHash
+The MatrixHash algorithm is a three-part algorithm:
+1. Firstly the algorithm:
+- Converts the input string into a binary representation 
+- Stores the representation in a temporary array (henceforth referred to as *k*)
+- Tracks how many 1s were in the binary representation and initializes the hashArray
+(which later becomes the resulting hash) with how many ones there were thus far to introduce randomness.
+2. Then it does something similar to matrix multiplying *k* (size: 1x|k|) with a matrix of size |k|x64 
+resulting in a matrix of size 1x64 (here: hashArray of size 64). It does so by creating a double for loop of sizes 64(i) and |k|(j)
+and adding i+j multiplied by the value of k[j]. The result is stored in hashArray[i].
+3. Finally, it does some final scrambling of hashArray by iterating through it as a binary representation and adding 1 to the original array (not binary)
+if the value is 1 in the binary representation and adding the value of the previous character if the value is 0 in the binary representation.
+Then the result is converted to hexadecimal and returned.
+   (note: pt3 is also a hashing algorithm on its own (HumanHash), but it's more useful here than being standalone)
+
+### Strenghts of the algorithm:
+- Deterministic
+- Output is always the same size (64 hex chars)
+- Avalanche effect (average hex-wise similarity between hashes of inputs with a 1 char difference char is ~7%)
+- Low collision rate
+
+### Weaknesses of the algorithm:
+- Efficiency (could be faster)
+- Collisions sometimes happen with similar inputs (1 char difference) (wk2)
+
+### Benchmarks (HashTests with 100k):
+(our comments in the results in square brackets[])
+```
+Average char similarity: 7.11381%
+Min char similarity: 0%
+Max char similarity: 100% 
+[Because of previously mentioned collisions (see wk2). Without those collisions:
+Max char similarity: 17.1875%]
+------------------------
+Average bit similarity: 66.9364%
+Min bit similarity: 52.5391%
+Max bit similarity: 100% [as before, without collisions - Max bit similarity: 74.0234%]
+------------------------
+[Super low collision rate with different random inputs]
+Collisions rate for size 10: 0
+Collisions rate for size 100: 0
+Collisions rate for size 500: 0
+Collisions rate for size 1000: 0
+[Reading from konstitucija.txt]
+Lines: 1 Average time: 0.000148378
+Lines: 2 Average time: 0.000256439
+Lines: 4 Average time: 0.000329685
+Lines: 8 Average time: 0.000541369
+Lines: 16 Average time: 0.00131609
+Lines: 32 Average time: 0.00232388
+Lines: 64 Average time: 0.00462775
+Lines: 128 Average time: 0.0113514
+Lines: 256 Average time: 0.0252459
+Lines: 512 Average time: 0.0588198
+Full file average time 0.0936677
+```
+
+[//]: # (TODO: GRAPH FOR KONSTITUCIJA)
+
+## VibeHash
+VibeHash is a hashing algorithm created by Claude AI.
+
+- We will not go in depth explaining the algorithm, but you can see the [chats here](https://claude.ai/share/1ce99725-f78d-4212-9ac7-555b50029023) (the issues were later fixed by us)
+
+### Strenghts of the algorithm:
+- Deterministic
+- Output is always the same size (64 hex chars)
+- Avalanche effect (average hex-wise similarity between hashes of inputs with a 1 char difference char
+- Low collision rate (no found in the tests done)
+- Fast (significantly faster than MatrixHash)
+
+### Weaknesses of the algorithm:
+- i have no clue how it works
+- 
+
+### Benchmarks (HashTests with 100k):
+```
+Average char similarity: 6.1728%
+Min char similarity: 0%
+Max char similarity: 21.875%
+------------------------
+Average bit similarity: 66.2901%
+Min bit similarity: 56.4453%
+Max bit similarity: 76.1719%
+------------------------
+Collisions rate for size 10: 0
+Collisions rate for size 100: 0
+Collisions rate for size 500: 0
+Collisions rate for size 1000: 0
+[konstitucija.txt]
+Lines: 1 Average time: 4.399e-06
+Lines: 2 Average time: 5.47267e-06
+Lines: 4 Average time: 8.71467e-06
+Lines: 8 Average time: 1.5012e-05
+Lines: 16 Average time: 4.03053e-05
+Lines: 32 Average time: 7.40847e-05
+Lines: 64 Average time: 0.000149867
+Lines: 128 Average time: 0.000354775
+Lines: 256 Average time: 0.000733858
+Lines: 512 Average time: 0.00151693
+Full file average time 0.00219872
+```
+
+[//]: # (TODO: setup guide)
 SETUP GUIDE (will be nicer later):
 (gal vietoj mingw msys2 siulyt whatever)
 1. Install g++/mingw (link)

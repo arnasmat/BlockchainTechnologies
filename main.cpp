@@ -10,6 +10,7 @@
 #include "VibeHash.h"
 
 int main(int argc, char *argv[]) {
+    // TODO: cli
     // Args to make:
     // galbut su cxxopts, idk kaip handlint args normaliai - https://www.v0rkath.com/blog/cxxopts-guide/
     // -f <file> : input file
