@@ -50,6 +50,9 @@ public:
                         hashArray[index] += 1;
                     } else if (index > 0) {
                         hashArray[index] += hashArray[index - 1];
+                    } else {
+                        //goofy ass way to make it edit the first element to prevent some issues
+                        hashArray[0] += hashArray[i+j];
                     }
                 }
             }
