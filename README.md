@@ -115,3 +115,15 @@ SETUP GUIDE (will be nicer later):
 4. Open terminal in the repository folder
 5. `cmake -B build -S .; cmake --build build`
 6. Go to the bin folder and run!
+
+
+SETUP GUIDE for Windows users
+1. clone this repository
+2. Install msys2 compiler from https://www.msys2.org/
+3. After setting up open the msys2 mingw64 bash terminal (not the plain msys2)
+4. navigate to the project folder where repository is cloned
+5. run this command: pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake
+6. run this command: pacman -S mingw-w64-x86_64-gcc
+7. run this command `cmake -B build -S .; cmake --build build`
+8. navigate to /bin directory
+9. run ./blockchaintechnologies
