@@ -44,15 +44,14 @@ public:
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
                     const int index = 8 * j + i;
-                    if (index >= 64) continue;
 
                     if (bin[i] == '1') {
                         hashArray[index] += 1;
                     } else if (index > 0) {
                         hashArray[index] += hashArray[index - 1];
                     } else {
-                        //goofy ass way to make it edit the first element to prevent some issues
-                        hashArray[0] += hashArray[i+j];
+                        //goofy way to make it edit the first element to prevent some issues
+                        hashArray[index] += hashArray[i+j];
                     }
                 }
             }

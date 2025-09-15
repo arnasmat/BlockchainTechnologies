@@ -7,6 +7,7 @@
 #include "HumanHash.h"
 #include "MatrixHash.h"
 #include "TestingFileGenerator.h"
+#include "VibeHash.h"
 
 int main(int argc, char *argv[]) {
     // Args to make:
@@ -17,12 +18,13 @@ int main(int argc, char *argv[]) {
     // -h      : our (human) crytpo hashing algorithm version (default)
     // -v     : vibe coded (ai) crypto hashing algorithm
 
-    TestingFileGenerator::generateAllFiles();
-    HumanHash hash;
+    // TestingFileGenerator::generateAllFiles();
+    // HumanHash hash;
+    // HashTests::runAllTests(&hash);
+    // std::cout<<"\n\n\n\n";
+    // MatrixHash mhash{};
+    // HashTests::runAllTests(&mhash);
+
+    VibeHash hash;
     HashTests::runAllTests(&hash);
-    std::cout<<"\n\n\n\n";
-    MatrixHash mhash{};
-    HashTests::runAllTests(&mhash);
-    std::cout<<mhash.generateHash("Hello, World!")<<"\n";
-    std::cout<<mhash.generateHash("Hello, Wnrld!");
 }

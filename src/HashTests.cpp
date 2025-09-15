@@ -25,6 +25,7 @@ namespace HashTests {
         collisionSearchPairs(hashGen);
         collisionSearchSets(hashGen);
         determinismTest(hashGen, "bazinga!");
+        // TODO: pridet konstitucija.txt prie buildo
         efficiencyTest(hashGen, "../data/input/test/konstitucija.txt");
     }
 
