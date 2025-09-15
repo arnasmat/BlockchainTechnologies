@@ -5,15 +5,17 @@
 
 #include "HashGenInterface.h"
 
-// TODO: make matrixhash reliant on this hash -> also make more consistent naming as currently it's super inconsistent
+// TODO: make matrixhash reliant on this hash -> also make more consistent naming as currently it's super inconsistent (prolly done)
 // i.e. hash[] in HumanHash, but hashArray[] in MatrixHash
 // TODO: make hashes work with file inputs as well
 
 // TODO: implement trycatches in code, clean up ts
 class HumanHash: public HashGenInterface {
 public:
-    std::string generateHash(const std::string& input) const override {
-        int hash[64] = {};
+    std::string generateHash(const std::string& input, int* hashed=nullptr) const override {
+        int* hash = new int[64];
+        if(hashed != nullptr) hash = hashed;
+        
 
         for (const char c : input) {
             std::string bin = std::bitset<8>(static_cast<unsigned char>(c)).to_string();
@@ -37,15 +39,15 @@ public:
 
         // goofy hex casting
         std::string output;
-        for (const int i : hash) {
-            output += "0123456789abcdef"[i % 16];
+        for (int i = 0; i < 64; ++i) {
+            output += "0123456789abcdef"[hash[i] % 16];
         }
 
         // std::cout<<output.size()<<" "<<output<<"\n";
+        delete[] hash;
         return output;
     }
 };
-
 
 
 #endif //HUMANHASH_H

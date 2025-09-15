@@ -11,7 +11,7 @@
 class HashGenInterface {
 public:
     virtual ~HashGenInterface() = default;
-    virtual std::string generateHash(const std::string& input) const = 0;
+    virtual std::string generateHash(const std::string& input, int* hashed=nullptr) const = 0;
 };
 
 

@@ -5,14 +5,15 @@
 #ifndef MATRIXHASH_H
 #define MATRIXHASH_H
 #include "HashGenInterface.h"
+#include "HumanHash.h"
 
 
 class MatrixHash: public HashGenInterface {
 public:
-    std::string generateHash(const std::string &input) const override {
+    std::string generateHash(const std::string &input, int* hashed=nullptr) const override {
         const int arrayDimensions = input.size() * 8;
         int tempArray[arrayDimensions]{};
-        int hashArray[64]{};
+        int* hash = new int[64]();
         int oneSum{0};
 
         for (int i=0; i<input.size(); i++) {
@@ -25,44 +26,21 @@ public:
                 const int index = (i * 8 + j)%64;
 
                 if (bit == 1) {
-                    hashArray[index] += 1;
+                    hash[index] += 1;
                     oneSum++;
                 } else if (index > 0) {
-                    hashArray[index] += hashArray[index - 1];
+                    hash[index] += hash[index - 1];
                 } else {
-                    hashArray[0] += hashArray[input.size() % 64] + oneSum;
+                    hash[0] += hash[input.size() % 64] + oneSum;
                 }
 
-                hashArray[index] += (i + j) * bit;
+                hash[index] += (i + j) * bit;
             }
         }
 
+       HumanHash finalHash;
+       return finalHash.generateHash(input, hash);
 
-        for (const int c : hashArray) {
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
-                    const bool bit = (c >> j) & 1;
-
-                    const int index = 8 * j + i;
-
-                    if (bit == 1) {
-                        hashArray[index] += 1;
-                    } else if (index > 0) {
-                        hashArray[index] += hashArray[index - 1];
-                    } else {
-                        //goofy way to make it edit the first element to prevent some issues
-                        hashArray[index] += hashArray[i+j] + oneSum;
-                    }
-                }
-            }
-        }
-
-        std::string output;
-        for (const int i : hashArray) {
-            output += "0123456789abcdef"[abs(i) % 16];
-        }
-
-        return output;
     }
 };
 

@@ -181,7 +181,7 @@ private:
     }
 
 public:
-    std::string generateHash(const std::string& input) const override {
+    std::string generateHash(const std::string& input, int* hashed=nullptr) const override {
         try {
             if (input.empty()) {
                 return generateHash(std::string(1, '\0'));
