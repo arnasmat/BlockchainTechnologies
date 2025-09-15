@@ -13,45 +13,45 @@ public:
         const int arrayDimensions = input.size() * 8;
         int tempArray[arrayDimensions]{};
         int hashArray[64]{};
-
         int oneSum{0};
 
         for (int i=0; i<input.size(); i++) {
-            std::string bin = std::bitset<8>(static_cast<unsigned char>(input[i])).to_string();
+            unsigned char inputChar = input[i];
+
             for (int j=0; j<8; j++) {
-                if ((bin[j] == '1')) {
-                    tempArray[i * 8 + j] = 1;
-                    oneSum ++;
-                    hashArray[(i * 8 + j)%64] = oneSum;
+                //https://stackoverflow.com/a/13823765
+                // instead of bitset<8> and casting to string which caused a lot of our issues lol
+                const bool bit = (inputChar >> j) & 1;
+                const int index = (i * 8 + j)%64;
+
+                if (bit == 1) {
+                    hashArray[index] += 1;
+                    oneSum++;
+                } else if (index > 0) {
+                    hashArray[index] += hashArray[index - 1];
+                } else {
+                    hashArray[0] += hashArray[input.size() % 64] + oneSum;
                 }
-                else {
-                    tempArray[i * 8 + j] = 0;
-                    hashArray[(i * 8 + j)%64] = oneSum % 3;
-                }
+
+                hashArray[index] += (i + j) * bit;
             }
         }
 
-
-        for (int i = 0; i < 64; i++) {
-            for (int j = 0; j < arrayDimensions; j++) {
-                hashArray[i] += (i + j) * tempArray[j];
-            }
-        }
 
         for (const int c : hashArray) {
-            std::string bin = std::bitset<8>(static_cast<unsigned char>(c)).to_string();
-
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
+                    const bool bit = (c >> j) & 1;
+
                     const int index = 8 * j + i;
 
-                    if (bin[i] == '1') {
+                    if (bit == 1) {
                         hashArray[index] += 1;
                     } else if (index > 0) {
                         hashArray[index] += hashArray[index - 1];
                     } else {
                         //goofy way to make it edit the first element to prevent some issues
-                        hashArray[index] += hashArray[i+j];
+                        hashArray[index] += hashArray[i+j] + oneSum;
                     }
                 }
             }

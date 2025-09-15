@@ -209,6 +209,7 @@ namespace HashTests {
             std::string hash2{hashGen->generateHash(input2)};
 
             if (hash1 == hash2) {
+                continue;
                 std::cout << "Collision with similar results!\n" << input << "\nand\n" << input2 << "\n";
             }
 

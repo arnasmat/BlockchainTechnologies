@@ -23,9 +23,9 @@ int main(int argc, char *argv[]) {
     // HumanHash hash;
     // HashTests::runAllTests(&hash);
     // std::cout<<"\n\n\n\n";
-    // MatrixHash mhash{};
-    // HashTests::runAllTests(&mhash);
+    MatrixHash mhash{};
+    HashTests::runAllTests(&mhash);
 
-    VibeHash hash;
-    HashTests::runAllTests(&hash);
+    // VibeHash hash;
+    // HashTests::runAllTests(&hash);
 }

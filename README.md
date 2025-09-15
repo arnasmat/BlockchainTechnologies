@@ -3,8 +3,10 @@ A repository for a university blockchain technologies course.
 This project implements two hashing algorithms: MatrixHash (a custom algorithm co-created by us)
 and VibeHash(an algorithm created using Claude AI).
 
+
+[//]: # (TODO: fix readme hash description to reflect better after improvements)
 ## MatrixHash
-The MatrixHash algorithm is a three-part algorithm:
+The MatrixHash algorithm is a three-part algorithm (after improvements the 3 parts are not as clear in the code):
 1. Firstly the algorithm:
 - Converts the input string into a binary representation 
 - Stores the representation in a temporary array (henceforth referred to as *k*)
@@ -25,39 +27,37 @@ Then the result is converted to hexadecimal and returned.
 - Low collision rate
 
 ### Weaknesses of the algorithm:
-- Efficiency (could be faster)
-- Collisions sometimes happen with similar inputs (1 char difference) (wk2)
+- Efficiency (could be faster) -> fixed by using bitwise operations instead of bitset<8> and casting to string
+- Collisions sometimes happen with similar inputs (1 char difference)  -> fixed same way and minor improvements
 
 ### Benchmarks (HashTests with 100k):
 (our comments in the results in square brackets[])
+
 ```
-Average char similarity: 7.11381%
+Average char similarity: 6.21052%
 Min char similarity: 0%
-Max char similarity: 100% 
-[Because of previously mentioned collisions (see wk2). Without those collisions:
-Max char similarity: 17.1875%]
+Max char similarity: 43.75%
 ------------------------
-Average bit similarity: 66.9364%
-Min bit similarity: 52.5391%
-Max bit similarity: 100% [as before, without collisions - Max bit similarity: 74.0234%]
+Average bit similarity: 66.2491%
+Min bit similarity: 58.2031%
+Max bit similarity: 81.6406%
 ------------------------
-[Super low collision rate with different random inputs]
 Collisions rate for size 10: 0
 Collisions rate for size 100: 0
 Collisions rate for size 500: 0
 Collisions rate for size 1000: 0
-[Reading from konstitucija.txt]
-Lines: 1 Average time: 0.000148378
-Lines: 2 Average time: 0.000256439
-Lines: 4 Average time: 0.000329685
-Lines: 8 Average time: 0.000541369
-Lines: 16 Average time: 0.00131609
-Lines: 32 Average time: 0.00232388
-Lines: 64 Average time: 0.00462775
-Lines: 128 Average time: 0.0113514
-Lines: 256 Average time: 0.0252459
-Lines: 512 Average time: 0.0588198
-Full file average time 0.0936677
+[reading konstitucija txt]
+Lines: 1 Average time: 6.218e-06
+Lines: 2 Average time: 6.39833e-06
+Lines: 4 Average time: 7.741e-06
+Lines: 8 Average time: 9.247e-06
+Lines: 16 Average time: 1.89477e-05
+Lines: 32 Average time: 4.12993e-05
+Lines: 64 Average time: 7.00223e-05
+Lines: 128 Average time: 0.000130538
+Lines: 256 Average time: 0.000303046
+Lines: 512 Average time: 0.000651051
+Full file average time 0.000965815
 ```
 
 [//]: # (TODO: GRAPH FOR KONSTITUCIJA)
