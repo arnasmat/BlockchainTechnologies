@@ -28,7 +28,7 @@ Then the result is converted to hexadecimal and returned.
 
 ### Weaknesses of the algorithm:
 - Efficiency (could be faster) -> fixed by using bitwise operations instead of bitset<8> and casting to string
-- Collisions sometimes happen with similar inputs (1 char difference)  -> fixed same way and minor improvements
+- Collisions sometimes happen with similar inputs (1 char difference)  -> fixed with some minor tweaks
 
 ### Benchmarks (HashTests with 100k):
 (our comments in the results in square brackets[])
@@ -107,23 +107,20 @@ Full file average time 0.00219872
 ```
 
 [//]: # (TODO: setup guide)
-SETUP GUIDE (will be nicer later):
-(gal vietoj mingw msys2 siulyt whatever)
-1. Install g++/mingw (link)
-2. Install cmake
-3. Clone this repository
-4. Open terminal in the repository folder
-5. `cmake -B build -S .; cmake --build build`
-6. Go to the bin folder and run!
-
+Linux setup guide:
+1. Install git and [clone this repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
+2. Install g++ and CMake using your package manager, e.g. for arch linux `sudo pacman -S gcc cmake`
+3. Open your terminal emulator in the repository folder
+4. Build the project `cmake -B build -S .; cmake --build build` (if you get errors, you may need to specify -G "Unix Makefiles")
+5. Navigate to /bin/ directory
+6. Run ./BlockchainTechnologies. You may need to use the -h flag to see the usage instructions.
 
 SETUP GUIDE for Windows users
-1. clone this repository
-2. Install msys2 compiler from https://www.msys2.org/
-3. After setting up open the msys2 mingw64 bash terminal (not the plain msys2)
-4. navigate to the project folder where repository is cloned
-5. run this command: pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake
-6. run this command: pacman -S mingw-w64-x86_64-gcc
-7. run this command `cmake -B build -S .; cmake --build build`
-8. navigate to /bin directory
-9. run ./blockchaintechnologies
+1. Install git and [clone this repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
+2. Install the [MSYS2 environment](https://www.msys2.org/)
+3. After setting up open the MSYS2 mingw64 bash terminal (not the plain msys2)
+4. navigate to the project folder where this repository is cloned
+5. Install the g++ compiler and cmake for the environment: `pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake`
+6. Build the project `cmake -B build -S .; cmake --build build`
+7. Navigate to /bin/ directory
+8. Run ./BlockchainTechnologies. You may need to use the -h flag to see the usage instructions.

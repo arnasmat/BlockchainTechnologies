@@ -3,30 +3,17 @@
 #include <bitset>
 #include <sstream>
 
+#include "CliArgHandler.h"
 #include "HashTests.h"
 #include "HumanHash.h"
 #include "MatrixHash.h"
 #include "TestingFileGenerator.h"
 #include "VibeHash.h"
+#include <CliArgHandler.h>
 
+// TODO: name which file is being opened in the eff test
 int main(int argc, char *argv[]) {
-    // TODO: cli
-    // Args to make:
-    // galbut su cxxopts, idk kaip handlint args normaliai - https://www.v0rkath.com/blog/cxxopts-guide/
-    // -f <file> : input file
-    // -o <file> : output file (default is stdout)
-    // --help    : help
-    // -h      : our (human) crytpo hashing algorithm version (default)
-    // -v     : vibe coded (ai) crypto hashing algorithm
+    ArgsToRun argsToRun = handleCliInput(argc, argv);
 
-    // TestingFileGenerator::generateAllFiles();
-    HumanHash hash;
-    HashTests::runAllTests(&hash);
-    std::cout<<"\n\n\n\n";
-    MatrixHash mhash(152);
-    HashTests::runAllTests(&mhash);
-
-    std::cout<<"\n\n\n\n";
-    VibeHash vhash;
-    HashTests::runAllTests(&vhash);
+    handleCliArgs(argsToRun);
 }

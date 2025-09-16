@@ -1,8 +1,5 @@
 #include "../include/HashTests.h"
 
-#include "TestingFileGenerator.h"
-
-
 // TODO: test if these tests work lmao
 // TODO: Improve test naming lmao
 
@@ -45,7 +42,7 @@ namespace HashTests {
         }
         if (outputSize.size() != 1) {
             std::cout << "Output size test failed\nFound output sizes:";
-            for (int i: outputSize) {
+            for (auto i: outputSize) {
                 std::cout << i << " ";
             }
         }
@@ -69,7 +66,7 @@ namespace HashTests {
         std::ifstream in(inputFile);
 
         if (!in) {
-            std::cerr << "Error: Could not open file " << inputFile << std::endl;
+            std::cerr << "Error: Could not open file " << inputFile <<"\n";
             return;
         }
 
@@ -81,6 +78,8 @@ namespace HashTests {
 
         int lineCount{0};
         //inefficient way of reading the file probably, but whatever. will fix later lmao
+
+        std::cout<<"Opening file "<<inputFile<<"\n";
 
         while (std::getline(in, line)) {
             input += line + "\n";
@@ -187,7 +186,6 @@ namespace HashTests {
 
         Similarity charSimilarity{};
         Similarity bitSimilarity{};
-        Similarity hexSimilarity{};
 
         static std::mt19937 rng(std::random_device{}());
         for (int i = 0; i < totalTests; i++) {
@@ -209,8 +207,8 @@ namespace HashTests {
             std::string hash2{hashGen->generateHash(input2)};
 
             if (hash1 == hash2) {
+                std::cout << "Collision with similar inputs!\n" << input << "\nand\n" << input2 << "\n";
                 continue;
-                std::cout << "Collision with similar results!\n" << input << "\nand\n" << input2 << "\n";
             }
 
             double percentageSimilarityChar{calculateSimilarityPercentage(hash1, hash2)};
@@ -225,14 +223,15 @@ namespace HashTests {
         }
 
         std::ostringstream ss;
-        ss << "Average char similarity: " << (charSimilarity.total / totalTests) << "%\n";
-        ss << "Min char similarity: " << charSimilarity.min << "%\n";
-        ss << "Max char similarity: " << charSimilarity.max << "%\n";
-        ss << "------------------------\n";
-        ss << "Average bit similarity: " << (bitSimilarity.total / totalTests) << "%\n";
-        ss << "Min bit similarity: " << bitSimilarity.min << "%\n";
-        ss << "Max bit similarity: " << bitSimilarity.max << "%\n";
-        ss << "------------------------\n";
+        ss << "Please note that collissions are not counted in the max similarity \n"
+            << "Average char similarity: " << (charSimilarity.total / totalTests) << "%\n"
+            << "Min char similarity: " << charSimilarity.min << "%\n"
+            << "Max char similarity: " << charSimilarity.max << "%\n"
+            << "------------------------\n"
+            << "Average bit similarity: " << (bitSimilarity.total / totalTests) << "%\n"
+            << "Min bit similarity: " << bitSimilarity.min << "%\n"
+            << "Max bit similarity: " << bitSimilarity.max << "%\n"
+            << "------------------------\n";
 
         std::cout << ss.str();
     }

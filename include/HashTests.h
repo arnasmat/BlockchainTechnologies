@@ -2,6 +2,7 @@
 #define HASHTESTS_H
 
 #include "HashGenInterface.h"
+#include "TestingFileGenerator.h"
 #include <string>
 #include <algorithm>
 #include <random>
@@ -11,10 +12,6 @@
 #include <filesystem>
 #include <iostream>
 #include <sstream>
-
-namespace std::filesystem::__cxx11 {
-    class path;
-}
 
 namespace HashTests {
     void runAllTests(const HashGenInterface* hashGen);
