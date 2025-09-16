@@ -12,40 +12,45 @@
 // TODO: implement trycatches in code, clean up ts
 class HumanHash: public HashGenInterface {
 public:
-    std::string generateHash(const std::string& input, int* hashed=nullptr) const override {
-        int* hash = new int[64];
-        if(hashed != nullptr) hash = hashed;
-        
+    explicit HumanHash(const int& inputKey=0) : HashGenInterface(inputKey) {}
+    std::string generateHash(const std::string& input) const override {
+        int hash[64]{};
 
         for (const char c : input) {
-            std::string bin = std::bitset<8>(static_cast<unsigned char>(c)).to_string();
-
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
-                    const int index = 8 * j + i;
-                    if (index >= 64) continue;
 
-                    if (bin[i] == '1') {
+                    const bool bit = (c >> j) & 1;
+                    const int index = 8 * j + i;
+
+                    if (bit) {
                         hash[index] += 1;
                     } else if (index > 0) {
                         hash[index] += hash[index - 1];
                     } else {
-                        //goofy ass way to make it edit the first element to prevent some issues
-                        hash[0] += hash[i+j];
+                        hash[0] += hash[c % 64] + key;
+                    }
+                }
+            }
+        }for (const char c : input) {
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+
+                    const bool bit = (c >> j) & 1;
+                    const int index = 8 * j + i;
+
+                    if (bit) {
+                        hash[index] += 1;
+                    } else if (index > 0) {
+                        hash[index] += hash[index - 1];
+                    } else {
+                        hash[0] += hash[c%64] + key;
                     }
                 }
             }
         }
 
-        // goofy hex casting
-        std::string output;
-        for (int i = 0; i < 64; ++i) {
-            output += "0123456789abcdef"[hash[i] % 16];
-        }
-
-        // std::cout<<output.size()<<" "<<output<<"\n";
-        delete[] hash;
-        return output;
+        return castToHex(hash, 64);
     }
 };
 

@@ -181,7 +181,9 @@ private:
     }
 
 public:
-    std::string generateHash(const std::string& input, int* hashed=nullptr) const override {
+    // didnt add the key to be used here because I was too lazy lol
+    explicit VibeHash(const int& inputKey=0) : HashGenInterface(inputKey) {}
+    std::string generateHash(const std::string& input) const override {
         try {
             if (input.empty()) {
                 return generateHash(std::string(1, '\0'));

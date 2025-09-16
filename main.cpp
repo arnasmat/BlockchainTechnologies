@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     // HumanHash hash;
     // HashTests::runAllTests(&hash);
     // std::cout<<"\n\n\n\n";
-    MatrixHash mhash{};
+    MatrixHash mhash(152);
     HashTests::runAllTests(&mhash);
 
     // VibeHash hash;
