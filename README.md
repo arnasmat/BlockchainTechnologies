@@ -38,14 +38,14 @@ Then the result is converted to hexadecimal and returned.
 Running all tests with MatrixHash:
 Output size test successful
 Running avalanche effect test
-Average char similarity: 6.20341%
+Average char similarity: 6.20275%
 Min char similarity: 0%
-Max char similarity: 51.5625%
+Max char similarity: 35.9375%
 ------------------------
-Average bit similarity: 66.2574%
-Min bit similarity: 57.2266%
-Max bit similarity: 85.7422%
-------------------------
+Average bit similarity: 66.2878%
+Min bit similarity: 57.0312%
+Max bit similarity: 78.7109%
+-----------------------
 Searching for collisions by generating pairs of random strings
 Collisions rate for size 10: 0
 Collisions rate for size 100: 0
