@@ -6,6 +6,7 @@
 
 //TODO: improve ts, currently the input file path thing is dogshit
 // also error handling ig
+// TODO: allow for multiple algorithms to input
 ArgsToRun handleCliInput(int argc, char *argv[]) {
     ArgsToRun args;
 
@@ -65,7 +66,7 @@ void printHelpInfo() {
             << "  -h, --help            Show this help message and exit\n"
             << "  -t, --tests           Run all tests (ignores all other input flags)\n"
             << "  -o, --output <file>   Specify output file (default is stdout)\n"
-            << "  -i, --input <file>    Specify input file (default is file)\n"
+            << "  -i, --input <file>    Specify input file (doesn't do anything lol)\n"
             << "  -m, --matrix         Use MatrixHash algorithm (Default)\n"
             << "  -u, --human          Use HumanHash algorithm\n"
             << "  -v, --vibe           Use VibeHash algorithm\n";

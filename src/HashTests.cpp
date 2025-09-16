@@ -248,9 +248,10 @@ namespace HashTests {
 
     double calculateSimilarityPercentage(std::string hash1, std::string hash2) {
         int identicalChars{0};
-        int totalChars{static_cast<int>(std::max(hash1.length(), hash2.length()))};
+        const int totalChars{static_cast<int>(std::max(hash1.length(), hash2.length()))};
         // ensure hash 1 is always the longer one -> go over hash2
         // -> all chars 1 has that are longer are not in h2, so they can't be identical
+        // even tho it uses the same alg and shouldn't happen, this is here just in case lol
         if (hash1.length() < hash2.length()) {
             swap(hash1, hash2);
         }
@@ -266,7 +267,7 @@ namespace HashTests {
     // changing like everything
     double calculateSimilarityPercentageBit(std::string hash1, std::string hash2) {
         int identicalBits{0};
-        int totalBits{static_cast<int>(std::max(hash1.length(), hash2.length()) * 8)};
+        const int totalBits{static_cast<int>(std::max(hash1.length(), hash2.length()) * 8)};
         // ensure hash 1 is always the longer one -> go over hash2
         // -> all bits 1 has that are longer are not in h2, so they can't be identical
         if (hash1.length() < hash2.length()) {

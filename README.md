@@ -109,6 +109,8 @@ Full file average time 0.00219872
 
 [//]: # (TODO: setup guide)
 # Setup guides
+Note: if you plan on testing the application (-t), please put [konstitucija.txt](https://bit.ly/33nYy2v) in the data/input/test directory
+
 Linux setup guide:
 1. Install git and [clone this repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
 2. Install g++ and CMake using your package manager, e.g. for arch linux `sudo pacman -S gcc cmake`
