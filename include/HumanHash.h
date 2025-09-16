@@ -28,23 +28,7 @@ public:
                     } else if (index > 0) {
                         hash[index] += hash[index - 1];
                     } else {
-                        hash[0] += hash[c % 64] + key;
-                    }
-                }
-            }
-        }for (const char c : input) {
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
-
-                    const bool bit = (c >> j) & 1;
-                    const int index = 8 * j + i;
-
-                    if (bit) {
-                        hash[index] += 1;
-                    } else if (index > 0) {
-                        hash[index] += hash[index - 1];
-                    } else {
-                        hash[0] += hash[c%64] + key;
+                        hash[0] += hash[0] + key;
                     }
                 }
             }
