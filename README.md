@@ -35,30 +35,40 @@ Then the result is converted to hexadecimal and returned.
 (our comments in the results in square brackets[])
 
 ```
-Average char similarity: 6.21052%
+Running all tests with MatrixHash:
+Output size test successful
+Running avalanche effect test
+Average char similarity: 6.20341%
 Min char similarity: 0%
-Max char similarity: 43.75%
+Max char similarity: 51.5625%
 ------------------------
-Average bit similarity: 66.2491%
-Min bit similarity: 58.2031%
-Max bit similarity: 81.6406%
+Average bit similarity: 66.2574%
+Min bit similarity: 57.2266%
+Max bit similarity: 85.7422%
 ------------------------
+Searching for collisions by generating pairs of random strings
 Collisions rate for size 10: 0
 Collisions rate for size 100: 0
 Collisions rate for size 500: 0
 Collisions rate for size 1000: 0
-[reading konstitucija txt]
-Lines: 1 Average time: 6.218e-06
-Lines: 2 Average time: 6.39833e-06
-Lines: 4 Average time: 7.741e-06
-Lines: 8 Average time: 9.247e-06
-Lines: 16 Average time: 1.89477e-05
-Lines: 32 Average time: 4.12993e-05
-Lines: 64 Average time: 7.00223e-05
-Lines: 128 Average time: 0.000130538
-Lines: 256 Average time: 0.000303046
-Lines: 512 Average time: 0.000651051
-Full file average time 0.000965815
+Searching for collisions by generating many random strings and putting them in a set
+Running efficiency test with file "../data/input/test/konstitucija.txt"
+Opening file "../data/input/test/konstitucija.txt"
+Lines: 1 Average time: 1.09463e-05
+Lines: 2 Average time: 1.0955e-05
+Lines: 4 Average time: 1.10037e-05
+Lines: 8 Average time: 1.43527e-05
+Lines: 16 Average time: 2.81997e-05
+Lines: 32 Average time: 4.4375e-05
+Lines: 64 Average time: 8.8412e-05
+Lines: 128 Average time: 0.000228676
+Lines: 256 Average time: 0.000488885
+Lines: 512 Average time: 0.00109383
+Full file average time 0.0016808
+Running salting test with input Man I love hash functions
+Input: Man I love hash functions Salt:  ihn o
+Hash without salt: 5bbdfd0a4126bcb3eb98e31ad83d03da67ba2f76d80e648274c598acef47a03b
+Hash with salt: 59c114d327749323e7a111f32ce080f73d0b43005a4158284537f56ff0166fdf
 ```
 
 [//]: # (TODO: GRAPH FOR KONSTITUCIJA)
@@ -81,30 +91,40 @@ VibeHash is a hashing algorithm created by Claude AI.
 
 ### Benchmarks (HashTests with 100k):
 ```
-Average char similarity: 6.1728%
+Running all tests with VibeHash:
+Output size test successful
+Running avalanche effect test
+Average char similarity: 6.17486%
 Min char similarity: 0%
-Max char similarity: 21.875%
+Max char similarity: 23.4375%
 ------------------------
-Average bit similarity: 66.2901%
-Min bit similarity: 56.4453%
-Max bit similarity: 76.1719%
+Average bit similarity: 66.2462%
+Min bit similarity: 57.4219%
+Max bit similarity: 77.1484%
 ------------------------
+Searching for collisions by generating pairs of random strings
 Collisions rate for size 10: 0
 Collisions rate for size 100: 0
 Collisions rate for size 500: 0
 Collisions rate for size 1000: 0
-[konstitucija.txt]
-Lines: 1 Average time: 4.399e-06
-Lines: 2 Average time: 5.47267e-06
-Lines: 4 Average time: 8.71467e-06
-Lines: 8 Average time: 1.5012e-05
-Lines: 16 Average time: 4.03053e-05
-Lines: 32 Average time: 7.40847e-05
-Lines: 64 Average time: 0.000149867
-Lines: 128 Average time: 0.000354775
-Lines: 256 Average time: 0.000733858
-Lines: 512 Average time: 0.00151693
-Full file average time 0.00219872
+Searching for collisions by generating many random strings and putting them in a set
+Running efficiency test with file "../data/input/test/konstitucija.txt"
+Opening file "../data/input/test/konstitucija.txt"
+Lines: 1 Average time: 6.11233e-06
+Lines: 2 Average time: 8.57667e-06
+Lines: 4 Average time: 1.37933e-05
+Lines: 8 Average time: 2.55953e-05
+Lines: 16 Average time: 6.39753e-05
+Lines: 32 Average time: 0.000120345
+Lines: 64 Average time: 0.000235874
+Lines: 128 Average time: 0.000543159
+Lines: 256 Average time: 0.00138955
+Lines: 512 Average time: 0.00264727
+Full file average time 0.00426793
+Running salting test with input Man I love hash functions
+Input: Man I love hash functions Salt: ntlsa
+Hash without salt: d7abcf6e7194821519d039f98571090b99e7016807adad99e4cdb1a895e621f9
+Hash with salt: ebfd0746718aadaf3ff780939dce414e36e16b2043bcbe640e9698dcf71826a2
 ```
 
 [//]: # (TODO: setup guide)
