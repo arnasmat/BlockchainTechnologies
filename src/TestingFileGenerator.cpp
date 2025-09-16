@@ -1,7 +1,5 @@
 #include "../include/TestingFileGenerator.h"
 
-// todo: better naming lol
-
 namespace TestingFileGenerator {
 
     void generateAllFiles() {

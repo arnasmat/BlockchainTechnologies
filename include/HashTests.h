@@ -17,14 +17,17 @@ namespace HashTests {
     void runAllTests(const HashGenInterface* hashGen);
 
     void determinismTest(const HashGenInterface* hashGen, const std::string& input);
-    void collisionSearchPairs(const HashGenInterface* hashGen);
-    void collisionSearchSets(const HashGenInterface *hashGen);
     void outputSizeTest(const HashGenInterface* hashgen);
     void efficiencyTest(const HashGenInterface* hashGen, const std::filesystem::__cxx11::path &inputFile);
+    void saltingTest(const HashGenInterface *hashGen, const std::string& input);
+    void collisionSearchPairs(const HashGenInterface* hashGen);
+    void collisionSearchSets(const HashGenInterface *hashGen);
+    void avalancheEffectTest(const HashGenInterface *hashGen);
+
+    // Helpers
     double effTestHelper(const HashGenInterface* hashGen, const std::string& input);
     std::string generateRandomString(const size_t length, const std::string& validSymbols, std::mt19937& rng);
     double calculateSimilarityPercentageBit(std::string hash1, std::string hash2);
-    void avalancheEffect(const HashGenInterface *hashGen);
     double calculateSimilarityPercentage(std::string hash1, std::string hash2);
 }
 

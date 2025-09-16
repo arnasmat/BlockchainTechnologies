@@ -3,6 +3,7 @@ A repository for a university blockchain technologies course.
 This project implements two hashing algorithms: MatrixHash (a custom algorithm co-created by us)
 and VibeHash(an algorithm created using Claude AI).
 
+[Click here for the setup guide](#setup-guides)
 
 [//]: # (TODO: fix readme hash description to reflect better after improvements)
 ## MatrixHash
@@ -72,7 +73,7 @@ VibeHash is a hashing algorithm created by Claude AI.
 - Output is always the same size (64 hex chars)
 - Avalanche effect (average hex-wise similarity between hashes of inputs with a 1 char difference char
 - Low collision rate (no found in the tests done)
-- Fast (significantly faster than MatrixHash)
+- Fast
 
 ### Weaknesses of the algorithm:
 - i have no clue how it works
@@ -107,6 +108,7 @@ Full file average time 0.00219872
 ```
 
 [//]: # (TODO: setup guide)
+# Setup guides
 Linux setup guide:
 1. Install git and [clone this repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
 2. Install g++ and CMake using your package manager, e.g. for arch linux `sudo pacman -S gcc cmake`

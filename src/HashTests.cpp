@@ -1,10 +1,6 @@
 #include "../include/HashTests.h"
 
-// TODO: test if these tests work lmao
-// TODO: Improve test naming lmao
-
 namespace HashTests {
-    // TODO: change to 100k
     const int totalTests{100000};
     // const int totalTests{100};
     // Patikrink išvedimo dydį – nepriklausomai nuo įvedimo, rezultatas visada tokio pat ilgio.
@@ -12,18 +8,19 @@ namespace HashTests {
     // TODO: Išmatuok efektyvumą: -> liko padaryt graph
     // Kolizijų paieška
     // Lavinos efektas
-    // TODO: Negrįžtamumo demonstracija (hiding, puzzle-friendliness) - HASH(input + salt)
+    // Negrįžtamumo demonstracija (hiding, puzzle-friendliness) - HASH(input + salt)
 
     // This test uses properties of sets (see determinismTest)
     // also tests determinism with the input of files
     void runAllTests(const HashGenInterface *hashGen) {
         outputSizeTest(hashGen);
-        avalancheEffect(hashGen);
+        avalancheEffectTest(hashGen);
         collisionSearchPairs(hashGen);
         collisionSearchSets(hashGen);
         determinismTest(hashGen, "bazinga!");
         // TODO: pridet konstitucija.txt prie buildo
         efficiencyTest(hashGen, "../data/input/test/konstitucija.txt");
+        saltingTest(hashGen, "Man I love hash functions");
     }
 
     void outputSizeTest(const HashGenInterface *hashgen) {
@@ -45,6 +42,8 @@ namespace HashTests {
             for (auto i: outputSize) {
                 std::cout << i << " ";
             }
+        } else {
+            std::cout<<"Output size test successful\n";
         }
     }
 
@@ -65,19 +64,16 @@ namespace HashTests {
     void efficiencyTest(const HashGenInterface *hashGen, const std::filesystem::path &inputFile) {
         std::ifstream in(inputFile);
 
+        std::cout<<"Running efficiency test with file "<<inputFile<<"\n";
         if (!in) {
             std::cerr << "Error: Could not open file " << inputFile <<"\n";
             return;
         }
 
-        // std::ostringstream ss{};
-        // ss << in.rdbuf();
-        // in.close();
         std::string input{};
         std::string line{};
 
         int lineCount{0};
-        //inefficient way of reading the file probably, but whatever. will fix later lmao
 
         std::cout<<"Opening file "<<inputFile<<"\n";
 
@@ -88,7 +84,6 @@ namespace HashTests {
             // quite cool way of checking if linecount is a power of 2
             if (lineCount > 0 && (lineCount & (lineCount - 1)) == 0) {
                 std::cout << "Lines: " << lineCount << " Average time: " << effTestHelper(hashGen, input) << "\n";
-                // std::cout<<input<<"\n\n\n";
             }
         }
         std::cout << "Full file average time " << effTestHelper(hashGen, input) << "\n";
@@ -110,6 +105,7 @@ namespace HashTests {
     }
 
     void collisionSearchPairs(const HashGenInterface *hashGen) {
+        std::cout<<"Searching for collisions by generating pairs of random strings\n";
         constexpr int pairStringLength[4] = {10, 100, 500, 1000};
         const std::string validSymbols{
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:',.<>/?`~\"\\"
@@ -142,6 +138,7 @@ namespace HashTests {
 
     // This test also relies on the way sets work, the logic is similar to determinismTest
     void collisionSearchSets(const HashGenInterface *hashGen) {
+        std::cout<<"Searching for collisions by generating many random strings and putting them in a set\n";
         constexpr int inputStringLength[4] = {10, 100, 500, 1000};
         const std::string validSymbols{
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:',.<>/?`~\"\\"
@@ -173,7 +170,8 @@ namespace HashTests {
         }
     }
 
-    void avalancheEffect(const HashGenInterface *hashGen) {
+    void avalancheEffectTest(const HashGenInterface *hashGen) {
+        std::cout<<"Running avalanche effect test\n";
         const std::string validSymbols{
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:',.<>/?`~\"\\"
         };
@@ -208,7 +206,7 @@ namespace HashTests {
 
             if (hash1 == hash2) {
                 std::cout << "Collision with similar inputs!\n" << input << "\nand\n" << input2 << "\n";
-                continue;
+                // continue;
             }
 
             double percentageSimilarityChar{calculateSimilarityPercentage(hash1, hash2)};
@@ -223,8 +221,7 @@ namespace HashTests {
         }
 
         std::ostringstream ss;
-        ss << "Please note that collissions are not counted in the max similarity \n"
-            << "Average char similarity: " << (charSimilarity.total / totalTests) << "%\n"
+        ss<< "Average char similarity: " << (charSimilarity.total / totalTests) << "%\n"
             << "Min char similarity: " << charSimilarity.min << "%\n"
             << "Max char similarity: " << charSimilarity.max << "%\n"
             << "------------------------\n"
@@ -240,7 +237,7 @@ namespace HashTests {
 
     std::string generateRandomString(const size_t length, const std::string &validSymbols, std::mt19937 &rng) {
         std::uniform_int_distribution<size_t> dist(0, validSymbols.size() - 1);
-        std::string result{""};
+        std::string result{};
 
         for (size_t i = 0; i < length; ++i) {
             result += validSymbols[dist(rng)];
@@ -265,6 +262,8 @@ namespace HashTests {
         return static_cast<double>(identicalChars) / totalChars * 100;
     }
 
+    // note: min is 50% because they are expressed as strings so um yeah sad! idk maybe fix but that'd require
+    // changing like everything
     double calculateSimilarityPercentageBit(std::string hash1, std::string hash2) {
         int identicalBits{0};
         int totalBits{static_cast<int>(std::max(hash1.length(), hash2.length()) * 8)};
@@ -284,5 +283,20 @@ namespace HashTests {
             }
         }
         return static_cast<double>(identicalBits) / totalBits * 100;
+    }
+
+    void saltingTest(const HashGenInterface *hashGen, const std::string& input) {
+        std::cout<<"Running salting test with input "<<input<<"\n";
+        static std::mt19937 rng{std::random_device{}()};
+        std::uniform_int_distribution<int> dist(5, 15);
+        int randomLength{dist(rng)};
+
+        std::string salt{generateRandomString(randomLength, input, rng)};
+        std::string hashNoSalt{hashGen->generateHash(input)};
+        std::string hashWithSalt{hashGen->generateHash(input + salt)};
+
+        std::cout<<"Input: "<<input<<" Salt: "<<salt<<"\n";
+        std::cout<<"Hash without salt: "<<hashNoSalt<<"\n";
+        std::cout<<"Hash with salt: "<<hashWithSalt<<"\n";
     }
 }

@@ -5,11 +5,6 @@
 
 #include "HashGenInterface.h"
 
-// TODO: make matrixhash reliant on this hash -> also make more consistent naming as currently it's super inconsistent (prolly done)
-// i.e. hash[] in HumanHash, but hashArray[] in MatrixHash
-// TODO: make hashes work with file inputs as well
-
-// TODO: implement trycatches in code, clean up ts
 class HumanHash: public HashGenInterface {
 public:
     explicit HumanHash(const int& inputKey=0) : HashGenInterface(inputKey) {}
