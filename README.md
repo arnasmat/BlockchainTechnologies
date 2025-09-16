@@ -1,6 +1,6 @@
 # Hash! - BlockchainTechnologies
 A repository for a university blockchain technologies course. 
-This project implements two hashing algorithms: MatrixHash (a custom algorithm co-created by us)
+This project implements two hashing algorithms: MatrixHash (a custom algorithm created by us)
 and VibeHash(an algorithm created using Claude AI).
 
 [Click here for the setup guide](#setup-guides)
