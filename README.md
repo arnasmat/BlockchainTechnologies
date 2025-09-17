@@ -1,5 +1,5 @@
 # Hash! - BlockchainTechnologies
-A repository for a university blockchain technologies course. 
+A repository for a university blockchain technologies course.
 This project implements two hashing algorithms: MatrixHash (a custom algorithm created by us)
 and VibeHash(an algorithm created using Claude AI).
 
@@ -9,11 +9,11 @@ and VibeHash(an algorithm created using Claude AI).
 ## MatrixHash
 The MatrixHash algorithm is a three-part algorithm (after improvements the 3 parts are not as clear in the code):
 1. Firstly the algorithm:
-- Converts the input string into a binary representation 
+- Converts the input string into a binary representation
 - Stores the representation in a temporary array (henceforth referred to as *k*)
 - Tracks how many 1s were in the binary representation and initializes the hashArray
 (which later becomes the resulting hash) with how many ones there were thus far to introduce randomness.
-2. Then it does something similar to matrix multiplying *k* (size: 1x|k|) with a matrix of size |k|x64 
+2. Then it does something similar to matrix multiplying *k* (size: 1x|k|) with a matrix of size |k|x64
 resulting in a matrix of size 1x64 (here: hashArray of size 64). It does so by creating a double for loop of sizes 64(i) and |k|(j)
 and adding i+j multiplied by the value of k[j]. The result is stored in hashArray[i].
 3. Finally, it does some final scrambling of hashArray by iterating through it as a binary representation and adding 1 to the original array (not binary)
@@ -91,7 +91,7 @@ VibeHash is a hashing algorithm created by Claude AI.
 
 ### Weaknesses of the algorithm:
 - i have no clue how it works
-- 
+-
 
 ### Benchmarks (HashTests with 100k):
 ```
@@ -156,6 +156,6 @@ SETUP GUIDE for Windows users
 7. Navigate to /bin/ directory
 8. Run ./BlockchainTechnologies. You may need to use the -h flag to see the usage instructions.
 
-[1]: OpenSSL is only used for testing our algorithms with other popular hashing algorithms(sha256 and md5). 
-If you don't want to install it - comment out everything in OtherAlgorithms.h and all lines related to sha256 and md5 in CliArgHandler.
+[1]: OpenSSL is only used for testing our algorithms with other popular hashing algorithms(sha256 and md5).
+If you don't want to install it - comment out everything in OtherAlgorithms.h, all lines related to sha256 and md5 in CliArgHandler and find_package(OpenSSL ...) as well as target_link_libraries (... OpenSSL ...) in CMakeLists.txt.
 Then the application should build without having to install OpenSSL.
