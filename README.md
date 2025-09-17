@@ -126,6 +126,9 @@ Input: Man I love hash functions Salt: ntlsa
 Hash without salt: d7abcf6e7194821519d039f98571090b99e7016807adad99e4cdb1a895e621f9
 Hash with salt: ebfd0746718aadaf3ff780939dce414e36e16b2043bcbe640e9698dcf71826a2
 ```
+konsitucija.txt test times graph
+<img width="1680" height="920" alt="image" src="https://github.com/user-attachments/assets/532271ab-7ef1-4605-89d3-311ed883ecc3" />
+It can be observed, that when input gets exponentially larger, hash takes exponentially more time. Thus it proves that our hash's time complexity is O(n)=n (linear)
 
 [//]: # (TODO: setup guide)
 # Setup guides
