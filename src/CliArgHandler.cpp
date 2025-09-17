@@ -64,6 +64,8 @@ void handleCliArgs(const ArgsToRun &argsToRun) {
 void printHelpInfo() {
     std::ostringstream ss;
     ss << "Usage: hash_program [options] <input_file>\n"
+            <<"(Please note that if you input more than one file, ONLY the last one will be used)\n"
+            <<"You can also use input from stdin. I.e. echo -n 'test' | ./BlockchainTechnologies OR run ./BlockchainTechnologies, input some data into stdin and click ctrl D\n"
             << "Options:\n"
             << "  -h, --help            Show this help message and exit\n"
             << "  -t, --tests           Run all tests (ignores all other input flags)\n"
@@ -106,8 +108,34 @@ std::string handleFileInput(const HashAlgorithm hashAlgorithm, const std::filesy
     // TODO: allow input from stdin
     // TODO: make output to file work
     // TODO: allow for multiple hash algs?
-    if (inputFilePath.empty()) {
-        std::cerr << "Error: no input file path provided. Run app with -h for more information\n";
+
+    std::string inputData{};
+    if (inputFilePath.empty() ) {
+
+        if (std::cin.peek() == EOF) {
+            std::cerr<<"Error: No input (file) provided. Run app with -h for more information\n";
+            return "";
+        }
+
+        std::ostringstream buffer;
+        buffer << std::cin.rdbuf();
+        inputData = buffer.str();
+        if (hashAlgorithm == HUMAN) {
+            HumanHash humanHash;
+            return humanHash.generateHash(inputData);
+        }
+        if (hashAlgorithm == VIBE) {
+            VibeHash vibeHash;
+            return vibeHash.generateHash(inputData);
+        }
+        if (hashAlgorithm == MATRIX) {
+            MatrixHash matrixHash;
+            return matrixHash.generateHash(inputData);
+        }
+    }
+
+    if (!std::filesystem::exists(inputFilePath)) {
+        std::cerr << "Error: file does not exist. Run app with -h for more information\n";
         return "";
     }
 
