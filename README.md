@@ -71,6 +71,10 @@ Hash without salt: 5bbdfd0a4126bcb3eb98e31ad83d03da67ba2f76d80e648274c598acef47a
 Hash with salt: 59c114d327749323e7a111f32ce080f73d0b43005a4158284537f56ff0166fdf
 ```
 
+konsitucija.txt test times graph
+<img width="1680" height="920" alt="image" src="https://github.com/user-attachments/assets/532271ab-7ef1-4605-89d3-311ed883ecc3" />
+It can be observed, that when input gets exponentially larger, hash takes exponentially more time. Thus it proves that our hash's time complexity is O(n)=n (linear)
+
 [//]: # (TODO: GRAPH FOR KONSTITUCIJA)
 
 ## VibeHash
@@ -127,8 +131,8 @@ Hash without salt: d7abcf6e7194821519d039f98571090b99e7016807adad99e4cdb1a895e62
 Hash with salt: ebfd0746718aadaf3ff780939dce414e36e16b2043bcbe640e9698dcf71826a2
 ```
 konsitucija.txt test times graph
-<img width="1680" height="920" alt="image" src="https://github.com/user-attachments/assets/532271ab-7ef1-4605-89d3-311ed883ecc3" />
-It can be observed, that when input gets exponentially larger, hash takes exponentially more time. Thus it proves that our hash's time complexity is O(n)=n (linear)
+<img width="1225" height="697" alt="image" src="https://github.com/user-attachments/assets/e87a9000-5056-4005-b6c8-53be500b0f38" />
+We can observe that while vibe hash's performance was a bit slower than ours, it still exhibits linear time complexion.
 
 [//]: # (TODO: setup guide)
 # Setup guides
