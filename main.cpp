@@ -11,6 +11,8 @@
 #include "VibeHash.h"
 #include <CliArgHandler.h>
 
+#include "OtherAlgorithms.h"
+
 int main(int argc, char *argv[]) {
     ArgsToRun argsToRun = handleCliInput(argc, argv);
 

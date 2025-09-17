@@ -287,12 +287,15 @@ namespace HashTests {
     }
 
     void saltingTest(const HashGenInterface *hashGen, const std::string& input) {
+        const std::string validSymbols{
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:',.<>/?`~\"\\"
+        };
         std::cout<<"Running salting test with input "<<input<<"\n";
         static std::mt19937 rng{std::random_device{}()};
         std::uniform_int_distribution<int> dist(5, 15);
         int randomLength{dist(rng)};
 
-        std::string salt{generateRandomString(randomLength, input, rng)};
+        std::string salt{generateRandomString(randomLength, validSymbols, rng)};
         std::string hashNoSalt{hashGen->generateHash(input)};
         std::string hashWithSalt{hashGen->generateHash(input + salt)};
 

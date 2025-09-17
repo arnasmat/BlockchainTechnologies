@@ -4,6 +4,8 @@
 
 #include <CliArgHandler.h>
 
+#include "OtherAlgorithms.h"
+
 //TODO: improve ts, currently the input file path thing is dogshit
 // also error handling ig
 // TODO: allow for multiple algorithms to input
@@ -70,6 +72,7 @@ void printHelpInfo() {
             << "  -m, --matrix         Use MatrixHash algorithm (Default)\n"
             << "  -u, --human          Use HumanHash algorithm\n"
             << "  -v, --vibe           Use VibeHash algorithm\n";
+// TODO: maybe make -i be the input key thing
 
     std::cout << ss.str();
 }
@@ -81,6 +84,9 @@ void runTestsWithAll() {
     HumanHash humanHash;
     MatrixHash matrixHash;
     VibeHash vibeHash;
+    // Other algs
+    Sha256 sha256;
+    Md5 md5;
 
     std::cout<<"Running all tests with MatrixHash: \n";
     HashTests::runAllTests(&matrixHash);
@@ -88,6 +94,12 @@ void runTestsWithAll() {
     HashTests::runAllTests(&humanHash);
     std::cout<<"\n\nRunning all tests with VibeHash: \n";
     HashTests::runAllTests(&vibeHash);
+
+    std::cout<<"\n\nRUNNING TESTS WITH OTHER ALGORITHMS\n(Algorithm implementations by OpenSSL)\n";
+    std::cout<<"\n\nRunning all tests with SHA256: \n";
+    HashTests::runAllTests(&sha256);
+    std::cout<<"\n\nRunning all tests with MD5: \n";
+    HashTests::runAllTests(&md5);
 }
 
 std::string handleFileInput(const HashAlgorithm hashAlgorithm, const std::filesystem::path &inputFilePath) {
