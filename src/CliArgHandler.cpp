@@ -65,7 +65,7 @@ void printHelpInfo() {
     std::ostringstream ss;
     ss << "Usage: hash_program [options] <input_file>\n"
             <<"(Please note that if you input more than one file, ONLY the last one will be used)\n"
-            <<"You can also use input from stdin. I.e. echo -n 'test' | ./BlockchainTechnologies OR run ./BlockchainTechnologies, input some data into stdin and click ctrl D\n"
+            <<"You can also use input from stdin. I.e. echo -n 'test' | ./BlockchainTechnologies OR run ./BlockchainTechnologies, input some data into stdin and click ctrl D\n\n"
             << "Options:\n"
             << "  -h, --help            Show this help message and exit\n"
             << "  -t, --tests           Run all tests (ignores all other input flags)\n"

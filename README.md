@@ -140,7 +140,7 @@ Note: if you plan on testing the application (-t), please put [konstitucija.txt]
 
 Linux setup guide:
 1. Install git and [clone this repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-2. Install g++ and CMake using your package manager, e.g. for arch linux `sudo pacman -S gcc cmake`
+2. Install g++, CMake and OpenSSL (may have to google the name, on some platforms it's called libssl-dev)[1] using your package manager, e.g. for arch linux `sudo pacman -S gcc cmake openssl`
 3. Open your terminal emulator in the repository folder
 4. Build the project `cmake -B build -S .; cmake --build build` (if you get errors, you may need to specify -G "Unix Makefiles")
 5. Navigate to /bin/ directory
@@ -151,7 +151,11 @@ SETUP GUIDE for Windows users
 2. Install the [MSYS2 environment](https://www.msys2.org/)
 3. After setting up open the MSYS2 mingw64 bash terminal (not the plain msys2)
 4. navigate to the project folder where this repository is cloned
-5. Install the g++ compiler and cmake for the environment: `pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake`
+5. Install the g++ compiler, cmake and OpenSSL[1] for the environment: `pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake mingw-w64-x86_64-openssl`
 6. Build the project `cmake -B build -S .; cmake --build build`
 7. Navigate to /bin/ directory
 8. Run ./BlockchainTechnologies. You may need to use the -h flag to see the usage instructions.
+
+[1]: OpenSSL is only used for testing our algorithms with other popular hashing algorithms(sha256 and md5). 
+If you don't want to install it - comment out everything in OtherAlgorithms.h and all lines related to sha256 and md5 in CliArgHandler.
+Then the application should build without having to install OpenSSL.
