@@ -79,6 +79,7 @@ VibeHash is a hashing algorithm created with Claude AI.
 - i have no clue how it works
 
 ### Benchmarks (HashTests with 100k):
+[SEE FULL BENCHMARKS OF ALL 3 HASHING ALGORITHMS  + SHA256 AND MD5](https://pastebin.com/t7gPY6Lz)
 ```
 Running all tests with VibeHash:
 Output size test successful
