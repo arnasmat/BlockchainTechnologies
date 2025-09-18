@@ -22,6 +22,7 @@ Nonetheless, the name related to matrix multiplication has remained. (see old ve
 
 
 ### Benchmarks (HashTests with 100k):
+[SEE FULL BENCHMARKS OF ALL 3 HASHING ALGORITHMS  + SHA256 AND MD5](https://pastebin.com/t7gPY6Lz)
 ```
 Running all tests with MatrixHash:
 Output size test successful
@@ -126,6 +127,7 @@ We can observe that while vibe hash's performance was a bit slower than our hash
 SHA256 and MD5 are widely used hashing functions. Famously, SHA256 is used as a proof of work in bitcoin's blockhain.
 
 ### Comparison of SHA256 and MD5 performance with respect to our algorithms
+[SEE FULL BENCHMARKS OF ALL 3 HASHING ALGORITHMS  + SHA256 AND MD5](https://pastebin.com/t7gPY6Lz)
 <img width="1392" height="987" alt="image" src="https://github.com/user-attachments/assets/0fc3f96e-f59c-4186-8dce-10e7f5ce5301" />
 
 
