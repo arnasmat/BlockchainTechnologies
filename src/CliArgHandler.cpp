@@ -6,58 +6,66 @@
 
 #include "OtherAlgorithms.h"
 
-//TODO: improve ts, currently the input file path thing is dogshit
 // also error handling ig
 // TODO: allow for multiple algorithms to input
 ArgsToRun handleCliInput(int argc, char *argv[]) {
     ArgsToRun args;
 
-    for (int i = 1; i < argc; i++) {
-        std::string arg{argv[i]};
-        // why can't we use switches in c++!!!
+    try {
+        for (int i = 1; i < argc; i++) {
+            std::string arg{argv[i]};
+            // why can't we use switches with strings in c++!!!
 
-        if (arg == "-t" || arg == "--tests") {
-            args.tests = true;
-        } else if (arg == "-h" || arg == "--help") {
-            args.help = true;
-        } else if (arg == "-o" || arg == "--output") {
-            if (i + 1 < argc) {
-                args.outputFilePath = argv[++i];
-            } else {
-                std::cerr << "Error: Missing output file path after " << arg << std::endl;
+            if (arg == "-t" || arg == "--tests") {
+                args.tests = true;
+            } else if (arg == "-h" || arg == "--help") {
                 args.help = true;
-            }
-        } else if (arg == "-i" || arg == "--input") {
-            if (i + 1 < argc) {
-                args.inputFilePath = argv[++i];
+            } else if (arg == "-o" || arg == "--output") {
+                if (i + 1 < argc) {
+                    args.outputFilePath = argv[++i];
+                } else {
+                    std::cerr << "Error: Missing output file path after " << arg << std::endl;
+                    args.help = true;
+                }
+            } else if (arg == "-i" || arg == "--input") {
+                if (i + 1 < argc) {
+                    args.inputFilePath = argv[++i];
+                } else {
+                    std::cerr << "Error: Missing input file path after " << arg << std::endl;
+                    args.help = true;
+                }
+            } else if (arg == "-v" || arg == "--vibe") {
+                args.hashAlgorithm = VIBE;
+            } else if (arg == "-m" || arg == "--matrix") {
+                args.hashAlgorithm = MATRIX;
+            } else if (arg == "-u" || arg == "--human") {
+                args.hashAlgorithm = HUMAN;
             } else {
-                std::cerr << "Error: Missing input file path after " << arg << std::endl;
-                args.help = true;
+                args.inputFilePath = arg;
             }
-        } else if (arg == "-v" || arg == "--vibe") {
-            args.hashAlgorithm = VIBE;
-        } else if (arg == "-m" || arg == "--matrix") {
-            args.hashAlgorithm = MATRIX;
-        } else if (arg == "-u" || arg == "--human") {
-            args.hashAlgorithm = HUMAN;
-        } else {
-            args.inputFilePath = arg;
         }
+    } catch (const std::exception &e) {
+        std::cerr << "Error parsing command line arguments: " << e.what() << std::endl;
+        args.help = true;
     }
 
     return args;
 }
 
 void handleCliArgs(const ArgsToRun &argsToRun) {
-    if (argsToRun.help) {
-        // If we run help - all other args are ignored
-        printHelpInfo();
-    } else if (argsToRun.tests) {
-        runTestsWithAll();
-    } else {
-        std::string output = handleFileInput(argsToRun.hashAlgorithm, argsToRun.inputFilePath);
+    try {
+        if (argsToRun.help) {
+            // If we run help - all other args are ignored
+            printHelpInfo();
+        } else if (argsToRun.tests) {
+            runTestsWithAll();
+        } else {
+            std::string output = handleFileInput(argsToRun.hashAlgorithm, argsToRun.inputFilePath);
 
-        handleFileOutput(output, argsToRun.outputFilePath);
+            handleFileOutput(output, argsToRun.outputFilePath);
+        }
+    } catch (const std::exception &e) {
+        std::cerr << "An error occurred: " << e.what() << std::endl;
     }
 }
 
@@ -75,6 +83,7 @@ void printHelpInfo() {
             << "  -u, --human          Use HumanHash algorithm\n"
             << "  -v, --vibe           Use VibeHash algorithm\n";
 // TODO: maybe make -i be the input key thing
+    // TODO: move help info into another, easier editable file lol
 
     std::cout << ss.str();
 }
@@ -82,13 +91,10 @@ void printHelpInfo() {
 void runTestsWithAll() {
     // TODO: let ppl choose which tests to run
     // TODO: let ppl choose which algorithms to test
-    // If we run tests - all other inputs are ignored)
+    // note - If we run tests - all other inputs are ignored)
     HumanHash humanHash;
     MatrixHash matrixHash;
     VibeHash vibeHash;
-    // Other algs
-    Sha256 sha256;
-    Md5 md5;
 
     std::cout<<"Running all tests with MatrixHash: \n";
     HashTests::runAllTests(&matrixHash);
@@ -96,6 +102,10 @@ void runTestsWithAll() {
     HashTests::runAllTests(&humanHash);
     std::cout<<"\n\nRunning all tests with VibeHash: \n";
     HashTests::runAllTests(&vibeHash);
+
+    // Other algs - Comment out from here until the end of this function if you don't want to use OpenSSL
+    Sha256 sha256;
+    Md5 md5;
 
     std::cout<<"\n\nRUNNING TESTS WITH OTHER ALGORITHMS\n(Algorithm implementations by OpenSSL)\n";
     std::cout<<"\n\nRunning all tests with SHA256: \n";
@@ -108,62 +118,68 @@ std::string handleFileInput(const HashAlgorithm hashAlgorithm, const std::filesy
     // TODO: allow input from stdin
     // TODO: make output to file work
     // TODO: allow for multiple hash algs?
+    try {
+        std::string inputData{};
+        if (inputFilePath.empty() ) {
+            if (std::cin.peek() == EOF) {
+                std::cerr<<"Error: No input (file) provided. Run app with -h for more information\n";
+                return "";
+            }
 
-    std::string inputData{};
-    if (inputFilePath.empty() ) {
+            std::ostringstream buffer;
+            buffer << std::cin.rdbuf();
+            inputData = buffer.str();
+            if (hashAlgorithm == HUMAN) {
+                HumanHash humanHash;
+                return humanHash.generateHash(inputData);
+            }
+            if (hashAlgorithm == VIBE) {
+                VibeHash vibeHash;
+                return vibeHash.generateHash(inputData);
+            }
+            if (hashAlgorithm == MATRIX) {
+                MatrixHash matrixHash;
+                return matrixHash.generateHash(inputData);
+            }
+        }
 
-        if (std::cin.peek() == EOF) {
-            std::cerr<<"Error: No input (file) provided. Run app with -h for more information\n";
+        if (!std::filesystem::exists(inputFilePath)) {
+            std::cerr << "Error: file does not exist. Run app with -h for more information\n";
             return "";
         }
 
-        std::ostringstream buffer;
-        buffer << std::cin.rdbuf();
-        inputData = buffer.str();
         if (hashAlgorithm == HUMAN) {
             HumanHash humanHash;
-            return humanHash.generateHash(inputData);
+            return humanHash.hashFromFile(inputFilePath);
         }
         if (hashAlgorithm == VIBE) {
             VibeHash vibeHash;
-            return vibeHash.generateHash(inputData);
+            return vibeHash.hashFromFile(inputFilePath);
         }
         if (hashAlgorithm == MATRIX) {
             MatrixHash matrixHash;
-            return matrixHash.generateHash(inputData);
+            return matrixHash.hashFromFile(inputFilePath);
         }
-    }
-
-    if (!std::filesystem::exists(inputFilePath)) {
-        std::cerr << "Error: file does not exist. Run app with -h for more information\n";
-        return "";
-    }
-
-    if (hashAlgorithm == HUMAN) {
-        HumanHash humanHash;
-        return humanHash.hashFromFile(inputFilePath);
-    }
-    if (hashAlgorithm == VIBE) {
-        VibeHash vibeHash;
-        return vibeHash.hashFromFile(inputFilePath);
-    }
-    if (hashAlgorithm == MATRIX) {
-        MatrixHash matrixHash;
-        return matrixHash.hashFromFile(inputFilePath);
+    } catch (std::exception &e) {
+        std::cerr << "An error occurred while handling file input: " << e.what() << std::endl;
     }
     return ""; // should never reach here as HashAlgorithm is enum, but ok compiler don't be mad
 }
 
-void handleFileOutput(std::string output, std::filesystem::path outputFilePath) {
-    if (outputFilePath.empty()) {
-        std::cout << output;
-    } else {
-        std::ofstream outputFile(outputFilePath);
-        if (!outputFile) {
-            std::cerr << "Error: Could not open output file: " << outputFilePath << std::endl;
+void handleFileOutput(const std::string& output, const std::filesystem::path& outputFilePath) {
+    try {
+        if (outputFilePath.empty()) {
+            std::cout << output;
         } else {
-            outputFile << output;
-            outputFile.close();
+            std::ofstream outputFile(outputFilePath);
+            if (!outputFile) {
+                std::cerr << "Error: Could not open output file: " << outputFilePath << std::endl;
+            } else {
+                outputFile << output;
+                outputFile.close();
+            }
         }
+    } catch (std::exception &e) {
+        std::cerr<< "An error occurred while handling file output: " << e.what() << std::endl;
     }
 }

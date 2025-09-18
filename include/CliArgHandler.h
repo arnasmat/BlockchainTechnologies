@@ -27,6 +27,6 @@ void handleCliArgs(const ArgsToRun& argsToRun);
 void printHelpInfo();
 void runTestsWithAll();
 std::string handleFileInput(const HashAlgorithm hashAlgorithm, const std::filesystem::path& inputFilePath);
-void handleFileOutput(std::string output, std::filesystem::path outputFilePath);
+void handleFileOutput(const std::string& output, const std::filesystem::path& outputFilePath);
 
 #endif //CLIARGHANDLER_H

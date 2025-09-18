@@ -5,31 +5,21 @@ and VibeHash(an algorithm created using Claude AI).
 
 [Click here for the setup guide](#setup-guides)
 
-[//]: # (TODO: fix readme hash description to reflect better after improvements)
 ## MatrixHash
-The MatrixHash algorithm is a three-part algorithm (after improvements the 3 parts are not as clear in the code):
-1. Firstly the algorithm:
-- Converts the input string into a binary representation
-- Stores the representation in a temporary array (henceforth referred to as *k*)
-- Tracks how many 1s were in the binary representation and initializes the hashArray
-(which later becomes the resulting hash) with how many ones there were thus far to introduce randomness.
-2. Then it does something similar to matrix multiplying *k* (size: 1x|k|) with a matrix of size |k|x64
-resulting in a matrix of size 1x64 (here: hashArray of size 64). It does so by creating a double for loop of sizes 64(i) and |k|(j)
-and adding i+j multiplied by the value of k[j]. The result is stored in hashArray[i].
-3. Finally, it does some final scrambling of hashArray by iterating through it as a binary representation and adding 1 to the original array (not binary)
-if the value is 1 in the binary representation and adding the value of the previous character if the value is 0 in the binary representation.
-Then the result is converted to hexadecimal and returned.
-   (note: pt3 is also a hashing algorithm on its own (HumanHash), but it's more useful here than being standalone)
+MatrixHash is a hashing algorithm created by us. The main idea was using matrix multiplication to create a hash,
+however after a lot of changes, the final algorithm is quite different from the original idea to be more efficient.
+Nonetheless, the name related to matrix multiplication has remained. (see old versions of readmes to see the original idea)
 
 ### Strenghts of the algorithm:
 - Deterministic
 - Output is always the same size (64 hex chars)
 - Avalanche effect (average hex-wise similarity between hashes of inputs with a 1 char difference char is ~7%)
 - Low collision rate
+- Faster than VibeHash
 
 ### Weaknesses of the algorithm:
-- Efficiency (could be faster) -> fixed by using bitwise operations instead of bitset<8> and casting to string
-- Collisions sometimes happen with similar inputs (1 char difference)  -> fixed with some minor tweaks
+- Slower than SHA256 and MD5
+
 
 ### Benchmarks (HashTests with 100k):
 (our comments in the results in square brackets[])
@@ -75,23 +65,20 @@ konsitucija.txt test times graph
 <img width="1680" height="920" alt="image" src="https://github.com/user-attachments/assets/532271ab-7ef1-4605-89d3-311ed883ecc3" />
 It can be observed, that when input gets exponentially larger, hash takes exponentially more time. Thus it proves that our hash's time complexity is O(n)=n (linear)
 
-[//]: # (TODO: GRAPH FOR KONSTITUCIJA)
-
 ## VibeHash
-VibeHash is a hashing algorithm created by Claude AI.
+VibeHash is a hashing algorithm created with Claude AI.
 
-- We will not go in depth explaining the algorithm, but you can see the [chats here](https://claude.ai/share/1ce99725-f78d-4212-9ac7-555b50029023) (the issues were later fixed by us)
+- We will not go in depth explaining the algorithm, but you can see the [chats here](https://claude.ai/share/1ce99725-f78d-4212-9ac7-555b50029023) (the issues we faced were later fixed by us)
 
 ### Strenghts of the algorithm:
 - Deterministic
 - Output is always the same size (64 hex chars)
 - Avalanche effect (average hex-wise similarity between hashes of inputs with a 1 char difference char
 - Low collision rate (no found in the tests done)
-- Fast
 
 ### Weaknesses of the algorithm:
+- Slower than MatrixHash, SHA256 and MD5
 - i have no clue how it works
--
 
 ### Benchmarks (HashTests with 100k):
 ```
@@ -134,7 +121,6 @@ konsitucija.txt test times graph
 <img width="1225" height="697" alt="image" src="https://github.com/user-attachments/assets/e87a9000-5056-4005-b6c8-53be500b0f38" />
 We can observe that while vibe hash's performance was a bit slower than ours, it still exhibits linear time complexion.
 
-[//]: # (TODO: setup guide)
 # Setup guides
 Note: if you plan on testing the application (-t), please put [konstitucija.txt](https://bit.ly/33nYy2v) in the data/input/test directory
 

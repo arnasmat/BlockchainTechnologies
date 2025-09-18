@@ -5,7 +5,7 @@ namespace HashTests {
     // const int totalTests{100};
     // Patikrink išvedimo dydį – nepriklausomai nuo įvedimo, rezultatas visada tokio pat ilgio.
     // Patikrink deterministiškumą – tas pats failas duoda tą patį hash’ą.
-    // TODO: Išmatuok efektyvumą: -> liko padaryt graph
+    // Išmatuok efektyvumą: -> liko padaryt graph
     // Kolizijų paieška
     // Lavinos efektas
     // Negrįžtamumo demonstracija (hiding, puzzle-friendliness) - HASH(input + salt)
@@ -18,7 +18,6 @@ namespace HashTests {
         collisionSearchPairs(hashGen);
         collisionSearchSets(hashGen);
         determinismTest(hashGen, "bazinga!");
-        // TODO: pridet konstitucija.txt prie buildo
         efficiencyTest(hashGen, "../data/input/test/konstitucija.txt");
         saltingTest(hashGen, "Man I love hash functions");
     }
