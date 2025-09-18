@@ -22,18 +22,18 @@ Nonetheless, the name related to matrix multiplication has remained. (see old ve
 
 
 ### Benchmarks (HashTests with 100k):
-[SEE FULL BENCHMARKS OF ALL 3 HASHING ALGORITHMS  + SHA256 AND MD5](https://pastebin.com/t7gPY6Lz)
+[SEE FULL BENCHMARKS OF ALL 3 HASHING ALGORITHMS  + SHA256 AND MD5](https://pastebin.com/YHC5JTiN)
 ```
 Running all tests with MatrixHash:
 Output size test successful
 Running avalanche effect test
-Average char similarity: 6.16819%
+Average char similarity: 6.1767%
 Min char similarity: 0%
-Max char similarity: 25%
+Max char similarity: 29.6875%
 ------------------------
-Average bit similarity: 66.3125%
-Min bit similarity: 58.0078%
-Max bit similarity: 77.1484%
+Average bit similarity: 49.4459%
+Min bit similarity: 35.1562%
+Max bit similarity: 66.0156%
 ------------------------
 Searching for collisions by generating pairs of random strings
 Collisions rate for size 10: 0
@@ -43,21 +43,21 @@ Collisions rate for size 1000: 0
 Searching for collisions by generating many random strings and putting them in a set
 Running efficiency test with file "../data/input/test/konstitucija.txt"
 Opening file "../data/input/test/konstitucija.txt"
-Lines: 1 Average time: 1.04957e-05
-Lines: 2 Average time: 1.09837e-05
-Lines: 4 Average time: 1.09683e-05
-Lines: 8 Average time: 1.68287e-05
-Lines: 16 Average time: 2.7863e-05
-Lines: 32 Average time: 5.45987e-05
-Lines: 64 Average time: 7.91137e-05
-Lines: 128 Average time: 0.000223387
-Lines: 256 Average time: 0.000501553
-Lines: 512 Average time: 0.00110145
-Full file average time 0.00166033
+Lines: 1 Average time: 1.3592e-05
+Lines: 2 Average time: 1.07767e-05
+Lines: 4 Average time: 1.16377e-05
+Lines: 8 Average time: 1.54693e-05
+Lines: 16 Average time: 3.06493e-05
+Lines: 32 Average time: 4.13803e-05
+Lines: 64 Average time: 7.93643e-05
+Lines: 128 Average time: 0.000220387
+Lines: 256 Average time: 0.000495177
+Lines: 512 Average time: 0.00110799
+Full file average time 0.00173936
 Running salting test with input Man I love hash functions
-Input: Man I love hash functions Salt: e]YZ`]
+Input: Man I love hash functions Salt: M}Hnv6&~K;~2w&S
 Hash without salt: 5bbdfd0a4126bcb3eb98e31ad83d03da67ba2f76d80e648274c598acef47a03b
-Hash with salt: dd7502dc287fee6389c197293154ace10cb76dea754d99f9cdc2f12ad939ab6d
+Hash with salt: 1a849731a89263dc6dbc147863034f56daca809ee8fbf663740039ea38ce054b
 ```
 
 konsitucija.txt test times graph
@@ -80,18 +80,18 @@ VibeHash is a hashing algorithm created with Claude AI.
 - i have no clue how it works
 
 ### Benchmarks (HashTests with 100k):
-[SEE FULL BENCHMARKS OF ALL 3 HASHING ALGORITHMS  + SHA256 AND MD5](https://pastebin.com/t7gPY6Lz)
+[SEE FULL BENCHMARKS OF ALL 3 HASHING ALGORITHMS  + SHA256 AND MD5](https://pastebin.com/YHC5JTiN)
 ```
 Running all tests with VibeHash:
 Output size test successful
 Running avalanche effect test
-Average char similarity: 6.18816%
+Average char similarity: 6.17091%
 Min char similarity: 0%
-Max char similarity: 21.875%
+Max char similarity: 23.4375%
 ------------------------
-Average bit similarity: 66.2784%
-Min bit similarity: 56.8359%
-Max bit similarity: 76.7578%
+Average bit similarity: 49.4469%
+Min bit similarity: 37.1094%
+Max bit similarity: 66.0156%
 ------------------------
 Searching for collisions by generating pairs of random strings
 Collisions rate for size 10: 0
@@ -101,21 +101,21 @@ Collisions rate for size 1000: 0
 Searching for collisions by generating many random strings and putting them in a set
 Running efficiency test with file "../data/input/test/konstitucija.txt"
 Opening file "../data/input/test/konstitucija.txt"
-Lines: 1 Average time: 6.60467e-06
-Lines: 2 Average time: 9.17867e-06
-Lines: 4 Average time: 1.4661e-05
-Lines: 8 Average time: 2.52487e-05
-Lines: 16 Average time: 6.7613e-05
-Lines: 32 Average time: 0.000119182
-Lines: 64 Average time: 0.000236253
-Lines: 128 Average time: 0.000568819
-Lines: 256 Average time: 0.0011686
-Lines: 512 Average time: 0.00242686
-Full file average time 0.00370426
+Lines: 1 Average time: 6.55267e-06
+Lines: 2 Average time: 9.137e-06
+Lines: 4 Average time: 1.46293e-05
+Lines: 8 Average time: 2.52257e-05
+Lines: 16 Average time: 6.96073e-05
+Lines: 32 Average time: 0.000117317
+Lines: 64 Average time: 0.000235619
+Lines: 128 Average time: 0.000557033
+Lines: 256 Average time: 0.00115018
+Lines: 512 Average time: 0.00237113
+Full file average time 0.00370043
 Running salting test with input Man I love hash functions
-Input: Man I love hash functions Salt: KHtuJ
+Input: Man I love hash functions Salt: Zlz<ce']}_0aB
 Hash without salt: d7abcf6e7194821519d039f98571090b99e7016807adad99e4cdb1a895e621f9
-Hash with salt: f5d6094da7671ad4be0672b877095da8871f49ea9f98f1be734acb6a823406d8
+Hash with salt: fff34ac3a26f86c8b64a75f7a4cf841a72ebc26e2910e51cdeda51ed7a5bf419
 ```
 konsitucija.txt test times graph
 <img width="1225" height="697" alt="image" src="https://github.com/user-attachments/assets/e87a9000-5056-4005-b6c8-53be500b0f38" />
@@ -127,7 +127,7 @@ We can observe that while vibe hash's performance was a bit slower than our hash
 SHA256 and MD5 are widely used hashing functions. Famously, SHA256 is used as a proof of work in bitcoin's blockhain.
 
 ### Comparison of SHA256 and MD5 performance with respect to our algorithms
-[SEE FULL BENCHMARKS OF ALL 3 HASHING ALGORITHMS  + SHA256 AND MD5](https://pastebin.com/t7gPY6Lz)
+[SEE FULL BENCHMARKS OF ALL 3 HASHING ALGORITHMS  + SHA256 AND MD5](https://pastebin.com/YHC5JTiN)
 <img width="1392" height="987" alt="image" src="https://github.com/user-attachments/assets/0fc3f96e-f59c-4186-8dce-10e7f5ce5301" />
 
 
