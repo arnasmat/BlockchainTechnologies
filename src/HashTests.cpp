@@ -293,7 +293,7 @@ namespace HashTests {
         };
 
 
-        const int totalBits{static_cast<int>(std::max(hash1.length(), hash2.length()) * 8)};
+        const int totalBits{static_cast<int>(std::max(hash1.length(), hash2.length()) * 4)};
         // ensure hash 1 is always the longer one -> go over hash2
         // -> all bits 1 has that are longer are not in h2, so they can't be identical
         if (hash1.length() < hash2.length()) {
