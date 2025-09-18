@@ -132,7 +132,16 @@ Hash with salt: ebfd0746718aadaf3ff780939dce414e36e16b2043bcbe640e9698dcf71826a2
 ```
 konsitucija.txt test times graph
 <img width="1225" height="697" alt="image" src="https://github.com/user-attachments/assets/e87a9000-5056-4005-b6c8-53be500b0f38" />
-We can observe that while vibe hash's performance was a bit slower than ours, it still exhibits linear time complexion.
+We can observe that while vibe hash's performance was a bit slower than our hash's, it still exhibits linear time complexion.
+
+[//]: # (TODO: SHA256 and MD5)
+
+## SHA256 and MD5
+SHA256 and MD5 are widely used hashing functions. Famously, SHA256 is used as a proof of work in bitcoin's blockhain.
+
+### Comparison of SHA256 and MD5 performance with respect to our algorithms
+<img width="1392" height="987" alt="image" src="https://github.com/user-attachments/assets/0fc3f96e-f59c-4186-8dce-10e7f5ce5301" />
+
 
 [//]: # (TODO: setup guide)
 # Setup guides
