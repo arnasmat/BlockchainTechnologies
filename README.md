@@ -22,20 +22,18 @@ Nonetheless, the name related to matrix multiplication has remained. (see old ve
 
 
 ### Benchmarks (HashTests with 100k):
-(our comments in the results in square brackets[])
-
 ```
 Running all tests with MatrixHash:
 Output size test successful
 Running avalanche effect test
-Average char similarity: 6.20275%
+Average char similarity: 6.16819%
 Min char similarity: 0%
-Max char similarity: 35.9375%
+Max char similarity: 25%
 ------------------------
-Average bit similarity: 66.2878%
-Min bit similarity: 57.0312%
-Max bit similarity: 78.7109%
------------------------
+Average bit similarity: 66.3125%
+Min bit similarity: 58.0078%
+Max bit similarity: 77.1484%
+------------------------
 Searching for collisions by generating pairs of random strings
 Collisions rate for size 10: 0
 Collisions rate for size 100: 0
@@ -44,21 +42,21 @@ Collisions rate for size 1000: 0
 Searching for collisions by generating many random strings and putting them in a set
 Running efficiency test with file "../data/input/test/konstitucija.txt"
 Opening file "../data/input/test/konstitucija.txt"
-Lines: 1 Average time: 1.09463e-05
-Lines: 2 Average time: 1.0955e-05
-Lines: 4 Average time: 1.10037e-05
-Lines: 8 Average time: 1.43527e-05
-Lines: 16 Average time: 2.81997e-05
-Lines: 32 Average time: 4.4375e-05
-Lines: 64 Average time: 8.8412e-05
-Lines: 128 Average time: 0.000228676
-Lines: 256 Average time: 0.000488885
-Lines: 512 Average time: 0.00109383
-Full file average time 0.0016808
+Lines: 1 Average time: 1.04957e-05
+Lines: 2 Average time: 1.09837e-05
+Lines: 4 Average time: 1.09683e-05
+Lines: 8 Average time: 1.68287e-05
+Lines: 16 Average time: 2.7863e-05
+Lines: 32 Average time: 5.45987e-05
+Lines: 64 Average time: 7.91137e-05
+Lines: 128 Average time: 0.000223387
+Lines: 256 Average time: 0.000501553
+Lines: 512 Average time: 0.00110145
+Full file average time 0.00166033
 Running salting test with input Man I love hash functions
-Input: Man I love hash functions Salt:  ihn o
+Input: Man I love hash functions Salt: e]YZ`]
 Hash without salt: 5bbdfd0a4126bcb3eb98e31ad83d03da67ba2f76d80e648274c598acef47a03b
-Hash with salt: 59c114d327749323e7a111f32ce080f73d0b43005a4158284537f56ff0166fdf
+Hash with salt: dd7502dc287fee6389c197293154ace10cb76dea754d99f9cdc2f12ad939ab6d
 ```
 
 konsitucija.txt test times graph
@@ -85,13 +83,13 @@ VibeHash is a hashing algorithm created with Claude AI.
 Running all tests with VibeHash:
 Output size test successful
 Running avalanche effect test
-Average char similarity: 6.17486%
+Average char similarity: 6.18816%
 Min char similarity: 0%
-Max char similarity: 23.4375%
+Max char similarity: 21.875%
 ------------------------
-Average bit similarity: 66.2462%
-Min bit similarity: 57.4219%
-Max bit similarity: 77.1484%
+Average bit similarity: 66.2784%
+Min bit similarity: 56.8359%
+Max bit similarity: 76.7578%
 ------------------------
 Searching for collisions by generating pairs of random strings
 Collisions rate for size 10: 0
@@ -101,21 +99,21 @@ Collisions rate for size 1000: 0
 Searching for collisions by generating many random strings and putting them in a set
 Running efficiency test with file "../data/input/test/konstitucija.txt"
 Opening file "../data/input/test/konstitucija.txt"
-Lines: 1 Average time: 6.11233e-06
-Lines: 2 Average time: 8.57667e-06
-Lines: 4 Average time: 1.37933e-05
-Lines: 8 Average time: 2.55953e-05
-Lines: 16 Average time: 6.39753e-05
-Lines: 32 Average time: 0.000120345
-Lines: 64 Average time: 0.000235874
-Lines: 128 Average time: 0.000543159
-Lines: 256 Average time: 0.00138955
-Lines: 512 Average time: 0.00264727
-Full file average time 0.00426793
+Lines: 1 Average time: 6.60467e-06
+Lines: 2 Average time: 9.17867e-06
+Lines: 4 Average time: 1.4661e-05
+Lines: 8 Average time: 2.52487e-05
+Lines: 16 Average time: 6.7613e-05
+Lines: 32 Average time: 0.000119182
+Lines: 64 Average time: 0.000236253
+Lines: 128 Average time: 0.000568819
+Lines: 256 Average time: 0.0011686
+Lines: 512 Average time: 0.00242686
+Full file average time 0.00370426
 Running salting test with input Man I love hash functions
-Input: Man I love hash functions Salt: ntlsa
+Input: Man I love hash functions Salt: KHtuJ
 Hash without salt: d7abcf6e7194821519d039f98571090b99e7016807adad99e4cdb1a895e621f9
-Hash with salt: ebfd0746718aadaf3ff780939dce414e36e16b2043bcbe640e9698dcf71826a2
+Hash with salt: f5d6094da7671ad4be0672b877095da8871f49ea9f98f1be734acb6a823406d8
 ```
 konsitucija.txt test times graph
 <img width="1225" height="697" alt="image" src="https://github.com/user-attachments/assets/e87a9000-5056-4005-b6c8-53be500b0f38" />
