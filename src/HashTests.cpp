@@ -1,5 +1,8 @@
 #include "../include/HashTests.h"
 
+#include <map>
+#include <unordered_map>
+
 namespace HashTests {
     const int totalTests{100000};
     // const int totalTests{100};
@@ -42,7 +45,7 @@ namespace HashTests {
                 std::cout << i << " ";
             }
         } else {
-            std::cout<<"Output size test successful\n";
+            std::cout << "Output size test successful\n";
         }
     }
 
@@ -63,9 +66,9 @@ namespace HashTests {
     void efficiencyTest(const HashGenInterface *hashGen, const std::filesystem::path &inputFile) {
         std::ifstream in(inputFile);
 
-        std::cout<<"Running efficiency test with file "<<inputFile<<"\n";
+        std::cout << "Running efficiency test with file " << inputFile << "\n";
         if (!in) {
-            std::cerr << "Error: Could not open file " << inputFile <<"\n";
+            std::cerr << "Error: Could not open file " << inputFile << "\n";
             return;
         }
 
@@ -74,7 +77,7 @@ namespace HashTests {
 
         int lineCount{0};
 
-        std::cout<<"Opening file "<<inputFile<<"\n";
+        std::cout << "Opening file " << inputFile << "\n";
 
         while (std::getline(in, line)) {
             input += line + "\n";
@@ -104,7 +107,7 @@ namespace HashTests {
     }
 
     void collisionSearchPairs(const HashGenInterface *hashGen) {
-        std::cout<<"Searching for collisions by generating pairs of random strings\n";
+        std::cout << "Searching for collisions by generating pairs of random strings\n";
         constexpr int pairStringLength[4] = {10, 100, 500, 1000};
         const std::string validSymbols{
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:',.<>/?`~\"\\"
@@ -137,7 +140,7 @@ namespace HashTests {
 
     // This test also relies on the way sets work, the logic is similar to determinismTest
     void collisionSearchSets(const HashGenInterface *hashGen) {
-        std::cout<<"Searching for collisions by generating many random strings and putting them in a set\n";
+        std::cout << "Searching for collisions by generating many random strings and putting them in a set\n";
         constexpr int inputStringLength[4] = {10, 100, 500, 1000};
         const std::string validSymbols{
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:',.<>/?`~\"\\"
@@ -170,7 +173,7 @@ namespace HashTests {
     }
 
     void avalancheEffectTest(const HashGenInterface *hashGen) {
-        std::cout<<"Running avalanche effect test\n";
+        std::cout << "Running avalanche effect test\n";
         const std::string validSymbols{
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:',.<>/?`~\"\\"
         };
@@ -220,14 +223,14 @@ namespace HashTests {
         }
 
         std::ostringstream ss;
-        ss<< "Average char similarity: " << (charSimilarity.total / totalTests) << "%\n"
-            << "Min char similarity: " << charSimilarity.min << "%\n"
-            << "Max char similarity: " << charSimilarity.max << "%\n"
-            << "------------------------\n"
-            << "Average bit similarity: " << (bitSimilarity.total / totalTests) << "%\n"
-            << "Min bit similarity: " << bitSimilarity.min << "%\n"
-            << "Max bit similarity: " << bitSimilarity.max << "%\n"
-            << "------------------------\n";
+        ss << "Average char similarity: " << (charSimilarity.total / totalTests) << "%\n"
+                << "Min char similarity: " << charSimilarity.min << "%\n"
+                << "Max char similarity: " << charSimilarity.max << "%\n"
+                << "------------------------\n"
+                << "Average bit similarity: " << (bitSimilarity.total / totalTests) << "%\n"
+                << "Min bit similarity: " << bitSimilarity.min << "%\n"
+                << "Max bit similarity: " << bitSimilarity.max << "%\n"
+                << "------------------------\n";
 
         std::cout << ss.str();
     }
@@ -264,8 +267,32 @@ namespace HashTests {
 
     // note: min is 50% because they are expressed as strings so um yeah sad! idk maybe fix but that'd require
     // changing like everything
+    // fixed this to use hex bit representation comparisons instead of char comparisons
     double calculateSimilarityPercentageBit(std::string hash1, std::string hash2) {
         int identicalBits{0};
+        struct bitRepresentation {
+            bool bits[4];
+        };
+        std::map<char, bitRepresentation> charToBits = {
+            {'0', {0, 0, 0, 0}},
+            {'1', {0, 0, 0, 1}},
+            {'2', {0, 0, 1, 0}},
+            {'3', {0, 0, 1, 1}},
+            {'4', {0, 1, 0, 0}},
+            {'5', {0, 1, 0, 1}},
+            {'6', {0, 1, 1, 0}},
+            {'7', {0, 1, 1, 1}},
+            {'8', {1, 0, 0, 0}},
+            {'9', {1, 0, 0, 1}},
+            {'a', {1, 0, 1, 0}},
+            {'b', {1, 0, 1, 1}},
+            {'c', {1, 1, 0, 0}},
+            {'d', {1, 1, 0, 1}},
+            {'e', {1, 1, 1, 0}},
+            {'f', {1, 1, 1, 1}}
+        };
+
+
         const int totalBits{static_cast<int>(std::max(hash1.length(), hash2.length()) * 8)};
         // ensure hash 1 is always the longer one -> go over hash2
         // -> all bits 1 has that are longer are not in h2, so they can't be identical
@@ -274,9 +301,12 @@ namespace HashTests {
         }
         for (int i = 0; i < hash2.length(); i++) {
             // weird asf this has to be a ulonglong
-            std::bitset<8> bits1{static_cast<unsigned long long>(hash1[i])};
-            std::bitset<8> bits2{static_cast<unsigned long long>(hash2[i])};
-            for (int j = 0; j < 8; j++) {
+            // std::bitset<8> bits1{static_cast<unsigned long long>(hash1[i])};
+            // std::bitset<8> bits2{static_cast<unsigned long long>(hash2[i])};
+            const bool* bits1 {charToBits.at(hash1[i]).bits};
+            const bool* bits2 {charToBits.at(hash2[i]).bits};
+
+            for (int j = 0; j < 4; j++) {
                 if (bits1[j] == bits2[j]) {
                     identicalBits++;
                 }
@@ -285,11 +315,11 @@ namespace HashTests {
         return static_cast<double>(identicalBits) / totalBits * 100;
     }
 
-    void saltingTest(const HashGenInterface *hashGen, const std::string& input) {
+    void saltingTest(const HashGenInterface *hashGen, const std::string &input) {
         const std::string validSymbols{
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:',.<>/?`~\"\\"
         };
-        std::cout<<"Running salting test with input "<<input<<"\n";
+        std::cout << "Running salting test with input " << input << "\n";
         static std::mt19937 rng{std::random_device{}()};
         std::uniform_int_distribution<int> dist(5, 15);
         int randomLength{dist(rng)};
@@ -298,8 +328,8 @@ namespace HashTests {
         std::string hashNoSalt{hashGen->generateHash(input)};
         std::string hashWithSalt{hashGen->generateHash(input + salt)};
 
-        std::cout<<"Input: "<<input<<" Salt: "<<salt<<"\n";
-        std::cout<<"Hash without salt: "<<hashNoSalt<<"\n";
-        std::cout<<"Hash with salt: "<<hashWithSalt<<"\n";
+        std::cout << "Input: " << input << " Salt: " << salt << "\n";
+        std::cout << "Hash without salt: " << hashNoSalt << "\n";
+        std::cout << "Hash with salt: " << hashWithSalt << "\n";
     }
 }
