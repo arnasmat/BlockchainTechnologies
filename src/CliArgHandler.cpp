@@ -4,6 +4,7 @@
 
 #include <CliArgHandler.h>
 
+#include "NikitaHash.h"
 #include "OtherAlgorithms.h"
 
 // also error handling ig
@@ -112,6 +113,12 @@ void runTestsWithAll() {
     HashTests::runAllTests(&sha256);
     std::cout<<"\n\nRunning all tests with MD5: \n";
     HashTests::runAllTests(&md5);
+
+    std::cout<<"\n\nRunning tests with other peoples algorithms for comparisons\n";
+    std::cout<<"Running tests with NikitaHash\n";
+    NikitaHash nikitaHash;
+    HashTests::runAllTests(&nikitaHash);
+
 }
 
 std::string handleFileInput(const HashAlgorithm hashAlgorithm, const std::filesystem::path &inputFilePath) {
