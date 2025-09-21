@@ -12,7 +12,6 @@
 // TODO: add input to change shit
 class HashGenInterface {
 protected:
-    int key;
     static std::string castToHex(const int hash[], const size_t size) {
         std::string output;
         for (int i=0; i<size; i++) {
@@ -21,7 +20,6 @@ protected:
         return output;
     }
 public:
-    explicit HashGenInterface(int inputKey = 0) : key(inputKey) {}
     virtual ~HashGenInterface() = default;
     virtual std::string generateHash(const std::string& input) const = 0;
     std::string hashFromFile(const std::filesystem::path& path) const {

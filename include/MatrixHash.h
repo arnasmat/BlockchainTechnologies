@@ -12,8 +12,6 @@
 
 class MatrixHash : public HashGenInterface {
 public:
-    explicit MatrixHash(const int &inputKey = 0) : HashGenInterface(inputKey) {}
-
     std::string generateHash(const std::string &input) const override {
         try{
             int hash[64]{};
@@ -32,7 +30,7 @@ public:
                         hash[index] += 1;
                         oneSum++;
                     } else if (index > 0) {
-                        hash[index] += hash[index - 1] + key;
+                        hash[index] += hash[index - 1];
                     } else {
                         hash[0] += hash[input.size() % 64] + oneSum;
                     }

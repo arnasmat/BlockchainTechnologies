@@ -7,7 +7,6 @@
 
 class Sha256: public HashGenInterface {
 public:
-	explicit Sha256(const int& inputKey=0) : HashGenInterface(inputKey) {}
 	std::string generateHash(const std::string &input) const override {
 		unsigned char hash[SHA256_DIGEST_LENGTH];
 		SHA256(reinterpret_cast<const unsigned char*>(input.c_str()), input.size(), hash);
@@ -21,7 +20,6 @@ public:
 
 class Md5: public HashGenInterface {
 public:
-	explicit Md5(const int& inputKey=0) : HashGenInterface(inputKey) {}
 	std::string generateHash(const std::string &input) const override {
 		EVP_MD_CTX*   context = EVP_MD_CTX_new();
 		const EVP_MD* md = EVP_md5();

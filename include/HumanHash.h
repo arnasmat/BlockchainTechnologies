@@ -7,7 +7,6 @@
 
 class HumanHash: public HashGenInterface {
 public:
-    explicit HumanHash(const int& inputKey=0) : HashGenInterface(inputKey) {}
     std::string generateHash(const std::string& input) const override {
         try {
             int hash[64]{};
@@ -24,7 +23,7 @@ public:
                         } else if (index > 0) {
                             hash[index] += hash[index - 1];
                         } else {
-                            hash[0] += hash[input.size() % 64] + key;
+                            hash[0] += hash[input.size() % 64];
                         }
                     }
                 }
