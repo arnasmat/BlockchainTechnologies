@@ -29,7 +29,7 @@ ArgsToRun handleCliInput(int argc, char *argv[]) {
                 }
             } else if (arg == "-i" || arg == "--input") {
                 if (i + 1 < argc) {
-                    args.inputFilePath = argv[++i];
+                    args.inputFilePath.push_back(argv[++i]);
                 } else {
                     std::cerr << "Error: Missing input file path after " << arg << std::endl;
                     args.help = true;
@@ -41,7 +41,7 @@ ArgsToRun handleCliInput(int argc, char *argv[]) {
             } else if (arg == "-u" || arg == "--human") {
                 args.hashAlgorithm = HUMAN;
             } else {
-                args.inputFilePath = arg;
+                args.inputFilePath.push_back(arg);
             }
         }
     } catch (const std::exception &e) {
@@ -60,8 +60,11 @@ void handleCliArgs(const ArgsToRun &argsToRun) {
         } else if (argsToRun.tests) {
             runTestsWithAll();
         } else {
-            std::string output = handleFileInput(argsToRun.hashAlgorithm, argsToRun.inputFilePath);
-
+            std::string output{};
+            for (auto &path: argsToRun.inputFilePath) {
+                output += handleFileInput(argsToRun.hashAlgorithm, path);
+                output += '\n';
+            }
             handleFileOutput(output, argsToRun.outputFilePath);
         }
     } catch (const std::exception &e) {
@@ -72,7 +75,7 @@ void handleCliArgs(const ArgsToRun &argsToRun) {
 void printHelpInfo() {
     std::ostringstream ss;
     ss << "Usage: hash_program [options] <input_file>\n"
-            <<"(Please note that if you input more than one file, ONLY the last one will be used)\n"
+            <<"(If you input more than one file, all of them will be used. The output will be seen in the specified output file)\n"
             <<"You can also use input from stdin. I.e. echo -n 'test' | ./BlockchainTechnologies OR run ./BlockchainTechnologies, input some data into stdin and click ctrl D\n\n"
             << "Options:\n"
             << "  -h, --help            Show this help message and exit\n"

@@ -17,7 +17,7 @@ enum HashAlgorithm { HUMAN, VIBE, MATRIX };
 struct ArgsToRun {
     bool help = false;
     bool tests = false;
-    std::filesystem::path inputFilePath = "";
+    std::vector<std::filesystem::path> inputFilePath{};
     std::filesystem::path outputFilePath = "";
     HashAlgorithm hashAlgorithm = MATRIX;
 };
