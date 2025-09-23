@@ -82,8 +82,8 @@ void handleCliArgs(const ArgsToRun &argsToRun) {
 void printHelpInfo() {
     std::ostringstream ss;
     ss << "Usage: hash_program [options] <input_file>\n"
-            <<"(If you input more than one file, all of them will be used. The output will be seen in the specified output file)\n"
-            <<"You can also use input from stdin. I.e. echo -n 'test' | ./BlockchainTechnologies OR run ./BlockchainTechnologies, input some data into stdin and click ctrl D\n\n"
+            << "(If you input more than one file, all of them will be used. The output will be seen in the specified output file)\n"
+            << "You can also use input from stdin. I.e. echo -n 'test' | ./BlockchainTechnologies OR run ./BlockchainTechnologies, input some data into stdin and click ctrl D\n\n"
             << "Options:\n"
             << "  -h, --help            Show this help message and exit\n"
             << "  -t, --tests           Run all tests (ignores all other input flags)\n"
@@ -92,7 +92,7 @@ void printHelpInfo() {
             << "  -m, --matrix         Use MatrixHash algorithm (Default)\n"
             << "  -u, --human          Use HumanHash algorithm\n"
             << "  -v, --vibe           Use VibeHash algorithm\n";
-// TODO: maybe make -i be the input key thing
+    // TODO: maybe make -i be the input key thing
     // TODO: move help info into another, easier editable file lol
 
     std::cout << ss.str();
@@ -106,21 +106,21 @@ void runTestsWithAll() {
     MatrixHash matrixHash;
     VibeHash vibeHash;
 
-    std::cout<<"Running all tests with MatrixHash: \n";
+    std::cout << "Running all tests with MatrixHash: \n";
     HashTests::runAllTests(&matrixHash);
-    std::cout<<"\n\nRunning all tests with HumanHash: \n";
+    std::cout << "\n\nRunning all tests with HumanHash: \n";
     HashTests::runAllTests(&humanHash);
-    std::cout<<"\n\nRunning all tests with VibeHash: \n";
+    std::cout << "\n\nRunning all tests with VibeHash: \n";
     HashTests::runAllTests(&vibeHash);
 
     // Other algs - Comment out from here until the end of this function if you don't want to use OpenSSL
     Sha256 sha256;
     Md5 md5;
 
-    std::cout<<"\n\nRUNNING TESTS WITH OTHER ALGORITHMS\n(Algorithm implementations by OpenSSL)\n";
-    std::cout<<"\n\nRunning all tests with SHA256: \n";
+    std::cout << "\n\nRUNNING TESTS WITH OTHER ALGORITHMS\n(Algorithm implementations by OpenSSL)\n";
+    std::cout << "\n\nRunning all tests with SHA256: \n";
     HashTests::runAllTests(&sha256);
-    std::cout<<"\n\nRunning all tests with MD5: \n";
+    std::cout << "\n\nRunning all tests with MD5: \n";
     HashTests::runAllTests(&md5);
 }
 
@@ -132,24 +132,21 @@ std::string handleFileInput(const HashAlgorithm hashAlgorithm, const std::filesy
         std::string inputData{};
         if (inputFilePath.empty()) {
             if (std::cin.peek() == EOF) {
-                std::cerr<<"Error: No input (file) provided. Run app with -h for more information\n";
+                std::cerr << "Error: No input (file) provided. Run app with -h for more information\n";
                 return "";
             }
 
             std::ostringstream buffer;
             buffer << std::cin.rdbuf();
             inputData = buffer.str();
-            if (hashAlgorithm == HUMAN) {
-                HumanHash humanHash;
-                return humanHash.generateHash(inputData);
-            }
-            if (hashAlgorithm == VIBE) {
-                VibeHash vibeHash;
-                return vibeHash.generateHash(inputData);
-            }
-            if (hashAlgorithm == MATRIX) {
-                MatrixHash matrixHash;
-                return matrixHash.generateHash(inputData);
+
+            switch (hashAlgorithm) {
+                case HUMAN:
+                    return HumanHash().generateHash(inputData);
+                case VIBE:
+                    return VibeHash().generateHash(inputData);
+                case MATRIX:
+                    return MatrixHash().generateHash(inputData);
             }
         }
 
@@ -160,17 +157,19 @@ std::string handleFileInput(const HashAlgorithm hashAlgorithm, const std::filesy
 
         std::string output{};
 
-        if (hashAlgorithm == HUMAN) {
-            output = HumanHash().hashFromFile(inputFilePath);
-        }
-        if (hashAlgorithm == VIBE) {
-            output = VibeHash().hashFromFile(inputFilePath);
-        }
-        if (hashAlgorithm == MATRIX) {
-            output = MatrixHash().hashFromFile(inputFilePath);
+        switch (hashAlgorithm) {
+            case HUMAN:
+                output = HumanHash().hashFromFile(inputFilePath);
+                break;
+            case VIBE:
+                output = VibeHash().hashFromFile(inputFilePath);
+                break;
+            case MATRIX:
+                output = MatrixHash().hashFromFile(inputFilePath);
+                break;
         }
 
-        // Add the file to the output
+        // Add the file name/path to the output
         return output + " " + inputFilePath.string();
     } catch (std::exception &e) {
         std::cerr << "An error occurred while handling file input: " << e.what() << std::endl;
@@ -178,7 +177,7 @@ std::string handleFileInput(const HashAlgorithm hashAlgorithm, const std::filesy
     return ""; // should never reach here as HashAlgorithm is enum, but ok compiler don't be mad
 }
 
-void handleFileOutput(const std::string& output, const std::filesystem::path& outputFilePath) {
+void handleFileOutput(const std::string &output, const std::filesystem::path &outputFilePath) {
     try {
         if (outputFilePath.empty()) {
             std::cout << output;
@@ -192,6 +191,6 @@ void handleFileOutput(const std::string& output, const std::filesystem::path& ou
             }
         }
     } catch (std::exception &e) {
-        std::cerr<< "An error occurred while handling file output: " << e.what() << std::endl;
+        std::cerr << "An error occurred while handling file output: " << e.what() << std::endl;
     }
 }
