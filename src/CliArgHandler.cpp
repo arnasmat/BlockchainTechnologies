@@ -61,9 +61,16 @@ void handleCliArgs(const ArgsToRun &argsToRun) {
             runTestsWithAll();
         } else {
             std::string output{};
-            for (auto &path: argsToRun.inputFilePath) {
-                output += handleFileInput(argsToRun.hashAlgorithm, path);
-                output += '\n';
+            if (argsToRun.inputFilePath.empty()) {
+                // This is here to allow input from stdin as then inputfilepath is empty
+                output = handleFileInput(argsToRun.hashAlgorithm, "");
+            } else {
+                for (auto &path: argsToRun.inputFilePath) {
+                    output += handleFileInput(argsToRun.hashAlgorithm, path);
+                    if (path != argsToRun.inputFilePath.back()) {
+                        output += "\n";
+                    }
+                }
             }
             handleFileOutput(output, argsToRun.outputFilePath);
         }
@@ -123,7 +130,7 @@ std::string handleFileInput(const HashAlgorithm hashAlgorithm, const std::filesy
     // TODO: allow for multiple hash algs?
     try {
         std::string inputData{};
-        if (inputFilePath.empty() ) {
+        if (inputFilePath.empty()) {
             if (std::cin.peek() == EOF) {
                 std::cerr<<"Error: No input (file) provided. Run app with -h for more information\n";
                 return "";
@@ -151,18 +158,20 @@ std::string handleFileInput(const HashAlgorithm hashAlgorithm, const std::filesy
             return "";
         }
 
+        std::string output{};
+
         if (hashAlgorithm == HUMAN) {
-            HumanHash humanHash;
-            return humanHash.hashFromFile(inputFilePath);
+            output = HumanHash().hashFromFile(inputFilePath);
         }
         if (hashAlgorithm == VIBE) {
-            VibeHash vibeHash;
-            return vibeHash.hashFromFile(inputFilePath);
+            output = VibeHash().hashFromFile(inputFilePath);
         }
         if (hashAlgorithm == MATRIX) {
-            MatrixHash matrixHash;
-            return matrixHash.hashFromFile(inputFilePath);
+            output = MatrixHash().hashFromFile(inputFilePath);
         }
+
+        // Add the file to the output
+        return output + " " + inputFilePath.string();
     } catch (std::exception &e) {
         std::cerr << "An error occurred while handling file input: " << e.what() << std::endl;
     }
