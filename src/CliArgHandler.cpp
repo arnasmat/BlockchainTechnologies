@@ -92,7 +92,6 @@ void printHelpInfo() {
             << "  -m, --matrix         Use MatrixHash algorithm (Default)\n"
             << "  -u, --human          Use HumanHash algorithm\n"
             << "  -v, --vibe           Use VibeHash algorithm\n";
-    // TODO: maybe make -i be the input key thing
     // TODO: move help info into another, easier editable file lol
 
     std::cout << ss.str();
@@ -125,8 +124,6 @@ void runTestsWithAll() {
 }
 
 std::string handleFileInput(const HashAlgorithm hashAlgorithm, const std::filesystem::path &inputFilePath) {
-    // TODO: allow input from stdin
-    // TODO: make output to file work
     // TODO: allow for multiple hash algs?
     try {
         std::string inputData{};

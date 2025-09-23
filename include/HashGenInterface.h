@@ -8,8 +8,6 @@
 #include <string>
 #include <utility>
 
-// TODO: rule of 5
-// TODO: add input to change shit
 class HashGenInterface {
 protected:
     static std::string castToHex(const int hash[], const size_t size) {
