@@ -249,14 +249,14 @@ namespace HashTests {
     }
 
     double calculateSimilarityPercentage(std::string hash1, std::string hash2) {
+        if (hash1.length() != hash2.length()) {
+            std::cerr<<"Hashes are of different length\n";
+            throw std::runtime_error("Hashes are of different length");
+        }
+
         int identicalChars{0};
         const int totalChars{static_cast<int>(std::max(hash1.length(), hash2.length()))};
-        // ensure hash 1 is always the longer one -> go over hash2
-        // -> all chars 1 has that are longer are not in h2, so they can't be identical
-        // even tho it uses the same alg and shouldn't happen, this is here just in case lol
-        if (hash1.length() < hash2.length()) {
-            swap(hash1, hash2);
-        }
+
         for (int i = 0; i < hash2.length(); i++) {
             if (hash1[i] == hash2[i]) {
                 identicalChars++;
@@ -265,49 +265,41 @@ namespace HashTests {
         return static_cast<double>(identicalChars) / totalChars * 100;
     }
 
-    // note: min is 50% because they are expressed as strings so um yeah sad! idk maybe fix but that'd require
-    // changing like everything
-    // fixed this to use hex bit representation comparisons instead of char comparisons
     double calculateSimilarityPercentageBit(std::string hash1, std::string hash2) {
-        int identicalBits{0};
-        struct bitRepresentation {
-            bool bits[4];
-        };
-        std::map<char, bitRepresentation> charToBits = {
-            {'0', {0, 0, 0, 0}},
-            {'1', {0, 0, 0, 1}},
-            {'2', {0, 0, 1, 0}},
-            {'3', {0, 0, 1, 1}},
-            {'4', {0, 1, 0, 0}},
-            {'5', {0, 1, 0, 1}},
-            {'6', {0, 1, 1, 0}},
-            {'7', {0, 1, 1, 1}},
-            {'8', {1, 0, 0, 0}},
-            {'9', {1, 0, 0, 1}},
-            {'a', {1, 0, 1, 0}},
-            {'b', {1, 0, 1, 1}},
-            {'c', {1, 1, 0, 0}},
-            {'d', {1, 1, 0, 1}},
-            {'e', {1, 1, 1, 0}},
-            {'f', {1, 1, 1, 1}}
-        };
-
-
-        const int totalBits{static_cast<int>(std::max(hash1.length(), hash2.length()) * 4)};
-        // ensure hash 1 is always the longer one -> go over hash2
-        // -> all bits 1 has that are longer are not in h2, so they can't be identical
-        if (hash1.length() < hash2.length()) {
-            swap(hash1, hash2);
+        if (hash1.length() != hash2.length()) {
+            std::cerr<<"Hashes are of different length\n";
+            throw std::runtime_error("Hashes are of different length");
         }
+
+        int identicalBits{0};
+        const int totalBits{static_cast<int>(hash1.length() * 4)};
+        std::map<char, std::bitset<4>> charToBits = {
+            {'0', 0b0000},
+            {'1', 0b0001},
+            {'2', 0b0010},
+            {'3', 0b0011},
+            {'4', 0b0100},
+            {'5', 0b0101},
+            {'6', 0b0110},
+            {'7', 0b0111},
+            {'8', 0b1000},
+            {'9', 0b1001},
+            {'a', 0b1010},
+            {'b', 0b1011},
+            {'c', 0b1100},
+            {'d', 0b1101},
+            {'e', 0b1110},
+            {'f', 0b1111}
+        };
+
         for (int i = 0; i < hash2.length(); i++) {
-            // weird asf this has to be a ulonglong
-            // std::bitset<8> bits1{static_cast<unsigned long long>(hash1[i])};
-            // std::bitset<8> bits2{static_cast<unsigned long long>(hash2[i])};
-            const bool* bits1 {charToBits.at(hash1[i]).bits};
-            const bool* bits2 {charToBits.at(hash2[i]).bits};
+            const std::bitset<4> bits1 {charToBits.at(hash1[i])};
+            const std::bitset<4> bits2 {charToBits.at(hash2[i])};
 
             for (int j = 0; j < 4; j++) {
-                if (bits1[j] == bits2[j]) {
+                const bool bit1 = bits1.test(j);
+                const bool bit2 = bits2.test(j);
+                if (bit1 == bit2) {
                     identicalBits++;
                 }
             }

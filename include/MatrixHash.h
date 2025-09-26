@@ -19,11 +19,10 @@ public:
 
             for (int i = 0; i < input.size(); i++) {
                 const unsigned char inputChar = input[i];
+                const std::bitset<8> inputCharBits(inputChar);
 
                 for (int j = 0; j < 8; j++) {
-                    //https://stackoverflow.com/a/13823765
-                    // instead of bitset<8> and casting to string which caused a lot of our issues lol
-                    const bool bit = (inputChar >> j) & 1;
+                    const bool bit = inputCharBits.test(j);
                     const int index = (i * 8 + j) % 64;
 
                     if (bit) {
@@ -43,11 +42,12 @@ public:
             // (and no, converting hash to hex and passing it as a key doesn't work :( )
             for (const int c: hash) {
                 for (int i = 0; i < 8; i++) {
+                    std::bitset<8> charBits(c);
                     for (int j = 0; j < 8; j++) {
-                        const bool bit = (c >> j) & 1;
+                        const bool bit = charBits.test(j);
                         const int index = 8 * j + i;
 
-                        if (bit == 1) {
+                        if (bit) {
                             hash[index] += 1;
                         } else if (index > 0) {
                             hash[index] += hash[index - 1];

@@ -12,10 +12,10 @@ public:
             int hash[64]{};
 
             for (const char c : input) {
+                const std::bitset<8> inputCharBits(c);
                 for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8; j++) {
-
-                        const bool bit = (c >> j) & 1;
+                        const bool bit = inputCharBits.test(j);
                         const int index = 8 * j + i;
 
                         if (bit) {
