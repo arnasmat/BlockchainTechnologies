@@ -30,8 +30,6 @@ public:
                         oneSum++;
                     } else if (index > 0) {
                         hash[index] += hash[index - 1];
-                        //ai technologijos
-                        hash[index] ^= ((hash[(index + 13) % 64] << 3) | (hash[(index + 47) % 64] >> 5)) ^ inputChar;
                     } else {
                         hash[0] += hash[input.size() % 64] + oneSum;
                     }
@@ -52,8 +50,6 @@ public:
                         if (bit) {
                             hash[index] += 1;
                         } else if (index > 0) {
-                            //ai technologijos
-                            hash[index] ^= ((hash[(index + 11) % 64] << 3) | (hash[(index + 59) % 64] >> 5)) ^ j;
                             hash[index] += hash[index - 1];
                         } else {
                             //The onesum here makes a huge difference lol
