@@ -41,11 +41,11 @@ public:
             // This is pretty much the same as humanhash, but hash[0] has onesum added and that makes a huge difference lol
             // (and no, converting hash to hex and passing it as a key doesn't work :( )
             for (const int c: hash) {
-                for (int i = 0; i < 8; i++) {
-                    std::bitset<8> charBits(c);
-                    for (int j = 0; j < 8; j++) {
-                        const bool bit = charBits.test(j);
-                        const int index = 8 * j + i;
+                for (int i = 0; i < 2; i++) {
+                    std::bitset<32> hashBits(c);
+                    for (int j = 0; j < 32; j++) {
+                        const bool bit = hashBits.test(j);
+                        const int index = 32 * i + j;
 
                         if (bit) {
                             hash[index] += 1;

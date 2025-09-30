@@ -10,6 +10,13 @@ MatrixHash is a hashing algorithm created by us. The main idea was using matrix 
 however after a lot of changes, the final algorithm is quite different from the original idea to be more efficient.
 Nonetheless, the name related to matrix multiplication has remained. (see old versions of readmes to see the original idea)
 
+Detailed description of algorithm:
+We initialize an integer array of size 64 and a oneSum with a starting value of 0
+We iterate through each input's char symbol, converting it to an bit representation (e.g. if we encounter 'a' symbol we would convert it to 01100001)
+We iterate through each bit of this bit representation (0 or 1). We also calculate the index, which is calculated by (char's index * 8 + bit's index) mod 64; this way index will stay between 0 and 63, no matter the input's length. This index will be used to add different values to the corresponding hash array element. We will also keep track of the amount of 1s in the bit representation of input using the oneSum variable.
+If the bit that we were iterating on was 1, we add 1 to the hash[index]. Else, If that bit was 0 and the current hash index is more than 0, we perform hash[index] += hash[index - 1]. Finally, if index is 0, we perform this operation: hash[0] += hash[input.size % 64] + oneSum. No matter the scenario, then we will add to the corresponding hash element bit value multiplied by the sum of current char's index, current bit's index and oneSum mod 64. 
+After finishing iterating through input, we start to iterate through each element of the hash array itself. Then we while iterating through its bits we apply same processes as defined previously, except the last step. Finally we convert each element inside the hash array into hexadecimal by applying modulo 16 to it and choosing corresponding hexadecimal symbol.
+
 ### Strenghts of the algorithm:
 - Deterministic
 - Output is always the same size (64 hex chars)
