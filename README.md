@@ -20,7 +20,7 @@ Our colleagues algorithms in order of speed:
 <img width="1925" height="857" alt="image" src="https://github.com/user-attachments/assets/9cc39029-ca06-4070-a46b-f693df25ee4b" />
 <img width="1955" height="965" alt="image" src="https://github.com/user-attachments/assets/be944de6-4300-4e11-b227-c54236d0ca17" />
 
-## Collision tests
+## Similarity tests
 
 - Most algorithms are similar in terms of char similarity (~6-7%)
 - NikitaHash is slightly behind in terms of similarity (~7.44%)
