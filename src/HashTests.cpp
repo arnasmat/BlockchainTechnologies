@@ -36,6 +36,7 @@ namespace HashTests {
 
             determinismTest(hashgen, content);
             std::string hash{hashgen->generateHash(content)};
+            size_t tempoutsz = outputSize.size();
             outputSize.insert(hash.size());
             in.close();
         }

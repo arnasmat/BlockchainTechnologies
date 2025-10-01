@@ -5,6 +5,37 @@ and VibeHash(an algorithm created using Claude AI).
 
 [Click here for the setup guide](#setup-guides)
 
+---
+# COMPARISONS WITH OTHER HASH ALGORITHMS
+
+## Efficiency tests
+- SHA256 and MD5 are the fastest (of course).
+Our colleagues algorithms in order of speed:
+1. NikitaHash
+2. MatrixHash
+3. SlaSimHash
+4. PatrykHash
+5. MonikaHash
+
+[//]: # (ADD IMAGES)
+
+## Avalanche effect tests
+
+- Most algorithms are similar in terms of char similarity (~6-7%)
+- NikitaHash is slightly behind in terms of similarity (~7.44%)
+- The only exception is MonikaHash, which has a char similarity of 43%
+
+[//]: # (ADD IMAGES)
+
+## Collision tests
+- Most algorithms had no collisions found in the tests done, expect for:
+- PatrykHash which had 19 collissions in the set test
+- NikitaHash which had 4 collissions in set test and over 100 while doing avalanche
+
+[//]: # (ADD IMAGES)
+
+---
+
 ## MatrixHash
 MatrixHash is a hashing algorithm created by us. The main idea was using matrix multiplication to create a hash,
 however after a lot of changes, the final algorithm is quite different from the original idea to be more efficient.

@@ -8,6 +8,7 @@
 #include "OtherAlgorithms.h"
 #include "../include/other-hash/PatrykHash.h"
 #include "../include/other-hash/SlaSimHash.h"
+#include "other-hash/MarijusHash.h"
 #include "other-hash/MonikaHash.h"
 
 // also error handling ig
@@ -102,45 +103,52 @@ void printHelpInfo() {
 }
 
 void runTestsWithAll() {
-    // // TODO: let ppl choose which tests to run
-    // // TODO: let ppl choose which algorithms to test
-    // // note - If we run tests - all other inputs are ignored)
-    // HumanHash humanHash;
-    // MatrixHash matrixHash;
-    // VibeHash vibeHash;
-    //
-    // std::cout << "Running all tests with MatrixHash: \n";
-    // HashTests::runAllTests(&matrixHash);
-    // std::cout << "\n\nRunning all tests with HumanHash: \n";
-    // HashTests::runAllTests(&humanHash);
-    // std::cout << "\n\nRunning all tests with VibeHash: \n";
-    // HashTests::runAllTests(&vibeHash);
-    //
-    // // Other algs - Comment out from here until the end of this function if you don't want to use OpenSSL
-    // Sha256 sha256;
-    // Md5 md5;
-    //
-    // std::cout << "\n\nRUNNING TESTS WITH OTHER ALGORITHMS\n(Algorithm implementations by OpenSSL)\n";
-    // std::cout << "\n\nRunning all tests with SHA256: \n";
-    // HashTests::runAllTests(&sha256);
-    // std::cout << "\n\nRunning all tests with MD5: \n";
-    // HashTests::runAllTests(&md5);
-    //
-    // std::cout<<"\n\nRunning tests with other peoples algorithms for comparisons\n";
-    // std::cout<<"Running tests with NikitaHash\n";
-    // NikitaHash nikitaHash;
-    // HashTests::runAllTests(&nikitaHash);
-    //
-    // std::cout<<"\nRunning tests with SlaSimHash\n";
-    // SlaSimHash slaSimHash;
-    // HashTests::runAllTests(&slaSimHash);
+    // TODO: let ppl choose which tests to run
+    // TODO: let ppl choose which algorithms to test
+    // note - If we run tests - all other inputs are ignored)
+    HumanHash humanHash;
+    MatrixHash matrixHash;
+    VibeHash vibeHash;
 
-    std::cout<<"\nRunning tests with MonikaHash\n";
-    MonikaHash monikaHash;
-    HashTests::runAllTests(&monikaHash);
+    std::cout << "Running all tests with MatrixHash: \n";
+    HashTests::runAllTests(&matrixHash);
+    std::cout << "\n\nRunning all tests with HumanHash: \n";
+    HashTests::runAllTests(&humanHash);
+    std::cout << "\n\nRunning all tests with VibeHash: \n";
+    HashTests::runAllTests(&vibeHash);
+
+    // Other algs - Comment out from here until the end of this function if you don't want to use OpenSSL
+    Sha256 sha256;
+    Md5 md5;
+
+    std::cout << "\n\nRUNNING TESTS WITH OTHER ALGORITHMS\n(Algorithm implementations by OpenSSL)\n";
+    std::cout << "\n\nRunning all tests with SHA256: \n";
+    HashTests::runAllTests(&sha256);
+    std::cout << "\n\nRunning all tests with MD5: \n";
+    HashTests::runAllTests(&md5);
+
+    std::cout<<"\n\nRunning tests with other peoples algorithms for comparisons\n";
+    std::cout<<"Running tests with NikitaHash\n";
+    NikitaHash nikitaHash;
+    HashTests::runAllTests(&nikitaHash);
+
+    std::cout<<"\nRunning tests with SlaSimHash\n";
+    SlaSimHash slaSimHash;
+    HashTests::runAllTests(&slaSimHash);
+
+    // broken rn
+    // std::cout<<"\nRunning tests with MarijusHash\n";
+    // MarijusHash marijusHash;
+    // HashTests::runAllTests(&marijusHash);
+
 
     // Too slow so we don't run it always lmao
-    // std::cout<<"\nNOT Running tests with PatrykHash\n";
+    std::cout<<"\nNOT Running tests with MonikaHash\n";
+    // MonikaHash monikaHash;
+    // HashTests::runAllTests(&monikaHash);
+
+
+    std::cout<<"\nNOT Running tests with PatrykHash\n";
     // PatrykHash patrykHash;
     // HashTests::runAllTests(&patrykHash);
 
