@@ -17,22 +17,23 @@ Our colleagues algorithms in order of speed:
 4. PatrykHash
 5. MonikaHash
 
-[//]: # (ADD IMAGES)
+<img width="1925" height="857" alt="image" src="https://github.com/user-attachments/assets/9cc39029-ca06-4070-a46b-f693df25ee4b" />
+<img width="1955" height="965" alt="image" src="https://github.com/user-attachments/assets/be944de6-4300-4e11-b227-c54236d0ca17" />
 
-## Avalanche effect tests
+## Collision tests
 
 - Most algorithms are similar in terms of char similarity (~6-7%)
 - NikitaHash is slightly behind in terms of similarity (~7.44%)
 - The only exception is MonikaHash, which has a char similarity of 43%
 
-[//]: # (ADD IMAGES)
+<img width="1552" height="900" alt="image" src="https://github.com/user-attachments/assets/7aa374e3-4dea-46f2-aa7e-48e0c2e6b854" />
 
-## Collision tests
+## Avalanche effect tests
 - Most algorithms had no collisions found in the tests done, expect for:
 - PatrykHash which had 19 collissions in the set test
 - NikitaHash which had 4 collissions in set test and over 100 while doing avalanche
 
-[//]: # (ADD IMAGES)
+<img width="1547" height="900" alt="image" src="https://github.com/user-attachments/assets/757c1086-5484-49dd-835c-45b6a505faaf" />
 
 ---
 
