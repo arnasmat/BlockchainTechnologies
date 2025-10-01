@@ -6,6 +6,8 @@
 
 #include "NikitaHash.h"
 #include "OtherAlgorithms.h"
+#include "PatrykHash.h"
+#include "SlaSimHash.h"
 
 // also error handling ig
 // TODO: allow for multiple algorithms to input
@@ -127,6 +129,19 @@ void runTestsWithAll() {
     std::cout<<"Running tests with NikitaHash\n";
     NikitaHash nikitaHash;
     HashTests::runAllTests(&nikitaHash);
+
+    std::cout<<"\nRunning tests with SlaSimHash\n";
+    SlaSimHash slaSimHash;
+    HashTests::runAllTests(&slaSimHash);
+
+    std::cout<<"\nRunning tests with MonikaHash\n";
+     // monikaHash;
+    // HashTests::runAllTests(&slaSimHash);
+
+    // Too slow so we don't run it always lmao
+    std::cout<<"\nNOT Running tests with PatrykHash\n";
+    // PatrykHash patrykHash;
+    // HashTests::runAllTests(&patrykHash);
 
 }
 
