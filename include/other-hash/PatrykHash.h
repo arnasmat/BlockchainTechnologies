@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <chrono>
 
-#include "HashGenInterface.h"
+#include "../HashGenInterface.h"
 
 class PatrykHash: public HashGenInterface {
     std::string Random_String (int length)

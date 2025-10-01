@@ -13,7 +13,7 @@
 #include <iomanip>
 #include <cstdint>
 
-#include "HashGenInterface.h"
+#include "../HashGenInterface.h"
 class SlaSimHash: public HashGenInterface {
     std::string slaSimHash(const std::string& input) const {
         if (input.empty()) {

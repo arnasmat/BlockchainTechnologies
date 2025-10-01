@@ -7,7 +7,7 @@
 #include <random>
 #include <vector>
 
-#include "HashGenInterface.h"
+#include "../HashGenInterface.h"
 
 // CODE BY NIKITA. NOT OURS. IS HERE FOR COMPARISONS
 

@@ -11,9 +11,7 @@
 #include "VibeHash.h"
 #include <CliArgHandler.h>
 
-#include "OtherAlgorithms.h"
-#include "PatrykHash.h"
-#include "SlaSimHash.h"
+#include "other-hash/MonikaHash.h"
 
 int main(int argc, char *argv[]) {
     ArgsToRun argsToRun = handleCliInput(argc, argv);
