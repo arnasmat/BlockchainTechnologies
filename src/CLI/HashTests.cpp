@@ -1,4 +1,4 @@
-#include "../include/HashTests.h"
+#include "../../include/CLI/HashTests.h"
 
 #include <map>
 #include <unordered_map>

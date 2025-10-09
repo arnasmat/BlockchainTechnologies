@@ -2,9 +2,9 @@
 // Created by arnas on 9/16/25.
 //
 
-#include <CliArgHandler.h>
+#include <../include/CLI/CliArgHandler.h>
 
-#include "OtherAlgorithms.h"
+#include "../include/HashAlg/OtherAlgorithms.h"
 
 // also error handling ig
 // TODO: allow for multiple algorithms to input
@@ -113,14 +113,14 @@ void runTestsWithAll() {
     HashTests::runAllTests(&vibeHash);
 
     // Other algs - Comment out from here until the end of this function if you don't want to use OpenSSL
-    Sha256 sha256;
-    Md5 md5;
-
-    std::cout << "\n\nRUNNING TESTS WITH OTHER ALGORITHMS\n(Algorithm implementations by OpenSSL)\n";
-    std::cout << "\n\nRunning all tests with SHA256: \n";
-    HashTests::runAllTests(&sha256);
-    std::cout << "\n\nRunning all tests with MD5: \n";
-    HashTests::runAllTests(&md5);
+    // Sha256 sha256;
+    // Md5 md5;
+    //
+    // std::cout << "\n\nRUNNING TESTS WITH OTHER ALGORITHMS\n(Algorithm implementations by OpenSSL)\n";
+    // std::cout << "\n\nRunning all tests with SHA256: \n";
+    // HashTests::runAllTests(&sha256);
+    // std::cout << "\n\nRunning all tests with MD5: \n";
+    // HashTests::runAllTests(&md5);
 }
 
 std::string handleFileInput(const HashAlgorithm hashAlgorithm, const std::filesystem::path &inputFilePath) {

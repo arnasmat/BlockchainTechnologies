@@ -8,9 +8,9 @@
 #include <string>
 #include <iostream>
 #include "HashTests.h"
-#include "HumanHash.h"
-#include "MatrixHash.h"
-#include "VibeHash.h"
+#include "../HashAlg/HumanHash.h"
+#include "../HashAlg/MatrixHash.h"
+#include "../HashAlg/VibeHash.h"
 
 enum HashAlgorithm { HUMAN, VIBE, MATRIX };
 

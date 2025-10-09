@@ -1,4 +1,4 @@
-#include "../include/TestingFileGenerator.h"
+#include "../../include/CLI/TestingFileGenerator.h"
 
 namespace TestingFileGenerator {
 

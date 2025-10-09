@@ -1,7 +1,7 @@
 #ifndef HASHTESTS_H
 #define HASHTESTS_H
 
-#include "HashGenInterface.h"
+#include "../HashAlg/HashGenInterface.h"
 #include "TestingFileGenerator.h"
 #include <string>
 #include <algorithm>
