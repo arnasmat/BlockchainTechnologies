@@ -2,6 +2,7 @@
 #define HUMANHASH_H
 
 #include <iomanip>
+#include <bitset>
 
 #include "HashGenInterface.h"
 

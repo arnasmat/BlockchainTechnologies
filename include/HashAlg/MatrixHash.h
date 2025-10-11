@@ -5,6 +5,7 @@
 #ifndef MATRIXHASH_H
 #define MATRIXHASH_H
 #include <ranges>
+#include <bitset>
 
 #include "HashGenInterface.h"
 #include "HumanHash.h"

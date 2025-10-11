@@ -7,11 +7,10 @@
 #include "HashAlg/HashGenInterface.h"
 #include "HashAlg/MatrixHash.h"
 
-
 class SystemAlgorithm {
-public:
+protected:
     HashGenInterface* hash;
-    constexpr unsigned short int MAX_HASH_LENGTH{64};
+    static constexpr unsigned short int MAX_HASH_LENGTH{64};
 
     SystemAlgorithm(): hash(new MatrixHash()) {}
     ~SystemAlgorithm() {

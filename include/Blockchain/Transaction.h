@@ -2,6 +2,7 @@
 #define TRANSACTION_H
 #include <string>
 
+#include "SystemAlgorithm.h"
 #include "HashAlg/HashGenInterface.h"
 
 class Transaction : SystemAlgorithm {
