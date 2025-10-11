@@ -13,7 +13,6 @@ class User : SystemAlgorithm {
     unsigned int id{}; //Instead of vardas
     unsigned int estimatedBalance{0};
     std::string publicKey{};
-
 public:
     User(const int id): id(id) {
         publicKey = hash->generateHash(std::to_string(id));

@@ -13,8 +13,7 @@ int main() {
         // Mine a block that meets the difficulty target
         while (true) {
             newBlock = new Block(previousBlock, time(nullptr), 1.0, nonce++, {});
-            if (newBlock->getBlockHash().substr(0, newBlock->getDifficultyTarget()) ==
-                std::string(newBlock->getDifficultyTarget(), '0')) {
+            if (newBlock->isBlockValid()){
                 break;
             }
             delete newBlock;
@@ -24,7 +23,7 @@ int main() {
                   << " | Hash: " << newBlock->getBlockHash() << std::endl;
 
         // Stop when difficulty target reaches 5
-        if (newBlock->getDifficultyTarget() >= 5)
+        if (newBlock->getDifficultyTarget() >= 20)
             break;
 
         previousBlock = newBlock;
