@@ -10,11 +10,12 @@
 
 class SystemAlgorithm {
 public:
-    HashGenInterface* _hashAlg;
+    HashGenInterface* hash;
+    constexpr unsigned short int MAX_HASH_LENGTH{64};
 
-    SystemAlgorithm(): _hashAlg(new MatrixHash()) {}
+    SystemAlgorithm(): hash(new MatrixHash()) {}
     ~SystemAlgorithm() {
-        delete _hashAlg;
+        delete hash;
     }
 };
 

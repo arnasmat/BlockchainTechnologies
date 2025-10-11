@@ -10,13 +10,13 @@
 // NOTE: This class is meant to represent a node's knowledge about a certain user in the blockchain network
 // -> Therefore using it you have to handle setting/getting values yourself.
 class User : SystemAlgorithm {
-    unsigned int _id{}; //Instead of vardas
+    unsigned int id{}; //Instead of vardas
     unsigned int estimatedBalance{0};
     std::string publicKey{};
 
 public:
-    User(const int id): _id(id) {
-        publicKey = _hashAlg->generateHash(std::to_string(_id));
+    User(const int id): id(id) {
+        publicKey = hash->generateHash(std::to_string(id));
     }
 
     std::string getPublicKey() const {

@@ -5,33 +5,33 @@
 #include "HashAlg/HashGenInterface.h"
 
 class Transaction : SystemAlgorithm {
-    std::string _transactionId{};
-    std::string _senderPublicKey{};
-    std::string _receiverPublicKey{};
-    unsigned int _amount{};
+    std::string transactionId{};
+    std::string senderPublicKey{};
+    std::string receiverPublicKey{};
+    unsigned int amount{};
 
 public:
     Transaction(const std::string &senderPk, const std::string &receiverPk, const int amount)
-        : _senderPublicKey(senderPk),
-          _receiverPublicKey(receiverPk),
-          _amount(amount) {
-        _transactionId = _hashAlg->generateHash(_senderPublicKey + _receiverPublicKey + std::to_string(_amount));
+        : senderPublicKey(senderPk),
+          receiverPublicKey(receiverPk),
+          amount(amount) {
+        transactionId = hash->generateHash(senderPublicKey + receiverPublicKey + std::to_string(amount));
     }
 
     std::string getTransactionId() {
-        return _transactionId;
+        return transactionId;
     }
 
-    unsigned int getAmount() {
-        return _amount;
+    unsigned int getAmount() const {
+        return amount;
     }
 
     std::string getSenderPublicKey() {
-        return _senderPublicKey;
+        return senderPublicKey;
     }
 
     std::string getReceiverPublicKey() {
-        return _receiverPublicKey;
+        return receiverPublicKey;
     }
 };
 
