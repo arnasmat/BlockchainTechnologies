@@ -18,6 +18,7 @@ constexpr unsigned int HEIGHT_FOR_HALVING_REWARD = 20;
 
 class Block : public SystemAlgorithm {
     // Header
+    MerkleTree merkleTree;
     const Block *previousBlock;
     std::string previousBlockHash;
     std::string minerPublicKey;
@@ -43,7 +44,7 @@ public:
           version(version),
           nonce(nonce),
           difficultyTarget(calculateDifficulty()),
-          merkleRootHash(""), // TODO
+          merkleRootHash(merkleTree.calculateMerkleTreeHash(transactions)), // will 'transactions' both as argument and class property not crash here?
           transactions(std::move(transactions)) {
         // TODO: implement the reward transaction ty
         transactions.insert(transactions.begin(), new Transaction("SYSTEM", minerPk, calculateBlockReward()));
