@@ -9,7 +9,7 @@ class Transaction : SystemAlgorithm {
     std::string transactionId{};
     std::string senderPublicKey{};
     std::string receiverPublicKey{};
-    unsigned int amount{};
+    double amount{};
 
 public:
     Transaction(const std::string &senderPk, const std::string &receiverPk, const int amount)
