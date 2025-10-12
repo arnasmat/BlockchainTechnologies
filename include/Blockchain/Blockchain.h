@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Helper.h"
+#include "MerkleTree.h"
 #include "SystemAlgorithm.h"
 #include "Transaction.h"
 
@@ -23,6 +24,7 @@ class Block : public SystemAlgorithm {
     std::string previousBlockHash;
     std::string minerPublicKey;
     const time_t timestamp;
+    const unsigned int height;
     const float version;
     const unsigned int nonce;
     std::string merkleRootHash;
@@ -41,13 +43,14 @@ public:
                                 : "0000000000000000000000000000000000000000000000000000000000000000"),
           minerPublicKey(minerPk),
           timestamp(timestamp),
+          height(previousBlock ? previousBlock->getHeight() + 1 : 0),
           version(version),
           nonce(nonce),
           difficultyTarget(calculateDifficulty()),
-          merkleRootHash(merkleTree.calculateMerkleTreeHash(transactions)), // will 'transactions' both as argument and class property not crash here?
           transactions(std::move(transactions)) {
-        // TODO: implement the reward transaction ty
-        transactions.insert(transactions.begin(), new Transaction("SYSTEM", minerPk, calculateBlockReward()));
+        // TODO: terrible to insert it at the start but whatever!
+        this->transactions.insert(this->transactions.begin(), new Transaction("SYSTEM", minerPk, calculateBlockReward()));
+        merkleRootHash = merkleTree.calculateMerkleTreeHash(this->transactions);
     }
 
     std::string getBlockAsString() const {
@@ -65,14 +68,15 @@ public:
     }
 
     unsigned int getHeight() const {
-        // should it just be precalculated or should it be verified each time the function is called? idk!
-        unsigned int height = 0;
-        const Block *current = previousBlock;
-        while (current) {
-            height++;
-            current = current->previousBlock;
+        return height;
+    }
+
+    unsigned int verifyHeight() const {
+        // idk if we need this, bet for security or whatever lol
+        if (!previousBlock) {
+            return 0;
         }
-        return height + 1;
+        return previousBlock->verifyHeight() + 1;
     }
 
     time_t getTimestamp() const {
@@ -92,6 +96,10 @@ public:
     double calculateBlockReward() const {
         return static_cast<double>(INITIAL_REWARD / std::pow(
                                        2, static_cast<int>(getHeight() / HEIGHT_FOR_HALVING_REWARD)));
+    }
+
+    std::vector<Transaction*> getTransactions() const {
+        return transactions;
     }
 
 private:

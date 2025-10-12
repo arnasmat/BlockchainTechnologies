@@ -1,5 +1,7 @@
 #ifndef MERKLETREE_H
 #define MERKLETREE_H
+#include <vector>
+
 #include "HashAlg/HashGenInterface.h"
 #include "Transaction.h"
 
@@ -12,10 +14,10 @@ class MerkleTree : SystemAlgorithm {
              RootMerkleTreeHash = hash->generateHash("");
         }
 
-        std::string calculateMerkleTreeHash(std::vector<Transaction *> blockTransactions) {
+        std::string calculateMerkleTreeHash(const std::vector<Transaction *> &blockTransactions) {
             std::vector<std::string> transactions{};
-            for(int i=0; i<blockTransactions.size(); i++){
-                transactions.push_back(hash->generateHash(blockTransactions[i]->getTransactionId()));
+            for(const auto blockTransaction : blockTransactions){
+                transactions.push_back(hash->generateHash(blockTransaction->getTransactionId()));
             }   
             while(transactions.size() > 1){
                 std::vector<std::string> tempTransactions{};
@@ -31,5 +33,6 @@ class MerkleTree : SystemAlgorithm {
             RootMerkleTreeHash = transactions[0];
             return RootMerkleTreeHash;
         }   
-}
+};
+
 #endif

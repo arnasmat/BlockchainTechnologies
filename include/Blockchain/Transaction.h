@@ -12,7 +12,7 @@ class Transaction : SystemAlgorithm {
     double amount{};
 
 public:
-    Transaction(const std::string &senderPk, const std::string &receiverPk, const int amount)
+    Transaction(const std::string &senderPk, const std::string &receiverPk, const double amount)
         : senderPublicKey(senderPk),
           receiverPublicKey(receiverPk),
           amount(amount) {
@@ -23,7 +23,7 @@ public:
         return transactionId;
     }
 
-    unsigned int getAmount() const {
+    double getAmount() const {
         return amount;
     }
 
