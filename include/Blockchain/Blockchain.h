@@ -23,9 +23,9 @@ class Block : public SystemAlgorithm {
     const Block *previousBlock;
     std::string previousBlockHash;
     std::string minerPublicKey;
-    const time_t timestamp;
+    time_t timestamp;
     const unsigned int height;
-    const float version;
+    const std::string version;
     const unsigned int nonce;
     std::string merkleRootHash;
     const unsigned short int difficultyTarget;
@@ -34,7 +34,7 @@ class Block : public SystemAlgorithm {
     std::vector<Transaction *> transactions;
 
 public:
-    Block(const Block *previousBlock, const std::string &minerPk, const time_t timestamp, const float version,
+    Block(const Block *previousBlock, const std::string &minerPk, const std::string version,
           const unsigned int nonce,
           std::vector<Transaction *> transactions)
         : previousBlock(previousBlock),
@@ -42,20 +42,21 @@ public:
                                 ? previousBlock->getBlockHash()
                                 : "0000000000000000000000000000000000000000000000000000000000000000"),
           minerPublicKey(minerPk),
-          timestamp(timestamp),
           height(previousBlock ? previousBlock->getHeight() + 1 : 0),
           version(version),
           nonce(nonce),
           difficultyTarget(calculateDifficulty()),
           transactions(std::move(transactions)) {
-        // TODO: terrible to insert it at the start but whatever!
-        this->transactions.insert(this->transactions.begin(), new Transaction("SYSTEM", minerPk, calculateBlockReward()));
+        timestamp = time(nullptr);
+        // TODO: terrible to insert it at the start but whatever, max n is 100!
+        this->transactions.insert(this->transactions.begin(),
+                                  new Transaction("SYSTEM", minerPk, calculateBlockReward()));
         merkleRootHash = merkleTree.calculateMerkleTreeHash(this->transactions);
     }
 
     std::string getBlockAsString() const {
         // TODO: make merkleroothash work and then transaction hashes will work!
-        return previousBlockHash + std::to_string(timestamp) + std::to_string(version) +
+        return previousBlockHash + std::to_string(timestamp) + version +
                std::to_string(nonce) + merkleRootHash + std::to_string(difficultyTarget);
     }
 
@@ -69,6 +70,15 @@ public:
 
     unsigned int getHeight() const {
         return height;
+    }
+
+    std::string getMinerPublicKey() const {
+        return minerPublicKey;
+    }
+
+    Block *getPreviousBlock() const {
+        // const_cast is the stupidest thing I have ever seen but ok
+        return const_cast<Block *>(previousBlock);
     }
 
     unsigned int verifyHeight() const {
@@ -90,7 +100,12 @@ public:
                 return false;
             }
         }
-        return true;
+
+        if (verifyHeight() == height) {
+            return true;
+        }
+        std::cout << "Transaction height couldn't be verified";
+        return false;
     }
 
     double calculateBlockReward() const {
@@ -98,7 +113,7 @@ public:
                                        2, static_cast<int>(getHeight() / HEIGHT_FOR_HALVING_REWARD)));
     }
 
-    std::vector<Transaction*> getTransactions() const {
+    std::vector<Transaction *> getTransactions() const {
         return transactions;
     }
 

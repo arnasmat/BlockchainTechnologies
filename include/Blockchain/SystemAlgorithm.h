@@ -9,15 +9,17 @@
 
 class SystemAlgorithm {
 protected:
-    HashGenInterface* hash;
+    HashGenInterface *hash;
     static constexpr unsigned short int MAX_HASH_LENGTH{64};
+    const std::string SYSTEM_VERSION{"1.0"};
 
-    SystemAlgorithm(): hash(new MatrixHash()) {}
+    SystemAlgorithm(): hash(new MatrixHash()) {
+    }
+
     ~SystemAlgorithm() {
         delete hash;
     }
 };
-
 
 
 #endif //SYSTEMALGORITHM_H
