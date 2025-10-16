@@ -48,7 +48,7 @@ public:
           nonce(nonce),
           difficultyTarget(calculateDifficulty()),
           transactions(std::move(transactions)) {
-        // TODO: terrible to insert it at the start but whatever!
+        // TODO: terrible to insert it at the start but whatever, max n is 100!
         this->transactions.insert(this->transactions.begin(), new Transaction("SYSTEM", minerPk, calculateBlockReward()));
         merkleRootHash = merkleTree.calculateMerkleTreeHash(this->transactions);
     }
@@ -71,6 +71,10 @@ public:
         return height;
     }
 
+    std::string getMinerPublicKey() const {
+        return minerPublicKey;
+    }
+
     unsigned int verifyHeight() const {
         // idk if we need this, bet for security or whatever lol
         if (!previousBlock) {
@@ -90,7 +94,12 @@ public:
                 return false;
             }
         }
-        return true;
+
+        if (verifyHeight() == height) {
+            return true;
+        }
+        std::cout<<"Transaction height couldn't be verified";
+        return false;
     }
 
     double calculateBlockReward() const {

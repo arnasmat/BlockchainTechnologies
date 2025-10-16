@@ -11,6 +11,7 @@ class SystemAlgorithm {
 protected:
     HashGenInterface* hash;
     static constexpr unsigned short int MAX_HASH_LENGTH{64};
+    constexpr float SYSTEM_VERSION{1.0};
 
     SystemAlgorithm(): hash(new MatrixHash()) {}
     ~SystemAlgorithm() {
