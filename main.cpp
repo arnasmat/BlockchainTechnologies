@@ -6,6 +6,7 @@
 #include "Blockchain/User.h"
 
 int main() {
+    // vibe coded n shit blahblah redo later just for testing rn
     Block *previousBlock = nullptr;
     unsigned int blockCount = 0;
     std::vector<User*> users;
@@ -18,6 +19,7 @@ int main() {
     std::uniform_int_distribution<> distrib(0, users.size() - 1);
 
     std::queue<Transaction*> transactionList;
+    // TODO: transaction queue
 
     // Mine 50 blocks to introduce something to the economy lol
     while (blockCount < 50) {
