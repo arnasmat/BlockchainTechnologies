@@ -33,11 +33,13 @@ private:
         const auto txs = newBlock->getTransactions();
         ss << "This block contains the following transactions: \n";
         for (const auto &tx: txs) {
-            ss << "\nTransaction " << tx->getTransactionId() << ": \n"
-                    << "From: " << tx->getSenderPublicKey()
-                    << ", To: " << tx->getReceiverPublicKey()
-                    << ", Amount: " << tx->getAmount()
-                    << "\n";
+            ss << "\nTransaction " << tx->getTransactionId() << ": \n";
+                    for(const auto &output: tx->getOutputs()) {
+                    ss << "From: " << tx->getSenderPublicKey();
+                    ss << ", To: " << output.second;
+                    ss << ", Amount: " << output.first;
+                    ss << "\n";
+                    }
         }
         ss << "\n----------------------\n";
 
@@ -54,7 +56,7 @@ public:
     }
 
     Block *mineBlock(
-        std::queue<Transaction *> &processedTransactions,
+        std::vector<Transaction *> &processedTransactions,
         const Block *previousBlock
     ) {
         const User *miner{pickMiner()};
@@ -63,9 +65,9 @@ public:
         Block *newBlock{nullptr};
 
         while (isMining) {
-            newBlock = new Block(previousBlock, miner->getPublicKey(), SYSTEM_VERSION, nonce++, {});
+            newBlock = new Block(previousBlock, miner->getPublicKey(), SYSTEM_VERSION, nonce++, processedTransactions);
             if (!newBlock->isBlockValid()) {
-                delete newBlock;
+                newBlock->updateNonce();
             } else {
                 announceNewBlock(newBlock);
                 break;

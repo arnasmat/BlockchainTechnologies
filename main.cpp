@@ -5,6 +5,7 @@
 #include "Blockchain/Blockchain.h"
 #include "Blockchain/MiningSimulator.h"
 #include "Blockchain/User.h"
+#include "Blockchain/UTXOSystem.h"
 
 int main() {
     std::vector<User *> users;
@@ -12,7 +13,7 @@ int main() {
         users.push_back(new User(i));
     }
 
-    std::queue<Transaction *> processedTransactions;
+    std::vector<Transaction *> processedTransactions;
     // TODO: transaction queue
 
     MiningSimulator mineSim(users);

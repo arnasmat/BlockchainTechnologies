@@ -6,6 +6,7 @@
 #include "SystemAlgorithm.h"
 #include "Transaction.h"
 #include "HashAlg/HashGenInterface.h"
+#include "UTXOSystem.h"
 
 // NOTE: This class is meant to represent a node's knowledge about a certain user in the blockchain network
 // -> Therefore using it you have to handle setting/getting values yourself.
@@ -26,8 +27,8 @@ public:
         return estimatedBalance;
     }
 
-    void setEstimatedBalance(const unsigned int value) {
-        estimatedBalance = value;
+    void setEstimatedBalance() {
+        estimatedBalance = UtxoSystem::getInstance().getBalanceOfPublicKey(hash->generateHash(std::to_string(id))); //tik zinantis private key gali gauti balansa 
     }
 };
 
