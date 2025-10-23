@@ -56,7 +56,7 @@ public:
     }
 
     Block *mineBlock(
-        std::queue<Transaction *> &processedTransactions,
+        std::vector<Transaction *> &processedTransactions,
         const Block *previousBlock
     ) {
         const User *miner{pickMiner()};
@@ -65,9 +65,9 @@ public:
         Block *newBlock{nullptr};
 
         while (isMining) {
-            newBlock = new Block(previousBlock, miner->getPublicKey(), SYSTEM_VERSION, nonce++, {});
+            newBlock = new Block(previousBlock, miner->getPublicKey(), SYSTEM_VERSION, nonce++, processedTransactions);
             if (!newBlock->isBlockValid()) {
-                delete newBlock;
+                newBlock->updateNonce();
             } else {
                 announceNewBlock(newBlock);
                 break;

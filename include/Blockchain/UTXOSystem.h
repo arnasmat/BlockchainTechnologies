@@ -3,6 +3,7 @@
 
 #include "SystemAlgorithm.h"
 class Transaction;
+#include "Blockchain.h"
 #include "UTXO.h"
 #include <vector>
 #include <algorithm>
@@ -22,7 +23,7 @@ class UtxoSystem : SystemAlgorithm {
             return instance;
         }
 
-        std::vector<Utxo*> findTransactionsThatSatisfySum(const std::string &sendersPK, double neededAmount) {
+        std::vector<Utxo*> findUtxosThatSatisfySum(const std::string &sendersPK, double neededAmount) {
             if(userUtxos.find(sendersPK) == userUtxos.end()) {
                 return {}; //treated as false
             } 
@@ -74,9 +75,9 @@ class UtxoSystem : SystemAlgorithm {
             }
         }
 
-        double getBalanceOfCertainPublicKey(const std::string &userPK) const {
+        double getBalanceOfPublicKey(const std::string &userPK) {
            double balance = 0;
-             for(auto &utxo : userUtxos.at(userPK)){
+             for(auto &utxo : userUtxos[userPK]){
                 balance += utxo->getAmount();
             }
             return balance;

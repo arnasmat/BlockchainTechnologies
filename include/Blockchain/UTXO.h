@@ -9,8 +9,8 @@ class Utxo {
     private:
         Transaction *transaction;
         unsigned int vout;
-        double amount; //output
-        std::string receiversPublicKey; //output
+        double amount; 
+        std::string receiversPublicKey; 
 
     public:
       Utxo(Transaction* transaction, unsigned int vout, double amount, std::string publicKey) : transaction(transaction), vout(vout), amount(amount), receiversPublicKey(publicKey) {

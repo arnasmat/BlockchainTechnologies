@@ -19,20 +19,22 @@ class Transaction : SystemAlgorithm {
 public:
     Transaction(const std::string &senderPk, const std::string &receiverPk, const double amount, std::vector<Utxo*> chosenUtxos)
         : senderPublicKey(senderPk){
-
-            std::string content{};
+            std::string content{std::to_string(time(nullptr)+amount)};
             double achievedSum = 0;
             for(auto &eachUtxo : chosenUtxos){
                 inputs.push_back({eachUtxo->getTransaction(), eachUtxo->getVout()});
                 achievedSum += eachUtxo->getAmount();
                 content += eachUtxo->getTransaction()->getTransactionId() + std::to_string(time(nullptr)); //so that every transasctionID be different
-                 UtxoSystem::getInstance().deleteUtxo(senderPk, eachUtxo);
+                UtxoSystem::getInstance().deleteUtxo(senderPk, eachUtxo);
             }
             outputs.push_back({amount, receiverPk});
-            double fee = achievedSum - amount; 
-            if(fee > 0){
-                outputs.push_back({fee, senderPk}); // so far it is simply being sent back to sender as change
-            }  
+            if(senderPk != "SYSTEM") {
+                double fee = achievedSum - amount; 
+                if(fee > 0){
+                    content += std::to_string(fee);
+                    outputs.push_back({fee, senderPk}); // so far it is simply being sent back to sender as change
+                }  
+            }    
         transactionId = hash->generateHash(senderPublicKey + receiverPk + content);    
         UtxoSystem::getInstance().addNewUtxos(outputs, this);           
     }

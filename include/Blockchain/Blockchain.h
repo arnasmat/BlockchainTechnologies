@@ -6,7 +6,7 @@
 #include "Helper.h"
 #include "MerkleTree.h"
 #include "SystemAlgorithm.h"
-#include "Transaction.h"
+class Transaction;
 
 // TODO: move all these defines somewhere else ig? idk
 constexpr unsigned int DIFFICULTY_TARGET_INCREASE_INTERVAL = 10;
@@ -26,7 +26,7 @@ class Block : public SystemAlgorithm {
     time_t timestamp;
     const unsigned int height;
     const std::string version;
-    const unsigned int nonce;
+    unsigned int nonce;
     std::string merkleRootHash;
     const unsigned short int difficultyTarget;
 
@@ -49,8 +49,9 @@ public:
           transactions(std::move(transactions)) {
         timestamp = time(nullptr);
         // TODO: terrible to insert it at the start but whatever, max n is 100!
-        this->transactions.insert(this->transactions.begin(),
-                                  new Transaction("SYSTEM", minerPk, calculateBlockReward(), {}));
+        if(minerPk != "SYSTEM") {
+            this->transactions.insert(this->transactions.begin(), new Transaction("SYSTEM", minerPk, calculateBlockReward(), {}));
+        } 
         merkleRootHash = merkleTree.calculateMerkleTreeHash(this->transactions);
     }
 
@@ -115,6 +116,10 @@ public:
 
     std::vector<Transaction *> getTransactions() const {
         return transactions;
+    }
+
+    void updateNonce() {
+        nonce++;
     }
 
 private:

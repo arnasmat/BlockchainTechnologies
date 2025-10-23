@@ -28,7 +28,7 @@ public:
     }
 
     void setEstimatedBalance() {
-        estimatedBalance = UtxoSystem::getInstance().getBalanceOfCertainPublicKey(hash->generateHash(std::to_string(id))); //tik zinantis private key gali gauti balansa 
+        estimatedBalance = UtxoSystem::getInstance().getBalanceOfPublicKey(hash->generateHash(std::to_string(id))); //tik zinantis private key gali gauti balansa 
     }
 };
 
