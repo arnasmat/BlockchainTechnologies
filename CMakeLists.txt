@@ -5,6 +5,7 @@ set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 set(CMAKE_CXX_STANDARD 20)
 
+find_package(OpenMP REQUIRED)
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
 add_executable(hashCli hashCli.cpp ${SRC_FILES})
@@ -12,6 +13,8 @@ add_executable(blockchain main.cpp ${SRC_FILES})
 
 target_include_directories(hashCli PRIVATE include)
 target_include_directories(blockchain PRIVATE include)
+
+target_link_libraries(blockchain PUBLIC OpenMP::OpenMP_CXX)
 
 set_target_properties(hashCli PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/../bin"
