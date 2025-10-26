@@ -4,9 +4,9 @@
 #include <map>
 
 // assumes hash is 64 characters long
-std::bitset<256> hashToBits(const std::string& hash) {
+inline std::bitset<256> hashToBits(const std::string &hash) {
     std::bitset<256> bits;
-    std::map<char, std::bitset<4>> charToBits = {
+    std::map<char, std::bitset<4> > charToBits = {
         {'0', 0x0},
         {'1', 0x1},
         {'2', 0x2},

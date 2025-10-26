@@ -13,15 +13,13 @@ int main() {
         users.push_back(new User(i));
     }
 
-    std::vector<Transaction *> processedTransactions;
     // TODO: transaction queue
 
     MiningSimulator mineSim(users);
-    Block *genesisBlock = new Block(nullptr, "SYSTEM", "1.0", 0, {});
-    std::cout << "GENESIS: " << genesisBlock->getBlockHash() << "\n";
-    Block *previousBlock = genesisBlock;
+    std::vector<Transaction *> processedTransactions;
+    Block *previousBlock = mineSim.getGenesisBlock();
     while (true) {
-        previousBlock = mineSim.mineBlock(processedTransactions, previousBlock);
+        previousBlock = mineSim.mineBlockParallel(processedTransactions, previousBlock);
     }
 
     return 0;

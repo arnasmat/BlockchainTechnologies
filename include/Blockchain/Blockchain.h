@@ -49,9 +49,10 @@ public:
           transactions(std::move(transactions)) {
         timestamp = time(nullptr);
         // TODO: terrible to insert it at the start but whatever, max n is 100!
-        if(minerPk != "SYSTEM") {
-            this->transactions.insert(this->transactions.begin(), new Transaction("SYSTEM", minerPk, calculateBlockReward(), {}));
-        } 
+        if (minerPk != "SYSTEM") {
+            this->transactions.insert(this->transactions.begin(),
+                                      new Transaction("SYSTEM", minerPk, calculateBlockReward(), {}));
+        }
         merkleRootHash = merkleTree.calculateMerkleTreeHash(this->transactions);
     }
 
