@@ -17,12 +17,13 @@ class Transaction : SystemAlgorithm {
     std::vector<std::pair<const Transaction *, unsigned int> > inputs;
     // transaction and index of valid output of other transaction
     std::vector<std::pair<double, std::string> > outputs; // amount and public key of receiver
+    std::time_t transactionTime{time(nullptr)};
 
 public:
     Transaction(const std::string &senderPk, const std::string &receiverPk, const double amount,
                 const std::vector<Utxo *> &chosenUtxos)
         : senderPublicKey(senderPk) {
-        std::string content{std::to_string(time(nullptr) + amount)};
+        std::string content{std::to_string(transactionTime) + std::to_string(amount)};
         double achievedSum = 0;
         for (auto &eachUtxo: chosenUtxos) {
             inputs.push_back({eachUtxo->getTransaction(), eachUtxo->getVout()});
@@ -49,6 +50,10 @@ public:
 
     std::string getSenderPublicKey() const {
         return senderPublicKey;
+    }
+
+    time_t getTransactionTime() const {
+        return transactionTime;
     }
 
     const std::vector<std::pair<const Transaction *, unsigned int> > &getInputs() const {
