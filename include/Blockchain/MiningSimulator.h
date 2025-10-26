@@ -50,7 +50,7 @@ private:
 public:
     MiningSimulator(const std::vector<User *> &_users): users(_users) {
         isMining = true;
-        genesisBlock = new Block(nullptr, "SYSTEM", "1.0", 0, {});
+        genesisBlock = new Block(nullptr, users.at(0)->getPublicKey(), "1.0", 0, {});
     };
 
     void stopMining() {
