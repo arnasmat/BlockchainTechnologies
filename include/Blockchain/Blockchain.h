@@ -1,21 +1,10 @@
 #ifndef BLOCKCHAIN_H
 #define BLOCKCHAIN_H
-#include <cmath>
-#include <vector>
 
 #include "Helper.h"
 #include "MerkleTree.h"
-#include "SystemAlgorithm.h"
-class Transaction;
-
-// TODO: move all these defines somewhere else ig? idk
-constexpr unsigned int DIFFICULTY_TARGET_INCREASE_INTERVAL = 10;
-constexpr unsigned int DEFAULT_DIFFICULTY = 12; // bits
-constexpr unsigned int TARGET_BLOCK_TIME = 5; //sec
-constexpr unsigned int TARGET_TOLERANCE = 2;
-constexpr unsigned int INITIAL_REWARD = 100;
-constexpr unsigned int HEIGHT_FOR_HALVING_REWARD = 20;
-// TODO: make the difficulty increase depending on the timestamp of the block that was 4 before
+#include "libs.h"
+#include "Transaction.h"
 
 class Block : public SystemAlgorithm {
     // Header
@@ -48,16 +37,13 @@ public:
           difficultyTarget(calculateDifficulty()),
           transactions(std::move(transactions)) {
         timestamp = time(nullptr);
-        // TODO: terrible to insert it at the start but whatever, max n is 100!
-        if (minerPk != "SYSTEM") {
-            this->transactions.insert(this->transactions.begin(),
-                                      new Transaction("SYSTEM", minerPk, calculateBlockReward(), {}));
-        }
+        // TODO: terrible to insert it at the start but whatever, max n is 100
+        this->transactions.insert(this->transactions.begin(),
+                                  new Transaction(SYSTEM_NAME, minerPk, calculateBlockReward(), {}));
         merkleRootHash = merkleTree.calculateMerkleTreeHash(this->transactions);
     }
 
     std::string getBlockAsString() const {
-        // TODO: make merkleroothash work and then transaction hashes will work!
         return previousBlockHash + std::to_string(timestamp) + version +
                std::to_string(nonce) + merkleRootHash + std::to_string(difficultyTarget);
     }
@@ -106,7 +92,7 @@ public:
         if (verifyHeight() == height) {
             return true;
         }
-        std::cout << "Transaction height couldn't be verified";
+        std::cerr << "Transaction height couldn't be verified";
         return false;
     }
 
