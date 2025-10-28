@@ -9,7 +9,7 @@
 namespace blockchainRandomGenerator {
     std::vector<User *> generateUsers(const unsigned int numberOfUsers) {
         std::vector<User *> users;
-        for (int i = 1; i <= 1000; i++) {
+        for (int i = 1; i <= numberOfUsers; i++) {
             users.push_back(new User(i));
         }
         return users;
@@ -31,13 +31,11 @@ namespace blockchainRandomGenerator {
             if (senderBalance == 0) {
                 continue;
             }
-            std::uniform_real_distribution<double> amountDistrib(1.0, senderBalance);
-            double amount{amountDistrib(gen)};
+            std::uniform_real_distribution<double> amountDistrib(std::min(1.0, senderBalance), senderBalance);
+            double amount{amountDistrib(gen)/10};
 
             const User *receiver{users[userDistrib(gen)]};
-            Transaction *transaction = new Transaction(sender->getPublicKey(), receiver->getPublicKey(), amount,
-                                                       UtxoSystem::getInstance().findUtxosThatSatisfySum(
-                                                           sender->getPublicKey(), amount));
+            Transaction *transaction = new Transaction(sender->getPublicKey(), receiver->getPublicKey(), amount);
             transactions.push_back(transaction);
             i++;
         }

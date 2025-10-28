@@ -29,13 +29,14 @@ public:
             std::vector<std::string> tempTransactions{};
             tempTransactions.reserve(1 + transactions.size() / 2);
 
-            for (int i = 0; i < transactions.size() / 2; i++) {
-                tempTransactions.push_back(hash->generateHash(transactions[2 * i] + transactions[2 * i + 1]));
+            if (transactions.size() % 2 == 1) {
+                transactions.push_back(transactions.back());
             }
 
-            if (transactions.size() % 2 == 1) {
-                tempTransactions.push_back(transactions.back());
+            for (size_t i = 0; i < transactions.size(); i += 2) {
+                tempTransactions.push_back(hash->generateHash(transactions[i] + transactions[i+1]));
             }
+
             transactions = std::move(tempTransactions);
         }
 
