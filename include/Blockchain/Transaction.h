@@ -32,8 +32,7 @@ public:
             //so that every transasctionID be different
     }
 
-    //after transaction is included into a mempool of certain thread, verified and ready to get mined,
-    //only then we fill its inputs and outputs, create its ID, etc.
+    //if user has enough utxos for this transaction, we associate these utxos with this transaction
     void fillTransaction(const std::vector<Utxo *> &chosenUtxos) {
         userUtxos = std::move(chosenUtxos);
         double achievedSum = 0;

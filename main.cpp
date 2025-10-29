@@ -10,8 +10,6 @@ constexpr unsigned int NUMBER_OF_USERS{10};
 int main() {
     std::vector<User *> users{blockchainRandomGenerator::generateUsers(NUMBER_OF_USERS)};
 
-    // TODO: transaction queue
-
     MiningSimulator mineSim(users);
     std::vector<Transaction *> processedTransactions{};
     Block *previousBlock = mineSim.getGenesisBlock();
@@ -38,8 +36,14 @@ int main() {
     //     std::cout << "  Total amount to be transferred: " << totalTransferred << "\n";
     // }
 
-    while(true) {
+    std::cout<<"Amount of transactions to be processed: "<<mempool.size()<<std::endl;
+
+    while(mempool.size()) {
         previousBlock = mineSim.mineBlockParallel(mempool, previousBlock);
+    }
+
+    for(auto &user : users) {
+        std::cout<<user->getPublicKey()<<" "<<UtxoSystem::getInstance().getBalanceOfPublicKey(user->getPublicKey())<<std::endl;
     }
 
     return 0;

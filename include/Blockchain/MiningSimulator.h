@@ -84,20 +84,13 @@ public:
             int nonce = threadId * 1000000;
 
             std::vector<Transaction*> threadMempool{};
-            threadMempool.reserve(10);
+            threadMempool.reserve(100);
 
-            for (size_t i = threadId; i < mempool.size(); i+=omp_get_num_threads()) 
-            while(threadMempool.size() < 1)
+            for (size_t i = threadId; i < std::min(mempool.size(), size_t(100)); i+=omp_get_num_threads()) 
             {
                 Transaction *pendingTransaction = mempool[i];
                 if(pendingTransaction->reserveTransaction()) {
-                    std::vector<Utxo*> chosenUtxos = std::move(UtxoSystem::getInstance().findUtxosThatSatisfySum(pendingTransaction->getSenderPublicKey(), pendingTransaction->getOutputs()[0].first));
-                    if(chosenUtxos.size()) {
-                        pendingTransaction->fillTransaction(chosenUtxos);
-                        threadMempool.push_back(pendingTransaction);
-                    } else {
-                       pendingTransaction->unreserveTransaction(); 
-                    }
+                    threadMempool.push_back(pendingTransaction);
                 }
             }
             

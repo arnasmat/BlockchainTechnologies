@@ -5,6 +5,7 @@
 
 #include "Blockchain/Transaction.h"
 #include "Blockchain/User.h"
+#include "Blockchain/UTXO.h"
 
 namespace blockchainRandomGenerator {
     std::vector<User *> generateUsers(const unsigned int numberOfUsers) {
@@ -36,7 +37,13 @@ namespace blockchainRandomGenerator {
 
             const User *receiver{users[userDistrib(gen)]};
             Transaction *transaction = new Transaction(sender->getPublicKey(), receiver->getPublicKey(), amount);
-            transactions.push_back(transaction);
+            std::vector<Utxo *> chosenUtxos = std::move(UtxoSystem::getInstance().findUtxosThatSatisfySum(sender->getPublicKey(), amount));
+            if(chosenUtxos.size()) { 
+                transaction->fillTransaction(chosenUtxos);
+                transactions.push_back(transaction);
+            } else {
+                delete transaction;
+            }
             i++;
         }
         return transactions;

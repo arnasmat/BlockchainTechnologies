@@ -30,17 +30,14 @@ public:
             return {}; //treated as false
         }
 
-        //safer due to the multi-threading
-        std::vector<Utxo *> sortedUtxos = userUtxos[sendersPK];
-
-        std::sort(sortedUtxos.begin(), sortedUtxos.end(), [](Utxo *x, Utxo *y) {
+        std::sort(userUtxos[sendersPK].begin(), userUtxos[sendersPK].end(), [](Utxo *x, Utxo *y) {
             return x->getAmount() > y->getAmount();
         });
 
         std::vector<Utxo *> pendingUtxos{};
         double achievedSum = 0;
 
-        for (auto &utxo: sortedUtxos) {
+        for (auto &utxo: userUtxos[sendersPK]) {
             if (achievedSum < neededAmount) {
                 if(utxo->reserveUtxo()) {
                     achievedSum += utxo->getAmount();
