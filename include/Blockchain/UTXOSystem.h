@@ -37,25 +37,24 @@ public:
         std::vector<Utxo *> pendingUtxos{};
         double achievedSum = 0;
 
-        size_t index = 0;
-        for (const auto &utxo: userUtxos[sendersPK]) {
+        for (auto &utxo: userUtxos[sendersPK]) {
             if (achievedSum < neededAmount) {
-                achievedSum += utxo->getAmount();
-                pendingUtxos.push_back(utxo);
-                index++;
+                if(utxo->reserveUtxo()) {
+                    achievedSum += utxo->getAmount();
+                    pendingUtxos.push_back(utxo);
+                }
             } else {
                 break;
             }
         }
 
         if (achievedSum < neededAmount) {
+            for(auto &utxo : pendingUtxos) {
+                utxo->unreserveUtxo();
+            }
             return {}; //treated as false
         }
 
-        userUtxos[sendersPK].erase(userUtxos[sendersPK].begin(), userUtxos[sendersPK].begin() + index);
-        if (userUtxos[sendersPK].size() == 0) {
-            userUtxos.erase(sendersPK);
-        }
         return pendingUtxos;
     }
 
@@ -65,16 +64,18 @@ public:
         }
     }
 
-    void deleteUtxo(const std::string &senderPk, Utxo *utxoToBeDeleted) {
-        if (userUtxos.find(senderPk) != userUtxos.end()) {
-            auto iter = std::find(userUtxos[senderPk].begin(), userUtxos[senderPk].end(), utxoToBeDeleted);
+    void deleteUtxo(const std::string &senderPk, std::vector<Utxo*> utxosToBeDeleted) {
+        for(auto &utxo : utxosToBeDeleted) {
+            auto iter = std::find(userUtxos[senderPk].begin(), userUtxos[senderPk].end(), utxo);
             if (iter != userUtxos[senderPk].end()) {
                 userUtxos[senderPk].erase(iter);
-                delete utxoToBeDeleted;
-                if (userUtxos[senderPk].empty()) {
-                    userUtxos.erase(senderPk);
-                }
+                delete utxo;
+            } else {
+                std::cerr << "Warning: Attempted to delete non-existent UTXO" << std::endl;
             }
+        }
+        if (userUtxos[senderPk].empty()) {
+            userUtxos.erase(senderPk);
         }
     }
 

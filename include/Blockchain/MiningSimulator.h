@@ -8,6 +8,7 @@
 #include "Blockchain.h"
 #include "SystemAlgorithm.h"
 #include "User.h"
+#include "UTXOSystem.h"
 
 
 class MiningSimulator : SystemAlgorithm {
@@ -50,7 +51,8 @@ private:
 public:
     MiningSimulator(const std::vector<User *> &_users): users(_users) {
         isMining = true;
-        genesisBlock = new Block(nullptr, users.at(0)->getPublicKey(), "1.0", 0, {});
+        std::vector<Transaction *> emptyVector{};
+        genesisBlock = new Block(nullptr, users.at(0)->getPublicKey(), "1.0", 0, emptyVector);
     };
 
     void stopMining() {
@@ -63,35 +65,72 @@ public:
 
 
     Block *mineBlockParallel(
-        std::vector<Transaction *> &processedTransactions,
+        std::vector<Transaction *> &mempool,
         const Block *previousBlock
     ) {
         bool blockFound{false};
         Block *minedBlock = nullptr;
 
         // TODO: make sure this works with for example difficulty 1
-#pragma omp parallel default(none) shared(blockFound, minedBlock, previousBlock, processedTransactions, users, isMining)
+
+        if(mempool.size()) {
+            omp_set_num_threads(4);
+        }
+
+#pragma omp parallel default(none) shared(blockFound, minedBlock, previousBlock, mempool, users, isMining)
         {
             int threadId = omp_get_thread_num();
             const User *miner = users[threadId % users.size()]; // kzn random priskiriam zmogui
             int nonce = threadId * 1000000;
 
+            std::vector<Transaction*> threadMempool{};
+            threadMempool.reserve(100);
+
+            for (size_t i = threadId; i < std::min(mempool.size(), size_t(100)); i+=omp_get_num_threads()) 
+            {
+                Transaction *pendingTransaction = mempool[i];
+                if(pendingTransaction->reserveTransaction()) {
+                    threadMempool.push_back(pendingTransaction);
+                }
+            }
+            
             while (isMining && !blockFound) {
                 Block *localBlock = new Block(previousBlock, miner->getPublicKey(), SYSTEM_VERSION, nonce++,
-                                              processedTransactions);
+                                              threadMempool);
 
                 if (!localBlock->isBlockValid()) {
                     delete localBlock;
                 } else {
-                    if (blockFound || previousBlock->getHeight() >= localBlock->getHeight()) {
-                        delete localBlock;
-                    } else {
-                        minedBlock = localBlock;
-                        announceNewBlock(minedBlock);
-                        blockFound = true;
+                    #pragma omp critical
+                    {
+                        if (!blockFound) {
+                            minedBlock = localBlock;
+                            for(auto &transaction : minedBlock->getTransactions()) {
+                                transaction->updateTransactionUtxosAfterBeingMined();
+                            }
+                            announceNewBlock(minedBlock);
+                            blockFound = true;
+                        } else {
+                            delete localBlock;
+                        }
                     }
                 }
             }
+        }
+
+        if (minedBlock) {
+            auto minedTxs = minedBlock->getTransactions();
+            mempool.erase(
+                std::remove_if(mempool.begin(), mempool.end(),
+                    [&minedTxs](Transaction* tx) {
+                        return std::find(minedTxs.begin(), minedTxs.end(), tx) != minedTxs.end();
+                    }),
+                mempool.end()
+            );
+        }     
+        
+        for (auto* tx : mempool) {
+            tx->unreserveTransaction();
         }
 
         return minedBlock;
