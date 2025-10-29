@@ -1,7 +1,6 @@
-#include "../../include/CLI/TestingFileGenerator.h"
+#include "../../include/HashAlg/CLI/TestingFileGenerator.h"
 
 namespace TestingFileGenerator {
-
     void generateAllFiles() {
         removeOldTestFiles();
 
@@ -24,7 +23,7 @@ namespace TestingFileGenerator {
     }
 
     // File names shortened to MRS - Many Random Symbols
-    void generateManyRandomSymbolsFiles(std::mt19937& rng, const std::string& validSymbols) {
+    void generateManyRandomSymbolsFiles(std::mt19937 &rng, const std::string &validSymbols) {
         std::filesystem::path testDir("../data/input/test/MRS/");
         ensureTestFolders(testDir);
 
@@ -35,13 +34,13 @@ namespace TestingFileGenerator {
 
     // Similar to MRS, but it creates one MRS file and randomly modifies one symbol in it
     // File names shortened to SSM - Similar Symbols Modification
-    void generateSimilarSymbolsFiles(std::mt19937& rng, const std::string& validSymbols) {
+    void generateSimilarSymbolsFiles(std::mt19937 &rng, const std::string &validSymbols) {
         std::filesystem::path testDir("../data/input/test/SSM/");
         ensureTestFolders(testDir);
 
         std::filesystem::path baseFilePathNoTxt{manyRandomSymbolsFileGen(rng, testDir, validSymbols)};
 
-        for (int i=0; i<10; i++) {
+        for (int i = 0; i < 10; i++) {
             modifyRandomSymbol(rng, baseFilePathNoTxt, validSymbols);
         }
     }
@@ -63,9 +62,9 @@ namespace TestingFileGenerator {
             "../data/input/test/SSM/",
             "../data/input/test/EF/"
         };
-        for (const auto& dir : testDirs) {
+        for (const auto &dir: testDirs) {
             if (std::filesystem::exists(dir)) {
-                for (const auto& entry : std::filesystem::directory_iterator(dir)) {
+                for (const auto &entry: std::filesystem::directory_iterator(dir)) {
                     if (entry.is_regular_file()) {
                         std::filesystem::remove(entry.path());
                     }
@@ -75,8 +74,8 @@ namespace TestingFileGenerator {
     }
 
     std::filesystem::path manyRandomSymbolsFileGen(std::mt19937 &rng,
-                                                                         const std::filesystem::path &testDir,
-                                                                         const std::string &validSymbols) {
+                                                   const std::filesystem::path &testDir,
+                                                   const std::string &validSymbols) {
         std::string outputContent{};
         int fileLenght = std::uniform_int_distribution<int>(1000, 10000)(rng);
         for (int i = 0; i < fileLenght; i++) {
@@ -91,7 +90,8 @@ namespace TestingFileGenerator {
         return testFileNameNoTxt;
     }
 
-    void modifyRandomSymbol(std::mt19937 &rng, const std::filesystem::path &testFileNameNoTxt, const std::string &validSymbols) {
+    void modifyRandomSymbol(std::mt19937 &rng, const std::filesystem::path &testFileNameNoTxt,
+                            const std::string &validSymbols) {
         // this one is vibe coded i was too lazy
         std::ifstream in(testFileNameNoTxt.string() + ".txt");
         std::string content((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
@@ -116,8 +116,7 @@ namespace TestingFileGenerator {
     }
 
 
-
-    void openUniqueFile(const std::filesystem::path& testFileNameNoTxt, std::ofstream& out) {
+    void openUniqueFile(const std::filesystem::path &testFileNameNoTxt, std::ofstream &out) {
         if (!std::filesystem::exists(testFileNameNoTxt.string() + ".txt")) {
             out.open(testFileNameNoTxt.string() + ".txt");
         } else {

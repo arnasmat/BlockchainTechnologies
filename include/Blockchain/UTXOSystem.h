@@ -25,6 +25,14 @@ public:
         return instance;
     }
 
+    std::vector<Utxo *> getUtxosForUser(const std::string &userPK) const {
+        auto it = userUtxos.find(userPK);
+        if (it != userUtxos.end()) {
+            return it->second;
+        }
+        return {};
+    }
+
     std::vector<Utxo *> findUtxosThatSatisfySum(const std::string &sendersPK, double neededAmount) {
         if (userUtxos.find(sendersPK) == userUtxos.end()) {
             return {}; //treated as false

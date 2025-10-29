@@ -1,4 +1,4 @@
-#include "../../include/CLI/HashTests.h"
+#include "../../include/HashAlg/CLI/HashTests.h"
 
 #include <map>
 #include <unordered_map>
@@ -250,7 +250,7 @@ namespace HashTests {
 
     double calculateSimilarityPercentage(std::string hash1, std::string hash2) {
         if (hash1.length() != hash2.length()) {
-            std::cerr<<"Hashes are of different length\n";
+            std::cerr << "Hashes are of different length\n";
             throw std::runtime_error("Hashes are of different length");
         }
 
@@ -267,13 +267,13 @@ namespace HashTests {
 
     double calculateSimilarityPercentageBit(std::string hash1, std::string hash2) {
         if (hash1.length() != hash2.length()) {
-            std::cerr<<"Hashes are of different length\n";
+            std::cerr << "Hashes are of different length\n";
             throw std::runtime_error("Hashes are of different length");
         }
 
         int identicalBits{0};
         const int totalBits{static_cast<int>(hash1.length() * 4)};
-        std::map<char, std::bitset<4>> charToBits = {
+        std::map<char, std::bitset<4> > charToBits = {
             {'0', 0x0},
             {'1', 0x1},
             {'2', 0x2},
@@ -293,8 +293,8 @@ namespace HashTests {
         };
 
         for (int i = 0; i < hash2.length(); i++) {
-            const std::bitset<4> bits1 {charToBits.at(hash1[i])};
-            const std::bitset<4> bits2 {charToBits.at(hash2[i])};
+            const std::bitset<4> bits1{charToBits.at(hash1[i])};
+            const std::bitset<4> bits2{charToBits.at(hash2[i])};
 
             for (int j = 0; j < 4; j++) {
                 const bool bit1 = bits1.test(j);
