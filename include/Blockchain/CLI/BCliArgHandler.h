@@ -37,5 +37,7 @@ void generateUsers(const unsigned int numberOfUsers);
 
 void generateTransactions(const unsigned int numberOfTransactions, const std::vector<class User *> &users);
 
+std::vector<User *> generateAndSaveUsersToFile(const unsigned int numberOfUsers, std::filesystem::path outputFolder);
+
 
 #endif //BCLIARGHANDLER_H

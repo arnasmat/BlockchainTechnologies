@@ -17,9 +17,13 @@ BArgsToRun handleBCliInput(int argc, char *argv[]) {
         if (arg == "-h" || arg == "--help") {
             args.help = true;
             return args;
-        } else if ((arg == "-r" || arg == "--read") && i + 1 < argc) {
+        }
+        if ((arg == "-r" || arg == "--read") && i + 1 < argc) {
             args.inputFolderPath = std::filesystem::path(argv[++i]);
-        } else if ((arg == "-o" || arg == "--output") && i + 1 < argc) {
+            args.outputFolderPath = args.inputFolderPath;
+            return args;
+        }
+        if ((arg == "-o" || arg == "--output") && i + 1 < argc) {
             args.outputFolderPath = std::filesystem::path(argv[++i]);
         } else if ((arg == "-u" || arg == "--users") && i + 1 < argc) {
             args.numberOfUsers = std::stoi(argv[++i]);
@@ -81,35 +85,21 @@ void handleFileGeneration(const BArgsToRun &argsToRun) {
         std::filesystem::create_directories(argsToRun.outputFolderPath);
     }
 
-    // Create blocks subdirectory
     std::filesystem::path blocksFolder = argsToRun.outputFolderPath / "blocks";
     if (!std::filesystem::exists(blocksFolder)) {
         std::filesystem::create_directories(blocksFolder);
     }
-
-    std::cout << "Generating " << argsToRun.numberOfUsers << " users...\n";
-    std::vector<User *> users = blockchainRandomGenerator::generateUsers(argsToRun.numberOfUsers);
-
-    // Save users immediately (IDs only)
-    std::filesystem::path usersFile = argsToRun.outputFolderPath / "users.txt";
-    std::ofstream usersOutFile(usersFile);
-    if (usersOutFile.is_open()) {
-        for (const auto *user: users) {
-            usersOutFile << user->getPublicKey() << "\n";
-        }
-        usersOutFile.close();
-        std::cout << "Users saved to " << usersFile << "\n";
-    }
+    std::vector<User *> users = generateAndSaveUsersToFile(argsToRun.numberOfUsers, argsToRun.outputFolderPath);
 
     std::cout << "Starting mining simulation...\n";
     MiningSimulator mineSim(users);
     Block *previousBlock = mineSim.getGenesisBlock();
 
     unsigned int blocksMined = 0;
-    bool mineIndefinitely = (argsToRun.numberOfBlocks == 0);
-    unsigned int blocksBeforeTransactions = mineIndefinitely ? 50 : argsToRun.numberOfBlocks;
 
-    // Phase 1: Mine blocks to build UTXO pool
+    bool mineIndefinitely = (argsToRun.numberOfBlocks == 0);
+    unsigned int blocksBeforeTransactions = mineIndefinitely ? BLOCKS_BEFORE_TRANSACTIONS : argsToRun.numberOfBlocks;
+
     std::cout << "Mining " << blocksBeforeTransactions << " blocks to build UTXO pool...\n";
     while (blocksMined < blocksBeforeTransactions) {
         std::vector<Transaction *> emptyTransactions;
@@ -178,6 +168,24 @@ void handleFileGeneration(const BArgsToRun &argsToRun) {
     std::cout << "\nMining complete. Mined " << blocksMined << " blocks.\n";
     std::cout << "Generated " << transactions.size() << " transactions.\n";
     std::cout << "Output saved to " << argsToRun.outputFolderPath << "\n";
+}
+
+std::vector<User *> generateAndSaveUsersToFile(const unsigned int numberOfUsers, std::filesystem::path outputFolder) {
+    std::cout << "Generating " << numberOfUsers << " users...\n";
+    std::vector<User *> users = blockchainRandomGenerator::generateUsers(numberOfUsers);
+
+    std::filesystem::path usersFile = outputFolder / "users.txt";
+    std::ofstream usersOutFile(usersFile);
+    if (usersOutFile.is_open()) {
+        for (const auto *user: users) {
+            usersOutFile << user->getPublicKey() << "\n";
+        }
+        usersOutFile.close();
+        std::cout << "Users saved to " << usersFile << "\n";
+    } else {
+        std::cerr << "Unable to open file oopsie daisy!\n";
+    }
+    return users;
 }
 
 
