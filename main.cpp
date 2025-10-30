@@ -4,6 +4,7 @@
 #include "Blockchain/Blockchain.h"
 #include "Blockchain/MiningSimulator.h"
 #include "Blockchain/User.h"
+#include "Blockchain/HeadBlock.h"
 
 constexpr unsigned int NUMBER_OF_USERS{10};
 
@@ -12,9 +13,9 @@ int main() {
 
     MiningSimulator mineSim(users);
     std::vector<Transaction *> processedTransactions{};
-    Block *previousBlock = mineSim.getGenesisBlock();
+    mineSim.getGenesisBlock();
     for (int i = 0; i < 50; i++) {
-        previousBlock = mineSim.mineBlockParallel(processedTransactions, previousBlock);
+        mineSim.mineBlockParallel(processedTransactions, HeadBlock::getInstance().getHeadBlock());
     }
 
     for (int i = 0; i < 5; i++) {
@@ -39,7 +40,7 @@ int main() {
     std::cout<<"Amount of transactions to be processed: "<<mempool.size()<<std::endl;
 
     while(mempool.size()) {
-        previousBlock = mineSim.mineBlockParallel(mempool, previousBlock);
+        mineSim.mineBlockParallel(mempool, HeadBlock::getInstance().getHeadBlock());
     }
 
     for(auto &user : users) {
