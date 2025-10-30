@@ -3,13 +3,14 @@
 #include <queue>
 #include <random>
 #include <vector>
+#include <set>
 #include <omp.h>
 
 #include "Blockchain.h"
 #include "SystemAlgorithm.h"
 #include "User.h"
 #include "UTXOSystem.h"
-
+#include "HeadBlock.h"
 
 class MiningSimulator : SystemAlgorithm {
 private:
@@ -53,6 +54,7 @@ public:
         isMining = true;
         std::vector<Transaction *> emptyVector{};
         genesisBlock = new Block(nullptr, users.at(0)->getPublicKey(), "1.0", 0, emptyVector);
+        HeadBlock::getInstance().updateHeadBlock(genesisBlock);
     };
 
     void stopMining() {
@@ -71,12 +73,6 @@ public:
         bool blockFound{false};
         Block *minedBlock = nullptr;
 
-        // TODO: make sure this works with for example difficulty 1
-
-        if(mempool.size()) {
-            omp_set_num_threads(4);
-        }
-
 #pragma omp parallel default(none) shared(blockFound, minedBlock, previousBlock, mempool, users, isMining)
         {
             int threadId = omp_get_thread_num();
@@ -86,15 +82,19 @@ public:
             std::vector<Transaction*> threadMempool{};
             threadMempool.reserve(100);
 
-            for (size_t i = threadId; i < std::min(mempool.size(), size_t(100)); i+=omp_get_num_threads()) 
-            {
-                Transaction *pendingTransaction = mempool[i];
-                if(pendingTransaction->reserveTransaction()) {
-                    threadMempool.push_back(pendingTransaction);
-                }
-            }
-            
-            while (isMining && !blockFound) {
+            static std::random_device rd;
+            std::mt19937 gen(rd() + threadId);
+            std::uniform_int_distribution<> distrib(0, users.size() - 1);
+
+            for(int i=0; i < std::min(size_t(10), mempool.size()); i++) {
+                Transaction *pendingTransaction = mempool[distrib(gen)%mempool.size()];
+                threadMempool.push_back(pendingTransaction);
+            }  
+
+            sort(threadMempool.begin(), threadMempool.end());
+            threadMempool.erase(unique(threadMempool.begin(), threadMempool.end()), threadMempool.end());
+    
+            while(isMining && !blockFound) {
                 Block *localBlock = new Block(previousBlock, miner->getPublicKey(), SYSTEM_VERSION, nonce++,
                                               threadMempool);
 
@@ -105,9 +105,7 @@ public:
                     {
                         if (!blockFound) {
                             minedBlock = localBlock;
-                            for(auto &transaction : minedBlock->getTransactions()) {
-                                transaction->updateTransactionUtxosAfterBeingMined();
-                            }
+                            HeadBlock::getInstance().updateHeadBlock(minedBlock);
                             announceNewBlock(minedBlock);
                             blockFound = true;
                         } else {
@@ -128,10 +126,6 @@ public:
                 mempool.end()
             );
         }     
-        
-        for (auto* tx : mempool) {
-            tx->unreserveTransaction();
-        }
 
         return minedBlock;
     }
