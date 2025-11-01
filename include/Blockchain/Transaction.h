@@ -74,7 +74,6 @@ public:
     void updateTransactionUtxosAfterBeingFinalised() {
         UtxoSystem::getInstance().deleteUtxo(senderPublicKey, userUtxos);
         UtxoSystem::getInstance().addNewUtxos(outputs, this);
-
     }
 
 };

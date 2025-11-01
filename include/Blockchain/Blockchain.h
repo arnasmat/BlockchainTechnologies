@@ -107,8 +107,8 @@ public:
         return transactions;
     }
 
-    void updateNonce() {
-        nonce++;
+    void updateNonce(int updateBy = 1) {
+        nonce += updateBy;
     }
 
     bool finaliseBlock() {

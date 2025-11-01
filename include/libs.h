@@ -15,5 +15,6 @@ constexpr unsigned int TARGET_TOLERANCE = 2;
 constexpr unsigned int INITIAL_REWARD = 100;
 constexpr unsigned int HEIGHT_FOR_HALVING_REWARD = 20;
 constexpr unsigned int NUMBER_OF_BLOCKS_IN_FRONT_TO_VALIDATE = 6;
+constexpr unsigned int MAX_TRANSACTIONS_IN_BLOCK = 100;
 
 #endif //LIBS_H

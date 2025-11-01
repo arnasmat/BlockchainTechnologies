@@ -5,6 +5,7 @@
 #include "Blockchain/MiningSimulator.h"
 #include "Blockchain/User.h"
 #include "Blockchain/HeadBlock.h"
+#include "Blockchain/TransactionQueue.h"
 
 constexpr unsigned int NUMBER_OF_USERS{10};
 
@@ -37,10 +38,14 @@ int main() {
     //     std::cout << "  Total amount to be transferred: " << totalTransferred << "\n";
     // }
 
+    TransactionQueue::findPossibleMempoolTransaction(mempool);
     std::cout<<"Amount of transactions to be processed: "<<mempool.size()<<std::endl;
 
     while(mempool.size()) {
-        mineSim.mineBlockParallel(mempool, HeadBlock::getInstance().getHeadBlock());
+        std::vector<Transaction*> batchMempool = TransactionQueue::pickValidTransactions(mempool, MAX_TRANSACTIONS_IN_BLOCK);
+        std::cout << "batch size of transactions taken (without coinbase transaction): "<< batchMempool.size() <<", total transactions in mempool left: " << mempool.size() << std::endl;
+        mineSim.mineBlockParallel(batchMempool, HeadBlock::getInstance().getHeadBlock());
+        TransactionQueue::freeMempoolFromMinedTransaction(mempool);
     }
 
     for(auto &user : users) {

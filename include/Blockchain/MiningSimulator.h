@@ -4,6 +4,7 @@
 #include <random>
 #include <vector>
 #include <set>
+#include <atomic>
 #include <omp.h>
 
 #include "Blockchain.h"
@@ -34,7 +35,7 @@ private:
                 << "Difficulty " << newBlock->getDifficultyTarget() << "\n"
                 << "Reward " << newBlock->calculateBlockReward() << "\n";
         const auto txs = newBlock->getTransactions();
-        ss << "This block contains the following transactions: \n";
+        ss << "This block contains the following "<<txs.size()<<" transactions: \n";
         for (const auto &tx: txs) {
             ss << "\nTransaction " << tx->getTransactionId() << ": \n";
             for (const auto &output: tx->getOutputs()) {
@@ -70,8 +71,9 @@ public:
         std::vector<Transaction *> &mempool,
         const Block *previousBlock
     ) {
-        bool blockFound{false};
+        isMining = true;
         Block *minedBlock = nullptr;
+        std::atomic<bool> blockFound = false; //first to mine a block in a batch gets accepted
 
 #pragma omp parallel default(none) shared(blockFound, minedBlock, previousBlock, mempool, users, isMining)
         {
@@ -86,46 +88,42 @@ public:
             std::mt19937 gen(rd() + threadId);
             std::uniform_int_distribution<> distrib(0, users.size() - 1);
 
-            for(int i=0; i < std::min(size_t(10), mempool.size()); i++) {
-                Transaction *pendingTransaction = mempool[distrib(gen)%mempool.size()];
+            for(int i=0; i < mempool.size(); i++) {
+                Transaction *pendingTransaction = mempool[i];
                 threadMempool.push_back(pendingTransaction);
             }  
 
-            sort(threadMempool.begin(), threadMempool.end());
-            threadMempool.erase(unique(threadMempool.begin(), threadMempool.end()), threadMempool.end());
-    
-            while(isMining && !blockFound) {
-                Block *localBlock = new Block(previousBlock, miner->getPublicKey(), SYSTEM_VERSION, nonce++,
+            Block *localBlock = new Block(previousBlock, miner->getPublicKey(), SYSTEM_VERSION, threadId,
                                               threadMempool);
 
+            while(isMining) {
                 if (!localBlock->isBlockValid()) {
-                    delete localBlock;
+                    localBlock->updateNonce(omp_get_num_threads());
                 } else {
-                    #pragma omp critical
-                    {
-                        if (!blockFound) {
-                            minedBlock = localBlock;
-                            HeadBlock::getInstance().updateHeadBlock(minedBlock);
-                            announceNewBlock(minedBlock);
-                            blockFound = true;
-                        } else {
-                            delete localBlock;
-                        }
+                    bool expected = false;
+                    if (blockFound.compare_exchange_strong(expected, true)) {
+                        minedBlock = localBlock;
+                        HeadBlock::getInstance().updateHeadBlock(minedBlock);
+                        announceNewBlock(minedBlock);
+                        isMining = false;
+                    } else {
+                        delete localBlock;
+                        break;
                     }
                 }
             }
         }
 
-        if (minedBlock) {
-            auto minedTxs = minedBlock->getTransactions();
-            mempool.erase(
-                std::remove_if(mempool.begin(), mempool.end(),
-                    [&minedTxs](Transaction* tx) {
-                        return std::find(minedTxs.begin(), minedTxs.end(), tx) != minedTxs.end();
-                    }),
-                mempool.end()
-            );
-        }     
+        // if (minedBlock) {
+        //     auto minedTxs = minedBlock->getTransactions();
+        //     mempool.erase(
+        //         std::remove_if(mempool.begin(), mempool.end(),
+        //             [&minedTxs](Transaction* tx) {
+        //                 return std::find(minedTxs.begin(), minedTxs.end(), tx) != minedTxs.end();
+        //             }),
+        //         mempool.end()
+        //     );
+        // }     
 
         return minedBlock;
     }
