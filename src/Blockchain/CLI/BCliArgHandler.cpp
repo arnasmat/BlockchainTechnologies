@@ -54,8 +54,9 @@ void printBHelpInfo() {
     std::cout << "Blockchain CLI - Usage:\n\n";
     std::cout << "  -h, --help                    Display this help message\n";
     std::cout <<
-            "  -r, --read <input_folder>     Read input from folder (requires users.txt, transactions.txt, blockchainHistory.txt)\n";
-    std::cout << "  -o, --output <output_folder>  Output folder (default: ./output)\n";
+            "  -r, --read <input_folder>     Read input from folder (requires " << USERS_FILE << " " <<
+            TRANSACTIONS_FILE << " and " << BLOCKS_DIRECTORY << ")\n";
+    std::cout << "  -o, --output <output_folder>  Output folder (default: " << DEFAULT_OUTPUT_DIR << ")\n";
     std::cout << "  -u, --users <number>          Number of users to generate (default: 1000)\n";
     std::cout << "  -b, --blocks <number>         Number of blocks to mine (default: 0 = mine until stopped)\n";
     std::cout << "  -t, --transactions <number>   Number of transactions to generate (default: 100000)\n\n";
@@ -65,14 +66,15 @@ void printBHelpInfo() {
 }
 
 void handleFileInput(const BArgsToRun &argsToRun) {
-    std::filesystem::path usersFile = argsToRun.inputFolderPath / "users.txt";
-    std::filesystem::path txFile = argsToRun.inputFolderPath / "transactions.txt";
-    std::filesystem::path blockchainFile = argsToRun.inputFolderPath / "blockchainHistory.txt";
+    std::filesystem::path usersFile = argsToRun.inputFolderPath / USERS_FILE;
+    std::filesystem::path txFile = argsToRun.inputFolderPath / TRANSACTIONS_FILE;
+    std::filesystem::path blocksDir = argsToRun.inputFolderPath / BLOCKS_DIRECTORY;
 
     if (!std::filesystem::exists(usersFile) ||
         !std::filesystem::exists(txFile) ||
-        !std::filesystem::exists(blockchainFile)) {
-        std::cerr << "Error: Input folder must contain users.txt, transactions.txt, and blockchainHistory.txt\n";
+        !std::filesystem::exists(blocksDir)) {
+        std::cerr << "Error: Input folder must contain " << USERS_FILE << " " << TRANSACTIONS_FILE << " and " <<
+                BLOCKS_DIRECTORY << "\n";
         return;
     }
 
@@ -85,10 +87,12 @@ void handleFileGeneration(const BArgsToRun &argsToRun) {
         std::filesystem::create_directories(argsToRun.outputFolderPath);
     }
 
-    std::filesystem::path blocksFolder = argsToRun.outputFolderPath / "blocks";
-    if (!std::filesystem::exists(blocksFolder)) {
-        std::filesystem::create_directories(blocksFolder);
+    std::filesystem::path blocksDir = argsToRun.outputFolderPath / BLOCKS_DIRECTORY;
+    if (!std::filesystem::exists(blocksDir)) {
+        std::filesystem::create_directories(blocksDir);
     }
+    // TODO: fix so it doesnt do it twice? idk how I should do it. currently it saves users twice. Once w/o utxos
+    // and once with. idk bro lmao
     std::vector<User *> users = generateAndSaveUsersToFile(argsToRun.numberOfUsers, argsToRun.outputFolderPath);
 
     std::cout << "Starting mining simulation...\n";
@@ -107,7 +111,7 @@ void handleFileGeneration(const BArgsToRun &argsToRun) {
         blocksMined++;
 
         // Save block in compact format
-        std::filesystem::path blockFile = blocksFolder / ("block_" + std::to_string(blocksMined) + ".txt");
+        std::filesystem::path blockFile = blocksDir / (std::to_string(blocksMined) + BLOCKS_FILE);
         std::ofstream outFile(blockFile);
         if (outFile.is_open()) {
             // Header line: Hash Miner Height Timestamp Difficulty TxCount
@@ -136,7 +140,7 @@ void handleFileGeneration(const BArgsToRun &argsToRun) {
         users, argsToRun.numberOfTransactions
     );
 
-    std::filesystem::path txFile = argsToRun.outputFolderPath / "transactions.txt";
+    std::filesystem::path txFile = argsToRun.outputFolderPath / TRANSACTIONS_FILE;
     std::ofstream txOutFile(txFile);
     if (txOutFile.is_open()) {
         for (const auto *tx: transactions) {
@@ -149,21 +153,7 @@ void handleFileGeneration(const BArgsToRun &argsToRun) {
         txOutFile.close();
     }
 
-    // Update users file with UTXOs
-    usersOutFile.open(usersFile, std::ios::trunc);
-    if (usersOutFile.is_open()) {
-        for (const auto *user: users) {
-            usersOutFile << user->getPublicKey() << "\n";
-            auto utxos = UtxoSystem::getInstance().getUtxosForUser(user->getPublicKey());
-            for (const auto *utxo: utxos) {
-                usersOutFile << utxo->getTransaction()->getTransactionId() << " "
-                        << utxo->getVout() << " "
-                        << utxo->getAmount() << "\n";
-            }
-            usersOutFile << "\n";
-        }
-        usersOutFile.close();
-    }
+    generateAndSaveUsersToFile(argsToRun.numberOfUsers, argsToRun.outputFolderPath);
 
     std::cout << "\nMining complete. Mined " << blocksMined << " blocks.\n";
     std::cout << "Generated " << transactions.size() << " transactions.\n";
@@ -174,12 +164,19 @@ std::vector<User *> generateAndSaveUsersToFile(const unsigned int numberOfUsers,
     std::cout << "Generating " << numberOfUsers << " users...\n";
     std::vector<User *> users = blockchainRandomGenerator::generateUsers(numberOfUsers);
 
-    std::filesystem::path usersFile = outputFolder / "users.txt";
+    std::filesystem::path usersFile = outputFolder / USERS_FILE;
     std::ofstream usersOutFile(usersFile);
     if (usersOutFile.is_open()) {
         for (const auto *user: users) {
             usersOutFile << user->getPublicKey() << "\n";
+            auto utxos = UtxoSystem::getInstance().getUtxosForUser(user->getPublicKey());
+            for (const auto *utxo: utxos) {
+                usersOutFile << utxo->getTransaction()->getTransactionId() << " "
+                        << utxo->getVout() << " "
+                        << utxo->getAmount() << "\n";
+            }
         }
+        usersOutFile << "\n";
         usersOutFile.close();
         std::cout << "Users saved to " << usersFile << "\n";
     } else {

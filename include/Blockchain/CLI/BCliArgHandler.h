@@ -3,6 +3,8 @@
 #include <filesystem>
 #include <vector>
 
+#include "libs.h"
+
 // h - overrides others. outputs help
 
 // -r <input_folder> : input from folder (Must have users.txt, transactions.txt and blockchainHistory.txt)
@@ -17,7 +19,7 @@ struct BArgsToRun {
     bool help = false; // -h --help
     std::filesystem::path inputFolderPath{""}; // -r <input_folder> --read <input_folder>
 
-    std::filesystem::path outputFolderPath{std::filesystem::path("./output")};
+    std::filesystem::path outputFolderPath{std::filesystem::path(DEFAULT_OUTPUT_DIR)};
     unsigned int numberOfUsers{1000};
     unsigned int numberOfBlocks{0}; // 0 - mine until app force close
     unsigned int numberOfTransactions{100000};

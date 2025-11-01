@@ -8,6 +8,13 @@
 
 constexpr std::string SYSTEM_NAME{"SYSTEM"};
 
+const std::string FILE_EXTENTION{".blkinf"};
+const std::string DEFAULT_OUTPUT_DIR{"output"};
+const std::string USERS_FILE{"users" + FILE_EXTENTION};
+const std::string TRANSACTIONS_FILE{"transactions" + FILE_EXTENTION};
+const std::string BLOCKS_DIRECTORY{"blocks"};
+const std::string BLOCKS_FILE{"_block" + FILE_EXTENTION};
+
 constexpr unsigned int DIFFICULTY_TARGET_INCREASE_INTERVAL = 10;
 constexpr unsigned int DEFAULT_DIFFICULTY = 12; // bits
 constexpr unsigned int TARGET_BLOCK_TIME = 5; //sec
@@ -16,5 +23,6 @@ constexpr unsigned int INITIAL_REWARD = 100;
 constexpr unsigned int HEIGHT_FOR_HALVING_REWARD = 20;
 
 constexpr unsigned int BLOCKS_BEFORE_TRANSACTIONS = 50;
+
 
 #endif //LIBS_H
