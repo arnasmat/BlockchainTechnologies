@@ -5,6 +5,7 @@
 #include <vector>
 #include <omp.h>
 
+#include "general.h"
 #include "Blockchain.h"
 #include "SystemAlgorithm.h"
 #include "User.h"
@@ -70,7 +71,7 @@ public:
         Block *minedBlock = nullptr;
 
         // TODO: make sure this works with for example difficulty 1
-#pragma omp parallel default(none) shared(blockFound, minedBlock, previousBlock, processedTransactions, users, isMining)
+#pragma omp parallel
         {
             int threadId = omp_get_thread_num();
             const User *miner = users[threadId % users.size()]; // kzn random priskiriam zmogui

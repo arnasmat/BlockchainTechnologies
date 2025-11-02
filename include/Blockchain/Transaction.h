@@ -9,7 +9,7 @@
 #include "HashAlg/HashGenInterface.h"
 #include "UTXO.h"
 #include "UTXOSystem.h"
-#include "libs.h"
+#include "general.h"
 
 class Transaction : SystemAlgorithm {
     std::string transactionId{};

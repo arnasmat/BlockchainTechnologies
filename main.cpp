@@ -1,5 +1,5 @@
 
-#include "libs.h"
+#include "general.h"
 #include "RandomGenerator.h"
 #include "Blockchain/Blockchain.h"
 #include "Blockchain/MiningSimulator.h"

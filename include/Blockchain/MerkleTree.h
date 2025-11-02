@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "HashAlg/HashGenInterface.h"
-#include "libs.h"
+#include "general.h"
 #include "SystemAlgorithm.h"
 #include "Transaction.h"
 

@@ -3,7 +3,7 @@
 
 #include "Helper.h"
 #include "MerkleTree.h"
-#include "libs.h"
+#include "general.h"
 #include "Transaction.h"
 
 class Block : public SystemAlgorithm {
@@ -133,7 +133,7 @@ private:
             return std::max(1, static_cast<int>(currentDifficulty) - 1);
         }
         if (averageBlockTime < TARGET_BLOCK_TIME - TARGET_TOLERANCE) {
-            return std::min(static_cast<int>(currentDifficulty) + 1, static_cast<int>(MAX_HASH_LENGTH) * 4);
+            return std::min(static_cast<int>(currentDifficulty) + 1, static_cast<int>(HASH_LENGTH) * 4);
         }
 
         return currentDifficulty;

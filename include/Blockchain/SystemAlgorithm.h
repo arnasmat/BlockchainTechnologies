@@ -6,15 +6,28 @@
 #define SYSTEMALGORITHM_H
 #include "HashAlg/HashGenInterface.h"
 #include "HashAlg/MatrixHash.h"
+#include "HashAlg/VibeHash.h"
+#include "general.h"
+
 
 class SystemAlgorithm {
 protected:
     HashGenInterface *hash;
-    static constexpr unsigned short int MAX_HASH_LENGTH{64};
-    const std::string SYSTEM_VERSION{"1.0"};
 
-    SystemAlgorithm(): hash(new MatrixHash()) {
+    SystemAlgorithm() {
+        switch (HASH_TYPE) {
+            case HUMAN:
+                hash = new HumanHash();
+                break;
+            case VIBE:
+                hash = new VibeHash();
+                break;
+            case MATRIX:
+                hash = new MatrixHash();
+                break;
+        }
     }
+
 
     ~SystemAlgorithm() {
         delete hash;
