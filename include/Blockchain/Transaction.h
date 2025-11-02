@@ -4,6 +4,7 @@
 #include <string>
 #include <utility>
 #include <ctime>
+#include <atomic>
 
 #include "SystemAlgorithm.h"
 #include "HashAlg/HashGenInterface.h"
@@ -12,36 +13,42 @@
 #include "general.h"
 
 class Transaction : SystemAlgorithm {
+
+    std::string content{};
     std::string transactionId{};
     std::string senderPublicKey{};
     std::vector<std::pair<const Transaction *, unsigned int> > inputs;
     // transaction and index of valid output of other transaction
     std::vector<std::pair<double, std::string> > outputs; // amount and public key of receiver
     std::time_t transactionTime{time(nullptr)};
+    std::vector<Utxo*> userUtxos;
 
 public:
-    Transaction(const std::string &senderPk, const std::string &receiverPk, const double amount,
-                const std::vector<Utxo *> &chosenUtxos)
+    Transaction(const std::string &senderPk, const std::string &receiverPk, const double amount)
         : senderPublicKey(senderPk) {
-        std::string content{std::to_string(transactionTime) + std::to_string(amount)};
+            outputs.push_back({amount, receiverPk});
+            content += std::to_string(transactionTime) + std::to_string(amount);
+            transactionId = hash->generateHash(senderPublicKey + content); //will be used if it is a coinbase transaction
+    }
+
+    //if user has enough utxos for this transaction, we associate these utxos with this transaction
+    void fillTransaction(const std::vector<Utxo *> &chosenUtxos) {
+        userUtxos = std::move(chosenUtxos);
         double achievedSum = 0;
-        for (auto &eachUtxo: chosenUtxos) {
+        for (auto &eachUtxo: userUtxos) {
             inputs.push_back({eachUtxo->getTransaction(), eachUtxo->getVout()});
             achievedSum += eachUtxo->getAmount();
-            content += eachUtxo->getTransaction()->getTransactionId() + std::to_string(time(nullptr));
-            //so that every transasctionID be different
-            UtxoSystem::getInstance().deleteUtxo(senderPk, eachUtxo); // TODO: delete only when block is mined
+            content += eachUtxo->getTransaction()->getTransactionId();
         }
-        outputs.push_back({amount, receiverPk});
-        if (senderPk != SYSTEM_NAME) {
-            double fee = achievedSum - amount;
+
+        if (senderPublicKey != SYSTEM_NAME) {
+            double fee = achievedSum - outputs[0].first;
             if (fee > 0) {
                 content += std::to_string(fee);
-                outputs.push_back({fee, senderPk}); // so far it is simply being sent back to sender as change
+                outputs.push_back({fee, senderPublicKey}); // so far it is simply being sent back to sender as change
             }
         }
-        transactionId = hash->generateHash(senderPublicKey + receiverPk + content);
-        UtxoSystem::getInstance().addNewUtxos(outputs, this);
+        transactionId = hash->generateHash(senderPublicKey + outputs[0].second + content);
     }
 
     std::string getTransactionId() const {
@@ -63,6 +70,12 @@ public:
     const std::vector<std::pair<double, std::string> > &getOutputs() const {
         return outputs;
     }
+
+    void updateTransactionUtxosAfterBeingFinalised() {
+        UtxoSystem::getInstance().deleteUtxo(senderPublicKey, userUtxos);
+        UtxoSystem::getInstance().addNewUtxos(outputs, this);
+    }
+
 };
 
 #endif //TRANSACTION_H

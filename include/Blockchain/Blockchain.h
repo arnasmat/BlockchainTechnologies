@@ -18,6 +18,7 @@ class Block : public SystemAlgorithm {
     unsigned int nonce;
     std::string merkleRootHash;
     const unsigned short int difficultyTarget;
+    std::atomic<bool> isFinal= false;
 
     // Body
     std::vector<Transaction *> transactions;
@@ -25,7 +26,7 @@ class Block : public SystemAlgorithm {
 public:
     Block(const Block *previousBlock, const std::string &minerPk, const std::string version,
           const unsigned int nonce,
-          std::vector<Transaction *> transactions)
+          const std::vector<Transaction *> &transactions)
         : previousBlock(previousBlock),
           previousBlockHash(previousBlock
                                 ? previousBlock->getBlockHash()
@@ -35,13 +36,14 @@ public:
           version(version),
           nonce(nonce),
           difficultyTarget(calculateDifficulty()),
-          transactions(std::move(transactions)) {
+          transactions(transactions) {
         timestamp = time(nullptr);
         // TODO: terrible to insert it at the start but whatever, max n is 100
         this->transactions.insert(this->transactions.begin(),
-                                  new Transaction(SYSTEM_NAME, minerPk, calculateBlockReward(), {}));
+                                  new Transaction(SYSTEM_NAME, minerPk, calculateBlockReward()));
         merkleRootHash = merkleTree.calculateMerkleTreeHash(this->transactions);
     }
+    //since block is created and deleted many times, we need the transactions which are being passed and cannot use std::move in constructor
 
     std::string getBlockAsString() const {
         return previousBlockHash + std::to_string(timestamp) + version +
@@ -105,8 +107,13 @@ public:
         return transactions;
     }
 
-    void updateNonce() {
-        nonce++;
+    void updateNonce(int updateBy = 1) {
+        nonce += updateBy;
+    }
+
+    bool finaliseBlock() {
+        bool expected = false;
+        return isFinal.compare_exchange_strong(expected, true);
     }
 
 private:

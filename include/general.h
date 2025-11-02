@@ -36,6 +36,8 @@ constexpr unsigned short HASH_LENGTH{getHashAlgorithmSize(HASH_TYPE)};
 constexpr std::string SYSTEM_NAME{"SYSTEM"};
 constexpr std::string SYSTEM_VERSION{"1.0"};
 
+constexpr unsigned int MAX_TRANSACTIONS_IN_BLOCK{100};
+
 
 const std::string FILE_EXTENTION{".blkinf"};
 const std::filesystem::path DEFAULT_OUTPUT_DIR{"output"};

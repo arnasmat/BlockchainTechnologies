@@ -3,14 +3,16 @@
 
 #include <vector>
 
-class User;
-class Transaction;
+#include "Blockchain/Transaction.h"
+#include "Blockchain/User.h"
+#include "Blockchain/UTXO.h"
 
 namespace blockchainRandomGenerator {
-    std::vector<User *> generateUsers(unsigned int numberOfUsers);
+    std::vector<User *> generateUsers(const unsigned int numberOfUsers);
 
     std::vector<Transaction *> generateValidTransactions(
-        const std::vector<User *> &users, unsigned int amountOfTransactions);
+        const std::vector<User *> &users, const unsigned int amountOfTransactions);
 }
 
-#endif //RANDOMGENERATOR_H
+
+#endif
