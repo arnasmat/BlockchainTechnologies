@@ -86,6 +86,15 @@ public:
         }
         return balance;
     }
+
+    int getNumberOfUtxos() {
+        int numberOfUtxos = 0;
+        for(auto &mapUtxo : userUtxos) {
+            numberOfUtxos += mapUtxo.second.size();
+        }
+        return numberOfUtxos;
+    }
+
 };
 
 #endif

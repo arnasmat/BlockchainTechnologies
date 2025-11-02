@@ -21,7 +21,6 @@ class Transaction : SystemAlgorithm {
     // transaction and index of valid output of other transaction
     std::vector<std::pair<double, std::string> > outputs; // amount and public key of receiver
     std::time_t transactionTime{time(nullptr)};
-    std::atomic<bool> isReserved = false;
     std::vector<Utxo*> userUtxos;
 
 public:
@@ -29,7 +28,7 @@ public:
         : senderPublicKey(senderPk) {
             outputs.push_back({amount, receiverPk});
             content += std::to_string(transactionTime) + std::to_string(amount);
-            //so that every transasctionID be different
+            transactionId = hash->generateHash(senderPublicKey + content); //will be used if it is a coinbase transaction
     }
 
     //if user has enough utxos for this transaction, we associate these utxos with this transaction
@@ -72,21 +71,9 @@ public:
         return outputs;
     }
 
-    void updateTransactionUtxosAfterBeingMined() {
+    void updateTransactionUtxosAfterBeingFinalised() {
         UtxoSystem::getInstance().deleteUtxo(senderPublicKey, userUtxos);
         UtxoSystem::getInstance().addNewUtxos(outputs, this);
-
-    }
-
-    //multi-thread safe appproach
-    bool reserveTransaction() {
-        bool expected = false;
-        return isReserved.compare_exchange_strong(expected, true);
-    }
-
-    //since only one thread has reserved this transaction, we can unreserve it this way 
-    void unreserveTransaction() {
-        isReserved = false;
     }
 
 };

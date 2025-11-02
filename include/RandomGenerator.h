@@ -33,17 +33,11 @@ namespace blockchainRandomGenerator {
                 continue;
             }
             std::uniform_real_distribution<double> amountDistrib(std::min(1.0, senderBalance), senderBalance);
-            double amount{amountDistrib(gen)/10};
+            double amount{amountDistrib(gen)/100};
 
             const User *receiver{users[userDistrib(gen)]};
             Transaction *transaction = new Transaction(sender->getPublicKey(), receiver->getPublicKey(), amount);
-            std::vector<Utxo *> chosenUtxos = std::move(UtxoSystem::getInstance().findUtxosThatSatisfySum(sender->getPublicKey(), amount));
-            if(chosenUtxos.size()) { 
-                transaction->fillTransaction(chosenUtxos);
-                transactions.push_back(transaction);
-            } else {
-                delete transaction;
-            }
+            transactions.push_back(transaction);  // ← FIXED: Actually add transaction to vector!
             i++;
         }
         return transactions;
@@ -51,4 +45,4 @@ namespace blockchainRandomGenerator {
 }
 
 
-#endif //RANDOMGENERATOR_H
+#endif

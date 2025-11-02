@@ -18,6 +18,7 @@ class Block : public SystemAlgorithm {
     unsigned int nonce;
     std::string merkleRootHash;
     const unsigned short int difficultyTarget;
+    std::atomic<bool> isFinal= false;
 
     // Body
     std::vector<Transaction *> transactions;
@@ -106,8 +107,13 @@ public:
         return transactions;
     }
 
-    void updateNonce() {
-        nonce++;
+    void updateNonce(int updateBy = 1) {
+        nonce += updateBy;
+    }
+
+    bool finaliseBlock() {
+        bool expected = false;
+        return isFinal.compare_exchange_strong(expected, true);
     }
 
 private:
