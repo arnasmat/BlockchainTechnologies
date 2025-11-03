@@ -36,16 +36,16 @@ private:
                 << "Difficulty " << newBlock->getDifficultyTarget() << "\n"
                 << "Reward " << newBlock->calculateBlockReward() << "\n";
         const auto txs = newBlock->getTransactions();
-        ss << "This block contains the following "<<txs.size()<<" transactions: \n";
-        for (const auto &tx: txs) {
-            ss << "\nTransaction " << tx->getTransactionId() << ": \n";
-            for (const auto &output: tx->getOutputs()) {
-                ss << "From: " << tx->getSenderPublicKey();
-                ss << ", To: " << output.second;
-                ss << ", Amount: " << output.first;
-                ss << "\n";
-            }
-        }
+        ss << "This block contains " << txs.size() << " transactions \n";
+        // for (const auto &tx: txs) {
+        //     ss << "\nTransaction " << tx->getTransactionId() << ": \n";
+        //     for (const auto &output: tx->getOutputs()) {
+        //         ss << "From: " << tx->getSenderPublicKey();
+        //         ss << ", To: " << output.second;
+        //         ss << ", Amount: " << output.first;
+        //         ss << "\n";
+        //     }
+        // }
         ss << "\n----------------------\n";
 
         std::cout << ss.str();
@@ -83,22 +83,22 @@ public:
             const User *miner = users[threadId % users.size()]; // kzn random priskiriam zmogui
             int nonce = threadId * 1000000;
 
-            std::vector<Transaction*> threadMempool{};
+            std::vector<Transaction *> threadMempool{};
             threadMempool.reserve(100);
 
             static std::random_device rd;
             std::mt19937 gen(rd() + threadId);
             std::uniform_int_distribution<> distrib(0, users.size() - 1);
 
-            for(int i=0; i < mempool.size(); i++) {
+            for (int i = 0; i < mempool.size(); i++) {
                 Transaction *pendingTransaction = mempool[i];
                 threadMempool.push_back(pendingTransaction);
             }
 
             Block *localBlock = new Block(previousBlock, miner->getPublicKey(), SYSTEM_VERSION, threadId,
-                                              threadMempool);
+                                          threadMempool);
 
-            while(isMining) {
+            while (isMining) {
                 if (!localBlock->isBlockValid()) {
                     localBlock->updateNonce(omp_get_num_threads());
                 } else {

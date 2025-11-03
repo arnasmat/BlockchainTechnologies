@@ -15,6 +15,8 @@
 // -b <number_of_blocks> : number of blocks to mine (default - mines until application stop)
 // -t <number_of_transactions> : number of transactions to generate (default 100000)
 
+class MiningSimulator;
+class Transaction;
 class Block;
 
 struct BArgsToRun {
@@ -44,14 +46,24 @@ void generateTransactions(const unsigned int numberOfTransactions, const std::ve
 
 std::vector<User *> generateAndSaveUsersToFile(const unsigned int numberOfUsers, std::filesystem::path outputFolder);
 
-void saveBlockToFile(const std::filesystem::path &blocksDir, Block *previousBlock, unsigned int &blocksMined);
+void saveBlockToFile(const std::filesystem::path &blocksDir, Block *previousBlock, unsigned int &blockIndex);
 
-void generateAndSaveMempool(const unsigned int numberOfTransactions, const std::vector<User *> &users,
-                            const std::filesystem::path &outputFolderPath);
+std::vector<Transaction *> generateAndSaveMempool(const unsigned int numberOfTransactions,
+                                                  const std::vector<User *> &users,
+                                                  const std::filesystem::path &outputFolderPath);
 
 bool doBlockchainFilesExist(const std::filesystem::path &folderPath);
 
 void generateBlockchainMetadata(std::filesystem::path outputDir);
+
+void continueMining(MiningSimulator &mineSim, std::vector<Transaction *> &mempool, Block *previousBlock,
+                    const std::filesystem::path &blocksDir,
+                    unsigned int startIndex,
+                    const unsigned int leftToMine);
+
+Block *miningHelper(MiningSimulator &mineSim, std::vector<Transaction *> &mempool, Block *previousBlock,
+                    const std::filesystem::path &blocksDir,
+                    unsigned int &fileIndex);
 
 
 #endif //BCLIARGHANDLER_H

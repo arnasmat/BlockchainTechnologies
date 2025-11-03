@@ -7,6 +7,7 @@
 #include "Blockchain/Transaction.h"
 #include "Blockchain/MiningSimulator.h"
 #include "Blockchain/Blockchain.h"
+#include "Blockchain/TransactionQueue.h"
 
 BArgsToRun handleBCliInput(int argc, char *argv[]) {
     BArgsToRun args;
@@ -61,6 +62,7 @@ void printBHelpInfo() {
     std::cout << "  -u, --users <number>          Number of users to generate (default: 1000)\n";
     std::cout << "  -b, --blocks <number>         Number of blocks to mine (default: 0 = mine until stopped)\n";
     std::cout << "  -t, --transactions <number>   Number of transactions to generate (default: 100000)\n\n";
+    // TODO: move consts used here
     // TODO: Add example usage
 }
 
@@ -105,33 +107,65 @@ void handleFileGeneration(const BArgsToRun &argsToRun) {
     MiningSimulator mineSim(users);
     Block *previousBlock = mineSim.getGenesisBlock();
 
-    unsigned int blocksMined = 0;
-
-    const bool mineIndefinitely = (argsToRun.numberOfBlocks == 0);
-    const unsigned int blocksBeforeTransactions = mineIndefinitely
-                                                      ? BLOCKS_BEFORE_TRANSACTIONS
-                                                      : argsToRun.numberOfBlocks;
-
+    bool shouldContinueMining = argsToRun.numberOfBlocks > BLOCKS_BEFORE_TRANSACTIONS || argsToRun.numberOfBlocks == 0;
+    unsigned int blocksBeforeTransactions = shouldContinueMining
+                                                ? BLOCKS_BEFORE_TRANSACTIONS
+                                                : argsToRun.numberOfBlocks;
     std::cout << "Mining " << blocksBeforeTransactions << " blocks to build UTXO pool...\n";
-    while (blocksMined < blocksBeforeTransactions) {
+    for (unsigned int blocksMined = 0; blocksMined < blocksBeforeTransactions; blocksMined++) {
         std::vector<Transaction *> emptyTransactions;
         previousBlock = mineSim.mineBlockParallel(emptyTransactions, previousBlock);
-        blocksMined++;
 
         saveBlockToFile(blocksDir, previousBlock, blocksMined);
     }
 
-    generateAndSaveMempool(argsToRun.numberOfTransactions, users, argsToRun.outputFolderPath);
+    std::vector<Transaction *> mempool = generateAndSaveMempool(argsToRun.numberOfTransactions, users,
+                                                                argsToRun.outputFolderPath);
 
     generateAndSaveUsersToFile(argsToRun.numberOfUsers, argsToRun.outputFolderPath);
 
     std::cout << "Initial output saved to " << argsToRun.outputFolderPath << "\n";
 
-    // TODO: Make this start mining the amount of blocks the user asked for
+    // TODO: Generic function for mining.
+    if (shouldContinueMining) {
+        continueMining(mineSim, mempool, previousBlock, blocksDir, BLOCKS_BEFORE_TRANSACTIONS,
+                       argsToRun.numberOfBlocks - BLOCKS_BEFORE_TRANSACTIONS);
+    }
 }
 
-void saveBlockToFile(const std::filesystem::path &blocksDir, Block *previousBlock, unsigned int &blocksMined) {
-    std::string fileName = std::to_string(blocksMined) + BLOCKS_FILE;
+void continueMining(MiningSimulator &mineSim, std::vector<Transaction *> &mempool, Block *previousBlock,
+                    const std::filesystem::path &blocksDir,
+                    unsigned int startIndex,
+                    const unsigned int leftToMine) {
+    std::cout << "Continuing mining for " << leftToMine << " more blocks...\n";
+    unsigned int fileIndex = startIndex;
+    if (leftToMine == 0) {
+        while (true) {
+            previousBlock = miningHelper(mineSim, mempool, previousBlock, blocksDir, fileIndex);
+        }
+    } else {
+        for (unsigned int blocksMined = 0; blocksMined < leftToMine; ++blocksMined) {
+            previousBlock = miningHelper(mineSim, mempool, previousBlock, blocksDir, fileIndex);
+        }
+    }
+    std::cout << "Finished mining. Transactions left in mempool: " << mempool.size() << " \n";
+}
+
+Block *miningHelper(MiningSimulator &mineSim, std::vector<Transaction *> &mempool, Block *previousBlock,
+                    const std::filesystem::path &blocksDir,
+                    unsigned int &fileIndex) {
+    std::vector<Transaction *> batchMempool = TransactionQueue::pickValidTransactions(
+        mempool, MAX_TRANSACTIONS_IN_BLOCK);
+    previousBlock = mineSim.mineBlockParallel(batchMempool, previousBlock);
+
+    fileIndex++;
+    saveBlockToFile(blocksDir, previousBlock, fileIndex);
+    TransactionQueue::freeMempoolFromMinedTransaction(mempool); // TODO: update transactions file after mining?
+    return previousBlock;
+}
+
+void saveBlockToFile(const std::filesystem::path &blocksDir, Block *previousBlock, unsigned int &blockIndex) {
+    std::string fileName = std::to_string(blockIndex) + BLOCKS_FILE;
     std::filesystem::path blockFile = blocksDir / fileName;
     std::ofstream outFile(blockFile);
     if (outFile.is_open()) {
@@ -143,12 +177,8 @@ void saveBlockToFile(const std::filesystem::path &blocksDir, Block *previousBloc
                 << previousBlock->getTransactions().size() << "\n";
 
         for (const auto *tx: previousBlock->getTransactions()) {
-            // no space, same reason as before, since it uses the same hash alg for trans hash and sender pk hash
-            outFile << tx->getTransactionId() << tx->getSenderPublicKey() << "\n";
-            for (const auto &output: tx->getOutputs()) {
-                outFile << output.second << " " << output.first << "\n";
-            }
-            outFile << tx->getTransactionTime() << "\n";
+            // !!! only id, no info about it here - that exists in transactions file and has to be gotten from there
+            outFile << tx->getTransactionId() << "\n";
         }
 
         outFile.close();
@@ -180,26 +210,29 @@ void generateBlockchainMetadata(std::filesystem::path outputDir) {
     std::cout << "Metadata saved to " << metaFile << "\n";
 }
 
-void generateAndSaveMempool(const unsigned int numberOfTransactions, const std::vector<User *> &users,
-                            const std::filesystem::path &outputFolderPath) {
+std::vector<Transaction *> generateAndSaveMempool(const unsigned int numberOfTransactions,
+                                                  const std::vector<User *> &users,
+                                                  const std::filesystem::path &outputFolderPath) {
     std::cout << "\nGenerating " << numberOfTransactions << " transactions...\n";
-    std::vector<Transaction *> transactions = blockchainRandomGenerator::generateValidTransactions(
-        users, numberOfTransactions
-    );
-    // TODO: FIX THIS WITH NEWER MEMPOOL SYSTEM.
+
+    std::vector<Transaction *> mempool = blockchainRandomGenerator::generateValidTransactions(
+        users, numberOfTransactions);
 
     std::filesystem::path txFile = outputFolderPath / TRANSACTIONS_FILE;
     std::ofstream txOutFile(txFile);
-    if (txOutFile.is_open()) {
-        for (const auto *tx: transactions) {
-            txOutFile << tx->getTransactionId() << " " << tx->getSenderPublicKey() << "\n";
-            for (const auto &output: tx->getOutputs()) {
-                txOutFile << output.second << " " << output.first << "\n";
-            }
-            txOutFile << tx->getTransactionTime() << "\n";
+    std::ostringstream ss;
+    for (const auto *tx: mempool) {
+        ss << tx->getTransactionId() << tx->getSenderPublicKey() << "\n";
+
+        auto outputs = tx->getOutputs();
+        for (const auto &[amount, receiverPublicKey]: outputs) {
+            ss << receiverPublicKey << amount << " ";
         }
-        txOutFile.close();
+        ss << "\n\n";
     }
+    txOutFile << ss.str();
+    txOutFile.close();
+    return mempool;
 }
 
 std::vector<User *> generateAndSaveUsersToFile(const unsigned int numberOfUsers, std::filesystem::path outputFolder) {
