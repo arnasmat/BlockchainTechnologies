@@ -27,6 +27,7 @@ namespace blockchainRandomGenerator {
             double senderBalance{UtxoSystem::getInstance().getBalanceOfPublicKey(sender->getPublicKey())};
 
             if (senderBalance == 0) {
+                i--;
                 continue;
             }
             std::uniform_real_distribution<double> amountDistrib(std::min(1.0, senderBalance), senderBalance);

@@ -34,6 +34,7 @@ private:
                 << "Height " << newBlock->getHeight() << "\n"
                 << "Timestamp " << newBlock->getTimestamp() << "\n"
                 << "Difficulty " << newBlock->getDifficultyTarget() << "\n"
+                << "Nonce " << newBlock->getNonce() << "\n"
                 << "Reward " << newBlock->calculateBlockReward() << "\n";
         const auto txs = newBlock->getTransactions();
         ss << "This block contains " << txs.size() << " transactions \n";

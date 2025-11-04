@@ -65,5 +65,7 @@ Block *miningHelper(MiningSimulator &mineSim, std::vector<Transaction *> &mempoo
                     const std::filesystem::path &blocksDir,
                     unsigned int &fileIndex);
 
+void testReadAllBlocks(const std::filesystem::path &blocksDir, const std::vector<Transaction *> &allTransactions);
+
 
 #endif //BCLIARGHANDLER_H

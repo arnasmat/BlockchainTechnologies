@@ -8,6 +8,7 @@
 #include "Blockchain/MiningSimulator.h"
 #include "Blockchain/Blockchain.h"
 #include "Blockchain/TransactionQueue.h"
+#include "Blockchain/CLI/BCliReader.h"
 
 BArgsToRun handleBCliInput(int argc, char *argv[]) {
     BArgsToRun args;
@@ -75,7 +76,74 @@ void handleFileInput(const BArgsToRun &argsToRun) {
 
     std::cout << "Reading blockchain data from " << argsToRun.inputFolderPath << "...\n";
     // TODO: Implement file reading logic based on your file format
+    // Read transactions from file first
+    std::filesystem::path txFile = argsToRun.inputFolderPath / TRANSACTIONS_FILE;
+    // TODO: Implement transaction reading
+    std::vector<Transaction *> allTransactions; // Load from txFile
+
+    // Test reading all blocks
+    std::filesystem::path blocksDir = argsToRun.inputFolderPath / BLOCKS_DIRECTORY;
+    testReadAllBlocks(blocksDir, allTransactions);
 }
+
+void testReadAllBlocks(const std::filesystem::path &blocksDir, const std::vector<Transaction *> &allTransactions) {
+    if (!std::filesystem::exists(blocksDir)) {
+        std::cerr << "Blocks directory does not exist: " << blocksDir << "\n";
+        return;
+    }
+
+    std::cout << "Testing block reading from " << blocksDir << "...\n\n";
+    Block *previousBlock = nullptr;
+    unsigned int blockIndex = 0;
+    unsigned int successfulBlocks = 0;
+    unsigned int failedBlocks = 0;
+
+    while (true) {
+        std::string fileName = std::to_string(blockIndex) + BLOCKS_FILE;
+        std::filesystem::path blockFile = blocksDir / fileName;
+
+        if (!std::filesystem::exists(blockFile)) {
+            std::cout << "No more block files found after " << blockIndex << " blocks\n";
+            break;
+        }
+
+        std::cout << "Reading block " << blockIndex << " from " << fileName << "...\n";
+
+        BlockData blockData = readBlockDataFromFile(blockFile, allTransactions);
+        if (blockData.expectedBlockHash.empty()) {
+            std::cerr << "Failed to read block data from " << fileName << "\n";
+            failedBlocks++;
+            blockIndex++;
+            continue;
+        }
+
+        Block *reconstructedBlock = reconstructAndVerifyBlock(blockData, previousBlock);
+
+        if (reconstructedBlock) {
+            std::cout << "Block " << blockIndex << " verified successfully!\n";
+            std::cout << "  Hash:       " << reconstructedBlock->getBlockHash() << "\n";
+            std::cout << "  Height:     " << reconstructedBlock->getHeight() << "\n";
+            std::cout << "  Timestamp:  " << reconstructedBlock->getTimestamp() << "\n";
+            std::cout << "  Nonce:      " << reconstructedBlock->getNonce() << "\n";
+            std::cout << "  Difficulty: " << reconstructedBlock->getDifficultyTarget() << "\n";
+            std::cout << "  Tx Count:   " << reconstructedBlock->getTransactions().size() << "\n\n";
+
+            previousBlock = reconstructedBlock;
+            successfulBlocks++;
+        } else {
+            std::cerr << "Failed to verify block " << blockIndex << "\n\n";
+            failedBlocks++;
+        }
+
+        blockIndex++;
+    }
+
+    std::cout << "\n=== Block Reading Summary ===\n";
+    std::cout << "Total blocks read: " << blockIndex << "\n";
+    std::cout << "Successfully verified: " << successfulBlocks << "\n";
+    std::cout << "Failed verification: " << failedBlocks << "\n";
+}
+
 
 bool doBlockchainFilesExist(const std::filesystem::path &folderPath) {
     std::filesystem::path usersFile = folderPath / USERS_FILE;
@@ -174,6 +242,7 @@ void saveBlockToFile(const std::filesystem::path &blocksDir, Block *previousBloc
                 << previousBlock->getHeight() << " "
                 << previousBlock->getTimestamp() << " "
                 << previousBlock->getDifficultyTarget() << " "
+                << previousBlock->getNonce() << " "
                 << previousBlock->getTransactions().size() << "\n";
 
         for (const auto *tx: previousBlock->getTransactions()) {
