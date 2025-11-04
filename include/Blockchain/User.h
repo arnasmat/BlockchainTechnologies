@@ -19,6 +19,9 @@ public:
         publicKey = hash->generateHash(std::to_string(id));
     }
 
+    User(const std::string &pk): publicKey(pk) {
+    }
+
     std::string getPublicKey() const {
         return publicKey;
     }

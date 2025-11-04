@@ -44,7 +44,8 @@ void generateUsers(const unsigned int numberOfUsers);
 
 void generateTransactions(const unsigned int numberOfTransactions, const std::vector<class User *> &users);
 
-std::vector<User *> generateAndSaveUsersToFile(const unsigned int numberOfUsers, std::filesystem::path outputFolder);
+std::vector<User *> generateAndSaveUsersToFile(const unsigned int numberOfUsers,
+                                               const std::filesystem::path &outputFolder);
 
 void saveBlockToFile(const std::filesystem::path &blocksDir, Block *previousBlock, unsigned int &blockIndex);
 
@@ -65,7 +66,8 @@ Block *miningHelper(MiningSimulator &mineSim, std::vector<Transaction *> &mempoo
                     const std::filesystem::path &blocksDir,
                     unsigned int &fileIndex);
 
-void testReadAllBlocks(const std::filesystem::path &blocksDir, const std::vector<Transaction *> &allTransactions);
-
+void testReadAllBlocks(const std::filesystem::path &blocksDir,
+                       const std::vector<Transaction *> &allTransactions,
+                       const std::vector<User *> &users);
 
 #endif //BCLIARGHANDLER_H

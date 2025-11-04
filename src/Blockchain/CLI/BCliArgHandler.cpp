@@ -69,31 +69,38 @@ void printBHelpInfo() {
 
 void handleFileInput(const BArgsToRun &argsToRun) {
     if (!doBlockchainFilesExist(argsToRun.inputFolderPath)) {
-        std::cerr << "Error: Input folder must contain " << USERS_FILE << " " << TRANSACTIONS_FILE << " and " <<
-                BLOCKS_DIRECTORY << "\n";
+        std::cerr << "Error: Input folder must contain " << USERS_FILE << ", "
+                << TRANSACTIONS_DIRECTORY << ", and " << BLOCKS_DIRECTORY << "\n";
         return;
     }
 
     std::cout << "Reading blockchain data from " << argsToRun.inputFolderPath << "...\n";
-    // TODO: Implement file reading logic based on your file format
-    // Read transactions from file first
-    std::filesystem::path txFile = argsToRun.inputFolderPath / TRANSACTIONS_FILE;
-    // TODO: Implement transaction reading
-    std::vector<Transaction *> allTransactions; // Load from txFile
+
+    // Read users from file
+    std::filesystem::path usersFile = argsToRun.inputFolderPath / USERS_FILE;
+    std::vector<User *> users = readUsersFromFile(usersFile);
+
+    // Read all transactions from directory
+    std::filesystem::path txDir = argsToRun.inputFolderPath / TRANSACTIONS_DIRECTORY;
+    std::vector<Transaction *> allTransactions = readAllTransactionsFromDir(txDir);
 
     // Test reading all blocks
     std::filesystem::path blocksDir = argsToRun.inputFolderPath / BLOCKS_DIRECTORY;
-    testReadAllBlocks(blocksDir, allTransactions);
+    testReadAllBlocks(blocksDir, allTransactions, users);
 }
 
-void testReadAllBlocks(const std::filesystem::path &blocksDir, const std::vector<Transaction *> &allTransactions) {
+
+void testReadAllBlocks(const std::filesystem::path &blocksDir,
+                       const std::vector<Transaction *> &allTransactions,
+                       const std::vector<User *> &users) {
     if (!std::filesystem::exists(blocksDir)) {
         std::cerr << "Blocks directory does not exist: " << blocksDir << "\n";
         return;
     }
 
     std::cout << "Testing block reading from " << blocksDir << "...\n\n";
-    Block *previousBlock = nullptr;
+    MiningSimulator mineSim(users);
+    Block *previousBlock = mineSim.getGenesisBlock();
     unsigned int blockIndex = 0;
     unsigned int successfulBlocks = 0;
     unsigned int failedBlocks = 0;
@@ -131,8 +138,10 @@ void testReadAllBlocks(const std::filesystem::path &blocksDir, const std::vector
             previousBlock = reconstructedBlock;
             successfulBlocks++;
         } else {
-            std::cerr << "Failed to verify block " << blockIndex << "\n\n";
+            std::cerr << "Failed to verify block " << blockIndex << "\n";
+            std::cerr << "Chain is broken - cannot continue verification\n\n";
             failedBlocks++;
+            break;
         }
 
         blockIndex++;
@@ -147,13 +156,16 @@ void testReadAllBlocks(const std::filesystem::path &blocksDir, const std::vector
 
 bool doBlockchainFilesExist(const std::filesystem::path &folderPath) {
     std::filesystem::path usersFile = folderPath / USERS_FILE;
-    std::filesystem::path txFile = folderPath / TRANSACTIONS_FILE;
+    std::filesystem::path txDir = folderPath / TRANSACTIONS_DIRECTORY; // Changed from TRANSACTIONS_FILE
     std::filesystem::path blocksDir = folderPath / BLOCKS_DIRECTORY;
 
     return std::filesystem::exists(usersFile) &&
-           std::filesystem::exists(txFile) &&
-           std::filesystem::exists(blocksDir);
+           std::filesystem::exists(txDir) &&
+           std::filesystem::is_directory(txDir) &&
+           std::filesystem::exists(blocksDir) &&
+           std::filesystem::is_directory(blocksDir);
 }
+
 
 void handleFileGeneration(const BArgsToRun &argsToRun) {
     if (!std::filesystem::exists(argsToRun.outputFolderPath)) {
@@ -287,24 +299,36 @@ std::vector<Transaction *> generateAndSaveMempool(const unsigned int numberOfTra
     std::vector<Transaction *> mempool = blockchainRandomGenerator::generateValidTransactions(
         users, numberOfTransactions);
 
-    std::filesystem::path txFile = outputFolderPath / TRANSACTIONS_FILE;
-    std::ofstream txOutFile(txFile);
-    std::ostringstream ss;
-    for (const auto *tx: mempool) {
-        ss << tx->getTransactionId() << tx->getSenderPublicKey() << "\n";
-
-        auto outputs = tx->getOutputs();
-        for (const auto &[amount, receiverPublicKey]: outputs) {
-            ss << receiverPublicKey << amount << " ";
-        }
-        ss << "\n\n";
+    std::filesystem::path txDir = outputFolderPath / TRANSACTIONS_DIRECTORY;
+    if (!std::filesystem::exists(txDir)) {
+        std::filesystem::create_directories(txDir);
     }
-    txOutFile << ss.str();
-    txOutFile.close();
+
+    unsigned int txIndex = 0;
+    for (const auto *tx: mempool) {
+        std::string fileName = std::to_string(txIndex) + TRANSACTIONS_FILE;
+        std::filesystem::path txFile = txDir / fileName;
+        std::ofstream txOutFile(txFile);
+        if (txOutFile.is_open()) {
+            txOutFile << tx->getTransactionId() << tx->getSenderPublicKey() << " " << tx->getTransactionTime() << "\n";
+            auto outputs = tx->getOutputs();
+            for (const auto &[amount, receiverPublicKey]: outputs) {
+                txOutFile << amount << " " << receiverPublicKey << "\n";
+            }
+            txOutFile.close();
+        } else {
+            std::cerr << "Failed to save transaction " << txIndex << "\n";
+        }
+
+        txIndex++;
+    }
+
+    std::cout << "Saved " << txIndex << " transactions to " << txDir << "\n";
     return mempool;
 }
 
-std::vector<User *> generateAndSaveUsersToFile(const unsigned int numberOfUsers, std::filesystem::path outputFolder) {
+std::vector<User *> generateAndSaveUsersToFile(const unsigned int numberOfUsers,
+                                               const std::filesystem::path &outputFolder) {
     std::cout << "Saving " << numberOfUsers << " users...\n";
     std::vector<User *> users = blockchainRandomGenerator::generateUsers(numberOfUsers);
 
@@ -329,6 +353,5 @@ std::vector<User *> generateAndSaveUsersToFile(const unsigned int numberOfUsers,
     }
     return users;
 }
-
 
 
