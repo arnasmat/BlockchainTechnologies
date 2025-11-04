@@ -239,8 +239,8 @@ Block *miningHelper(MiningSimulator &mineSim, std::vector<Transaction *> &mempoo
         mempool, MAX_TRANSACTIONS_IN_BLOCK);
     previousBlock = mineSim.mineBlockParallel(batchMempool, previousBlock);
 
-    fileIndex++;
     saveBlockToFile(blocksDir, previousBlock, fileIndex);
+    fileIndex++;
     TransactionQueue::freeMempoolFromMinedTransaction(mempool); // TODO: update transactions file after mining?
     return previousBlock;
 }
