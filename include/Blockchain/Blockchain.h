@@ -40,7 +40,7 @@ public:
         timestamp = time(nullptr);
         // TODO: terrible to insert it at the start but whatever, max n is 100
         this->transactions.insert(this->transactions.begin(),
-                                  new Transaction(SYSTEM_NAME, minerPk, calculateBlockReward()));
+                                  new Transaction(SYSTEM_NAME, minerPk, calculateBlockReward(), timestamp));
         merkleRootHash = merkleTree.calculateMerkleTreeHash(this->transactions);
     }
 
@@ -60,7 +60,7 @@ public:
           transactions(transactions) {
         // TODO: terrible to insert it at the start but whatever, max n is 100
         this->transactions.insert(this->transactions.begin(),
-                                  new Transaction(SYSTEM_NAME, minerPk, calculateBlockReward()));
+                                  new Transaction(SYSTEM_NAME, minerPk, calculateBlockReward(), timestamp));
         merkleRootHash = merkleTree.calculateMerkleTreeHash(this->transactions);
     }
 

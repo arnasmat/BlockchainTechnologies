@@ -101,6 +101,7 @@ void testReadAllBlocks(const std::filesystem::path &blocksDir,
     std::cout << "Testing block reading from " << blocksDir << "...\n\n";
     MiningSimulator mineSim(users);
     Block *previousBlock = mineSim.getGenesisBlock();
+    std::cout << previousBlock->getBlockHash() << "\n";
     unsigned int blockIndex = 0;
     unsigned int successfulBlocks = 0;
     unsigned int failedBlocks = 0;

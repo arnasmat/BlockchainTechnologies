@@ -56,7 +56,7 @@ public:
     MiningSimulator(const std::vector<User *> &_users): users(_users) {
         isMining = true;
         std::vector<Transaction *> emptyVector{};
-        genesisBlock = new Block(nullptr, users.at(0)->getPublicKey(), "1.0", 0, emptyVector);
+        genesisBlock = new Block(nullptr, users.at(0)->getPublicKey(), "1.0", 0, 0, emptyVector);
         HeadBlock::getInstance().updateHeadBlock(genesisBlock);
     };
 

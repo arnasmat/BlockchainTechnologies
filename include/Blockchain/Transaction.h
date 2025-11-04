@@ -24,17 +24,33 @@ class Transaction : SystemAlgorithm {
 
 public:
     Transaction(const std::string &senderPk, const std::string &receiverPk, const double amount)
-        : senderPublicKey(senderPk) {
+        : senderPublicKey(senderPk), transactionTime(time(nullptr)) {
         outputs.push_back({amount, receiverPk});
         content += std::to_string(transactionTime) + std::to_string(amount);
         transactionId = hash->generateHash(senderPublicKey + content); //will be used if it is a coinbase transaction
     }
 
+    // Coinbase transaction with timestamp parameter
+    Transaction(const std::string &senderPk, const std::string &receiverPk, const double amount, const time_t txTime)
+        : senderPublicKey(senderPk), transactionTime(txTime) {
+        outputs.push_back({amount, receiverPk});
+        content += std::to_string(transactionTime) + std::to_string(amount);
+        transactionId = hash->generateHash(senderPublicKey + content);
+    }
+
     Transaction(const std::string &senderPk, const std::vector<std::pair<double, std::string> > &outputs,
                 const time_t txTime)
         : senderPublicKey(senderPk), outputs(outputs), transactionTime(txTime) {
-        transactionId = hash->generateHash(
-            senderPublicKey + std::to_string(transactionTime) + getOutputsAsString());
+        content += std::to_string(transactionTime) + std::to_string(outputs[0].first);
+        transactionId = hash->generateHash(senderPublicKey + content);
+    }
+
+
+    // Constructor for reconstructing transactions from saved files with known transaction ID
+    Transaction(const std::string &senderPk, const std::vector<std::pair<double, std::string> > &outputs,
+                const time_t txTime, const std::string &txId)
+        : senderPublicKey(senderPk), outputs(outputs), transactionTime(txTime), transactionId(txId) {
+        content += std::to_string(transactionTime) + std::to_string(outputs[0].first);
     }
 
 

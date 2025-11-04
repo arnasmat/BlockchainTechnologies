@@ -165,7 +165,8 @@ std::vector<Transaction *> readAllTransactionsFromDir(const std::filesystem::pat
             continue;
         }
         // Create transaction object
-        Transaction *tx = new Transaction(txData.senderPublicKey, txData.outputs, txData.timestamp);
+        Transaction *tx = new Transaction(txData.senderPublicKey, txData.outputs, txData.timestamp,
+                                          txData.transactionId);
         // Verify transaction ID matches
         if (tx->getTransactionId() != txData.transactionId) {
             std::cerr << "WARNING: Transaction ID mismatch for " << txFile << "\n";
@@ -206,5 +207,3 @@ std::vector<User *> readUsersFromFile(const std::filesystem::path &usersFile) {
     std::cout << "Loaded " << users.size() << " users from file\n";
     return users;
 }
-
-
