@@ -91,7 +91,7 @@ void handleFileInput(const BArgsToRun &argsToRun) {
 
 
 void testReadAllBlocks(const std::filesystem::path &blocksDir,
-                       const std::vector<Transaction *> &allTransactions,
+                       std::vector<Transaction *> &allTransactions,
                        const std::vector<User *> &users) {
     if (!std::filesystem::exists(blocksDir)) {
         std::cerr << "Blocks directory does not exist: " << blocksDir << "\n";
@@ -128,6 +128,7 @@ void testReadAllBlocks(const std::filesystem::path &blocksDir,
         Block *reconstructedBlock = reconstructAndVerifyBlock(blockData, previousBlock);
 
         if (reconstructedBlock) {
+            std::cout << reconstructedBlock->getTransactions().at(0)->getTransactionId() << "\n\n\n\n";
             std::cout << "Block " << blockIndex << " verified successfully!\n";
             std::cout << "  Hash:       " << reconstructedBlock->getBlockHash() << "\n";
             std::cout << "  Height:     " << reconstructedBlock->getHeight() << "\n";
@@ -238,6 +239,7 @@ Block *miningHelper(MiningSimulator &mineSim, std::vector<Transaction *> &mempoo
     std::vector<Transaction *> batchMempool = TransactionQueue::pickValidTransactions(
         mempool, MAX_TRANSACTIONS_IN_BLOCK);
     previousBlock = mineSim.mineBlockParallel(batchMempool, previousBlock);
+    mempool.push_back(previousBlock->getTransactions().at(0));
 
     saveBlockToFile(blocksDir, previousBlock, fileIndex);
     fileIndex++;
