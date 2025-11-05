@@ -69,6 +69,7 @@ If you'd like to try it out, see `feature/blockchain-cli` branch.
 
 AI was primarily used for assistance and help understanding certain functionality such as UTXOs in bitcoin, not for code
 generation.
+NOTE: In the CLI branch AI was used for blockchain reading implementation. As you can notice, reading isn't done. AI has only caused harm and made the codebase terrible, unusable, ugly and not functional lol
 
 ---
 

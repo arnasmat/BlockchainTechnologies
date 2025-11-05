@@ -2,7 +2,7 @@
 // Created by arnas on 9/16/25.
 //
 
-#include <../include/CLI/CliArgHandler.h>
+#include <../include/HashAlg/CLI/CliArgHandler.h>
 
 #include "../include/HashAlg/OtherAlgorithms.h"
 

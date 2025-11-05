@@ -3,7 +3,7 @@
 
 #include "Blockchain.h"
 #include "SystemAlgorithm.h"
-#include "libs.h"
+#include "general.h"
 #include "Transaction.h"
 
 #include <vector>
@@ -21,18 +21,18 @@ public:
         return instance;
     }
 
-    Block* getHeadBlock() {
+    Block *getHeadBlock() {
         return headBlock;
     }
 
     void updateHeadBlock(Block *newHead) {
-        if(newHead->finaliseBlock()) {
-            for(auto &transaction : newHead->getTransactions()) {
+        if (newHead->finaliseBlock()) {
+            for (auto &transaction: newHead->getTransactions()) {
                 transaction->updateTransactionUtxosAfterBeingFinalised();
             }
             headBlock = newHead;
         }
-        
+
         // headBlock = newHead;
         // int currentHeight = headBlock->getHeight();
         // if(currentHeight >= NUMBER_OF_BLOCKS_IN_FRONT_TO_VALIDATE) {
@@ -46,9 +46,7 @@ public:
         //         }
         //     }
         // }
-        
     }
-
 };
 
-#endif    
+#endif

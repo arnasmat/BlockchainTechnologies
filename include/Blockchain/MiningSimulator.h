@@ -7,6 +7,7 @@
 #include <atomic>
 #include <omp.h>
 
+#include "general.h"
 #include "Blockchain.h"
 #include "SystemAlgorithm.h"
 #include "User.h"
@@ -33,8 +34,21 @@ private:
                 << "Height " << newBlock->getHeight() << "\n"
                 << "Timestamp " << newBlock->getTimestamp() << "\n"
                 << "Difficulty " << newBlock->getDifficultyTarget() << "\n"
+                << "Nonce " << newBlock->getNonce() << "\n"
                 << "Reward " << newBlock->calculateBlockReward() << "\n";
         const auto txs = newBlock->getTransactions();
+<<<<<<< HEAD
+        ss << "This block contains " << txs.size() << " transactions \n";
+        // for (const auto &tx: txs) {
+        //     ss << "\nTransaction " << tx->getTransactionId() << ": \n";
+        //     for (const auto &output: tx->getOutputs()) {
+        //         ss << "From: " << tx->getSenderPublicKey();
+        //         ss << ", To: " << output.second;
+        //         ss << ", Amount: " << output.first;
+        //         ss << "\n";
+        //     }
+        // }
+=======
         ss << "This block contains the following " << txs.size() << " transactions: \n";
         for (const auto &tx: txs) {
             ss << "\nTransaction " << tx->getTransactionId() << ": \n";
@@ -45,6 +59,7 @@ private:
                 ss << "\n";
             }
         }
+>>>>>>> origin
         ss << "\n----------------------\n";
 
         std::cout << ss.str();
@@ -54,7 +69,7 @@ public:
     MiningSimulator(const std::vector<User *> &_users): users(_users) {
         isMining = true;
         std::vector<Transaction *> emptyVector{};
-        genesisBlock = new Block(nullptr, users.at(0)->getPublicKey(), "1.0", 0, emptyVector);
+        genesisBlock = new Block(nullptr, users.at(0)->getPublicKey(), "1.0", 0, 0, emptyVector);
         HeadBlock::getInstance().updateHeadBlock(genesisBlock);
     };
 
@@ -75,6 +90,10 @@ public:
         Block *minedBlock = nullptr;
         std::atomic<bool> blockFound = false; //first to mine a block in a batch gets accepted
 
+<<<<<<< HEAD
+        // TODO: make sure this works with for example difficulty 1
+=======
+>>>>>>> origin
 #pragma omp parallel
         {
             int threadId = omp_get_thread_num();
@@ -123,7 +142,7 @@ public:
         //             }),
         //         mempool.end()
         //     );
-        // }     
+        // }
 
         return minedBlock;
     }

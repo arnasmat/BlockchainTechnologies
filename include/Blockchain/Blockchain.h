@@ -3,7 +3,7 @@
 
 #include "Helper.h"
 #include "MerkleTree.h"
-#include "libs.h"
+#include "general.h"
 #include "Transaction.h"
 
 class Block : public SystemAlgorithm {
@@ -18,7 +18,7 @@ class Block : public SystemAlgorithm {
     unsigned int nonce;
     std::string merkleRootHash;
     const unsigned short int difficultyTarget;
-    std::atomic<bool> isFinal= false;
+    std::atomic<bool> isFinal = false;
 
     // Body
     std::vector<Transaction *> transactions;
@@ -40,9 +40,30 @@ public:
         timestamp = time(nullptr);
         // TODO: terrible to insert it at the start but whatever, max n is 100
         this->transactions.insert(this->transactions.begin(),
-                                  new Transaction(SYSTEM_NAME, minerPk, calculateBlockReward()));
+                                  new Transaction(SYSTEM_NAME, minerPk, calculateBlockReward(), timestamp));
         merkleRootHash = merkleTree.calculateMerkleTreeHash(this->transactions);
     }
+
+    Block(const Block *previousBlock, const std::string &minerPk, const std::string version,
+          const unsigned int nonce, const unsigned int timestamp,
+          const std::vector<Transaction *> &transactions)
+        : previousBlock(previousBlock),
+          previousBlockHash(previousBlock
+                                ? previousBlock->getBlockHash()
+                                : "0000000000000000000000000000000000000000000000000000000000000000"),
+          minerPublicKey(minerPk),
+          height(previousBlock ? previousBlock->getHeight() + 1 : 0),
+          version(version),
+          nonce(nonce),
+          difficultyTarget(calculateDifficulty()),
+          timestamp(timestamp),
+          transactions(transactions) {
+        // TODO: terrible to insert it at the start but whatever, max n is 100
+        this->transactions.insert(this->transactions.begin(),
+                                  new Transaction(SYSTEM_NAME, minerPk, calculateBlockReward(), timestamp));
+        merkleRootHash = merkleTree.calculateMerkleTreeHash(this->transactions);
+    }
+
     //since block is created and deleted many times, we need the transactions which are being passed and cannot use std::move in constructor
 
     std::string getBlockAsString() const {
@@ -52,6 +73,10 @@ public:
 
     std::string getBlockHash() const {
         return hash->generateHash(getBlockAsString());
+    }
+
+    unsigned int getNonce() const {
+        return nonce;
     }
 
     unsigned int getDifficultyTarget() const {
@@ -140,7 +165,7 @@ private:
             return std::max(1, static_cast<int>(currentDifficulty) - 1);
         }
         if (averageBlockTime < TARGET_BLOCK_TIME - TARGET_TOLERANCE) {
-            return std::min(static_cast<int>(currentDifficulty) + 1, static_cast<int>(MAX_HASH_LENGTH) * 4);
+            return std::min(static_cast<int>(currentDifficulty) + 1, static_cast<int>(HASH_LENGTH) * 4);
         }
 
         return currentDifficulty;
