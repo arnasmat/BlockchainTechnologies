@@ -41,6 +41,34 @@ transactions to blocks.
 
 <img width="1637" alt="image" src="https://github.com/user-attachments/assets/e244c0e3-3caf-41a8-be3a-88cbcdac4d91" />
 
+## Unique solutions
+
+- Parallelized mining was done using OpenMP. We felt it was the most appropriate and safest way to implement
+  multithreading for our project.
+- Certain "managers" use a singleton pattern to ensure only one instance exists. E.g. UTXOSystem, TransactionQueue,
+  HeadBlock are done this way
+- Difficulty is automatically adjusted every 20 blocks based on the time taken to mine the previous 20 blocks, therefore
+  it auto adjusts to the speed of the system (simulated miners on the blockchain simulation)
+
+## Instructions
+
+[Click here for the setup guide](#setup-guides)
+
+To work with the application, edit the main.cpp file as you desire. You can alter the numbers, change flow order or
+functionality. The current main.cpp file is an example of what can be done, but users are encouraged to experiment and
+alter it to their desires.
+
+Afterwards, build and run the application. Note that two files are generated in the bin/ directory: hashCli and
+blockchain. HashCLI is used to test out the hashing algorithms, while blockchain is used to run the blockchain
+simulation.
+
+There is also an unfinished CLI application for the blockchain simulation, however reading from files is not finished.
+If you'd like to try it out, see `feature/blockchain-cli` branch.
+
+## AI Assistance
+
+AI was primarily used for assistance and help understanding certain functionality such as UTXOs in bitcoin, not for code
+generation.
 
 ---
 
