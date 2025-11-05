@@ -1,10 +1,44 @@
-# Hash! - BlockchainTechnologies
+# Blockchain and Hash! - BlockchainTechnologies
 
 A repository for a university blockchain technologies course.
-This project implements two hashing algorithms: MatrixHash (a custom algorithm created by us)
-and VibeHash(an algorithm created using Claude AI).
+This project implements:
+
+- A blockchain network simulation with parallelized mining and UTXO functionality.
+- two hashing algorithms: MatrixHash (a custom algorithm created by us)
+  and VibeHash(an algorithm created using Claude AI).
 
 [Click here for the setup guide](#setup-guides)
+
+# Blockchain
+
+## Overview
+
+The blockchain implementation simulates a blockchain network with the following features:
+
+- Blockchain blocks that are created with a proof-of-work mechanism with self-adjusting difficulty.
+- Merkle tree for transaction verification within blocks
+- UTXO (Unspent Transaction Output) model for transactions
+- User wallets with public and private keys (ids). Some of the users are also miners.
+- Parallelized mining with OpenMP
+- All of these use our custom hashing algorithm (currently set to MatrixHash, but can easily be changed in
+  SystemAlgorithm.h)
+
+## Showcase
+
+This part explains the current setup in the main.cpp code. All of the functionality can easily be tweaked by the user.
+
+Initial mining - at first the blockchain is empty, so miners have to create transactions by mining 50 blocks (including
+genesis block).
+
+Afterwards 100000 transactions are created - note that only valid ones are added to the blockchain, while invalid ones
+are not.
+
+Then the blockchain is continued indefinitely until user interrupts the program (Ctrl + C) adding the generated
+transactions to blocks.
+
+---
+
+# Hashing algorithms
 
 ## MatrixHash
 
