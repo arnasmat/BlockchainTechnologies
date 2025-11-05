@@ -30,11 +30,17 @@ This part explains the current setup in the main.cpp code. All of the functional
 Initial mining - at first the blockchain is empty, so miners have to create transactions by mining 50 blocks (including
 genesis block).
 
+<img width="1228" alt="image" src="https://github.com/user-attachments/assets/92252066-eee1-4018-9a99-7e555450dfb8" />
+
+
 Afterwards 100000 transactions are created - note that only valid ones are added to the blockchain, while invalid ones
 are not.
 
 Then the blockchain is continued indefinitely until user interrupts the program (Ctrl + C) adding the generated
 transactions to blocks.
+
+<img width="1637" alt="image" src="https://github.com/user-attachments/assets/e244c0e3-3caf-41a8-be3a-88cbcdac4d91" />
+
 
 ---
 
