@@ -23,10 +23,11 @@ int main() {
     }
 
     std::vector<Transaction *> mempool = blockchainRandomGenerator::generateValidTransactions(users, 100000);
-    std::cout<<"Amount of transactions to be processed: "<<mempool.size()<<std::endl;
+    std::cout << "Amount of transactions to be processed: " << mempool.size() << std::endl;
 
-    while(mempool.size()) {
-        std::vector<Transaction*> batchMempool = TransactionQueue::pickValidTransactions(mempool, MAX_TRANSACTIONS_IN_BLOCK);
+    while (mempool.size()) {
+        std::vector<Transaction *> batchMempool = TransactionQueue::pickValidTransactions(
+            mempool, MAX_TRANSACTIONS_IN_BLOCK);
         //std::cout << "batch size of transactions taken (without coinbase transaction): "<< batchMempool.size() <<", total transactions in mempool left: " << mempool.size() << std::endl;
         mineSim.mineBlockParallel(batchMempool, HeadBlock::getInstance().getHeadBlock());
         TransactionQueue::freeMempoolFromMinedTransaction(mempool);

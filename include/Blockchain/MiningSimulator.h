@@ -13,6 +13,8 @@
 #include "UTXOSystem.h"
 #include "HeadBlock.h"
 
+constexpr bool ENABLE_PRINT_TRANSACTIONS{false};
+
 class MiningSimulator : SystemAlgorithm {
 private:
     std::vector<User *> users;
@@ -36,15 +38,19 @@ private:
                 << "Difficulty " << newBlock->getDifficultyTarget() << "\n"
                 << "Reward " << newBlock->calculateBlockReward() << "\n";
         const auto txs = newBlock->getTransactions();
-        ss << "This block contains the following "<<txs.size()<<" transactions: \n";
-        for (const auto &tx: txs) {
-            ss << "\nTransaction " << tx->getTransactionId() << ": \n";
-            for (const auto &output: tx->getOutputs()) {
-                ss << "From: " << tx->getSenderPublicKey();
-                ss << ", To: " << output.second;
-                ss << ", Amount: " << output.first;
-                ss << "\n";
+        if (ENABLE_PRINT_TRANSACTIONS) {
+            ss << "This block contains the following " << txs.size() << " transactions: \n";
+            for (const auto &tx: txs) {
+                ss << "\nTransaction " << tx->getTransactionId() << ": \n";
+                for (const auto &output: tx->getOutputs()) {
+                    ss << "From: " << tx->getSenderPublicKey();
+                    ss << ", To: " << output.second;
+                    ss << ", Amount: " << output.first;
+                    ss << "\n";
+                }
             }
+        } else {
+            ss << "This block contains " << txs.size() << " transactions. \n";
         }
         ss << "\n----------------------\n";
 
@@ -80,7 +86,7 @@ public:
         {
             int threadId = omp_get_thread_num();
             const User *miner = users[threadId % users.size()]; // kzn random priskiriam zmogui
-          
+
             Block *localBlock = new Block(previousBlock, miner->getPublicKey(), SYSTEM_VERSION, threadId, mempool);
 
             while (isMining) {
@@ -89,7 +95,7 @@ public:
                 } else {
                     bool expected = false;
                     if (blockFound.compare_exchange_strong(expected, true)) {
-                        if(HeadBlock::getInstance().validateMerkleRootInNewHeadBlock(localBlock)) {
+                        if (HeadBlock::getInstance().validateMerkleRootInNewHeadBlock(localBlock)) {
                             minedBlock = localBlock;
                             HeadBlock::getInstance().updateHeadBlock(minedBlock);
                             announceNewBlock(minedBlock);
