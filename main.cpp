@@ -8,20 +8,27 @@
 #include "Blockchain/TransactionQueue.h"
 
 constexpr unsigned int NUMBER_OF_USERS{1000};
+constexpr unsigned int MINE_BEFORE_TRANSACTIONS{50};
+constexpr unsigned int MINE_SLOWER{20};
 
 int main() {
     std::vector<User *> users{blockchainRandomGenerator::generateUsers(NUMBER_OF_USERS)};
 
     MiningSimulator mineSim(users);
     std::vector<Transaction *> processedTransactions{};
-    for (int i = 0; i < 50; i++) {
-        mineSim.mineBlockParallel(processedTransactions, HeadBlock::getInstance().getHeadBlock());
+    for (int i = 0; i < MINE_SLOWER; i++) {
+        mineSim.mineBlockParallel(processedTransactions, HeadBlock::getInstance().getHeadBlock(), 5);
+    }
+
+    for (int i = 0; i < MINE_BEFORE_TRANSACTIONS - MINE_SLOWER; i++) {
+        mineSim.mineBlockParallel(processedTransactions, HeadBlock::getInstance().getHeadBlock(), 20);
     }
 
     for (int i = 0; i < 5; i++) {
         std::cout << "------------------------------------\n";
     }
 
+    std::cout << "Generating transactions\n";
     std::vector<Transaction *> mempool = blockchainRandomGenerator::generateValidTransactions(users, 100000);
     std::cout << "Amount of transactions to be processed: " << mempool.size() << std::endl;
 

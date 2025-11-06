@@ -76,14 +76,20 @@ public:
 
     Block *mineBlockParallel(
         std::vector<Transaction *> &mempool,
-        const Block *previousBlock
+        const Block *previousBlock,
+        int threadCount = omp_get_max_threads()
     ) {
         isMining = true;
         Block *minedBlock = nullptr;
         std::atomic<bool> blockFound = false; //first to mine a block in a batch gets accepted
 
+        omp_set_num_threads(threadCount);
+
+
 #pragma omp parallel
         {
+            int threads = omp_get_num_threads();
+
             int threadId = omp_get_thread_num();
             const User *miner = users[threadId % users.size()]; // kzn random priskiriam zmogui
 
@@ -98,6 +104,8 @@ public:
                         if (HeadBlock::getInstance().validateMerkleRootInNewHeadBlock(localBlock)) {
                             minedBlock = localBlock;
                             HeadBlock::getInstance().updateHeadBlock(minedBlock);
+                            std::cout << "Thread " << threadId + 1 << " out of " << threads <<
+                                    " mined a valid block!\n";
                             announceNewBlock(minedBlock);
                             isMining = false;
                         } else {
