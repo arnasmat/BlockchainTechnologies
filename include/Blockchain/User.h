@@ -10,8 +10,7 @@
 // NOTE: This class is meant to represent a node's knowledge about a certain user in the blockchain network
 // -> Therefore using it you have to handle setting/getting values yourself.
 class User : SystemAlgorithm {
-    unsigned int id{}; //Instead of vardas
-    unsigned int estimatedBalance{0};
+    unsigned int id{}; //Instead of vardas, works like private key
     std::string publicKey{};
 
 public:
@@ -23,15 +22,14 @@ public:
         return publicKey;
     }
 
-    unsigned int getEstimatedBalance() const {
-        return estimatedBalance;
-        // no lmao this doesnt owkr
+    std::string makeSignature(std::string content) {
+        return hash->generateHash(hash->generateHash(std::to_string(id)) + content);
     }
 
-    void setEstimatedBalance() {
-        estimatedBalance = UtxoSystem::getInstance().getBalanceOfPublicKey(hash->generateHash(std::to_string(id)));
-        //tik zinantis private key gali gauti balansa
+    bool verifyUtxo(std::string transactionId, unsigned int vout, std::string utxoId) {
+        return hash->generateHash(transactionId + std::to_string(vout) + hash->generateHash(std::to_string(id))) == utxoId;
     }
+    
 };
 
 #endif //USER_H

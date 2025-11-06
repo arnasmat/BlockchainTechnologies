@@ -8,13 +8,15 @@
 
 #include "SystemAlgorithm.h"
 #include "HashAlg/HashGenInterface.h"
-#include "UTXO.h"
-#include "UTXOSystem.h"
 #include "libs.h"
+
+// Forward declarations to avoid circular dependency
+class Utxo;
+class UtxoSystem;
+class UserSystem;
 
 class Transaction : SystemAlgorithm {
 
-    std::string content{};
     std::string transactionId{};
     std::string senderPublicKey{};
     std::vector<std::pair<const Transaction *, unsigned int> > inputs;
@@ -24,32 +26,10 @@ class Transaction : SystemAlgorithm {
     std::vector<Utxo*> userUtxos;
 
 public:
-    Transaction(const std::string &senderPk, const std::string &receiverPk, const double amount)
-        : senderPublicKey(senderPk) {
-            outputs.push_back({amount, receiverPk});
-            content += std::to_string(transactionTime) + std::to_string(amount);
-            transactionId = hash->generateHash(senderPublicKey + content); //will be used if it is a coinbase transaction
-    }
+    Transaction(const std::string &senderPk, const std::string &receiverPk, const double amount);
 
     //if user has enough utxos for this transaction, we associate these utxos with this transaction
-    void fillTransaction(const std::vector<Utxo *> &chosenUtxos) {
-        userUtxos = std::move(chosenUtxos);
-        double achievedSum = 0;
-        for (auto &eachUtxo: userUtxos) {
-            inputs.push_back({eachUtxo->getTransaction(), eachUtxo->getVout()});
-            achievedSum += eachUtxo->getAmount();
-            content += eachUtxo->getTransaction()->getTransactionId();
-        }
-
-        if (senderPublicKey != SYSTEM_NAME) {
-            double fee = achievedSum - outputs[0].first;
-            if (fee > 0) {
-                content += std::to_string(fee);
-                outputs.push_back({fee, senderPublicKey}); // so far it is simply being sent back to sender as change
-            }
-        }
-        transactionId = hash->generateHash(senderPublicKey + outputs[0].second + content);
-    }
+    void fillTransaction(const std::vector<Utxo *> &chosenUtxos);
 
     std::string getTransactionId() const {
         return transactionId;
@@ -71,10 +51,7 @@ public:
         return outputs;
     }
 
-    void updateTransactionUtxosAfterBeingFinalised() {
-        UtxoSystem::getInstance().deleteUtxo(senderPublicKey, userUtxos);
-        UtxoSystem::getInstance().addNewUtxos(outputs, this);
-    }
+    void updateTransactionUtxosAfterBeingFinalised();
 
 };
 

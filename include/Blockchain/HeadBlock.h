@@ -25,28 +25,23 @@ public:
         return headBlock;
     }
 
+    bool validateMerkleRootInNewHeadBlock(Block *newHead) {
+        std::vector<Transaction*> goodTransactions{};
+        MerkleTree merkleTree;
+
+        if(merkleTree.calculateMerkleTreeHash(newHead->getTransactions()) == newHead->getMerkleRootHash()) {
+            return true;
+        }
+        return false;
+    }
+
     void updateHeadBlock(Block *newHead) {
         if(newHead->finaliseBlock()) {
             for(auto &transaction : newHead->getTransactions()) {
                 transaction->updateTransactionUtxosAfterBeingFinalised();
             }
             headBlock = newHead;
-        }
-        
-        // headBlock = newHead;
-        // int currentHeight = headBlock->getHeight();
-        // if(currentHeight >= NUMBER_OF_BLOCKS_IN_FRONT_TO_VALIDATE) {
-        //     Block *finalisableBlock = headBlock;
-        //     while(finalisableBlock->getHeight() > currentHeight - NUMBER_OF_BLOCKS_IN_FRONT_TO_VALIDATE) {
-        //         finalisableBlock = finalisableBlock->getPreviousBlock();
-        //     }
-        //     if(finalisableBlock->finaliseBlock()) {
-        //         for(auto &transaction : finalisableBlock->getTransactions()) {
-        //             transaction->updateTransactionUtxosAfterBeingFinalised();
-        //         }
-        //     }
-        // }
-        
+        } 
     }
 
 };
