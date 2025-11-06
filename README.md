@@ -1,10 +1,78 @@
-# Hash! - BlockchainTechnologies
+# Blockchain and Hash! - BlockchainTechnologies
 
 A repository for a university blockchain technologies course.
-This project implements two hashing algorithms: MatrixHash (a custom algorithm created by us)
-and VibeHash(an algorithm created using Claude AI).
+This project implements:
+
+- A blockchain network simulation with parallelized mining and UTXO functionality.
+- two hashing algorithms: MatrixHash (a custom algorithm created by us)
+  and VibeHash(an algorithm created using Claude AI).
 
 [Click here for the setup guide](#setup-guides)
+
+# Blockchain
+
+## Overview
+
+The blockchain implementation simulates a blockchain network with the following features:
+
+- Blockchain blocks that are created with a proof-of-work mechanism with self-adjusting difficulty.
+- Merkle tree for transaction verification within blocks
+- UTXO (Unspent Transaction Output) model for transactions
+- User wallets with public and private keys (ids). Some of the users are also miners.
+- Parallelized mining with OpenMP
+- All of these use our custom hashing algorithm (currently set to MatrixHash, but can easily be changed in
+  SystemAlgorithm.h)
+
+## Showcase
+
+This part explains the current setup in the main.cpp code. All of the functionality can easily be tweaked by the user.
+
+Initial mining - at first the blockchain is empty, so miners have to create transactions by mining 50 blocks (including
+genesis block).
+
+<img width="1228" alt="image" src="https://github.com/user-attachments/assets/92252066-eee1-4018-9a99-7e555450dfb8" />
+
+
+Afterwards 100000 transactions are created - note that only valid ones are added to the blockchain, while invalid ones
+are not.
+
+Then the blockchain is continued indefinitely until user interrupts the program (Ctrl + C) adding the generated
+transactions to blocks.
+
+<img width="1637" alt="image" src="https://github.com/user-attachments/assets/e244c0e3-3caf-41a8-be3a-88cbcdac4d91" />
+
+## Unique solutions
+
+- Parallelized mining was done using OpenMP. We felt it was the most appropriate and safest way to implement
+  multithreading for our project.
+- Certain "managers" use a singleton pattern to ensure only one instance exists. E.g. UTXOSystem, TransactionQueue,
+  HeadBlock are done this way
+- Difficulty is automatically adjusted every 20 blocks based on the time taken to mine the previous 20 blocks, therefore
+  it auto adjusts to the speed of the system (simulated miners on the blockchain simulation)
+
+## Instructions
+
+[Click here for the setup guide](#setup-guides)
+
+To work with the application, edit the main.cpp file as you desire. You can alter the numbers, change flow order or
+functionality. The current main.cpp file is an example of what can be done, but users are encouraged to experiment and
+alter it to their desires.
+
+Afterwards, build and run the application. Note that two files are generated in the bin/ directory: hashCli and
+blockchain. HashCLI is used to test out the hashing algorithms, while blockchain is used to run the blockchain
+simulation.
+
+There is also an unfinished CLI application for the blockchain simulation, however reading from files is not finished.
+If you'd like to try it out, see `feature/blockchain-cli` branch.
+
+## AI Assistance
+
+AI was primarily used for assistance and help understanding certain functionality such as UTXOs in bitcoin, not for code
+generation.
+
+---
+
+# Hashing algorithms
 
 ## MatrixHash
 

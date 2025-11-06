@@ -83,7 +83,7 @@ public:
           
             Block *localBlock = new Block(previousBlock, miner->getPublicKey(), SYSTEM_VERSION, threadId, mempool);
 
-            while(isMining) {
+            while (isMining) {
                 if (!localBlock->isBlockValid()) {
                     localBlock->updateNonce(omp_get_num_threads());
                 } else {

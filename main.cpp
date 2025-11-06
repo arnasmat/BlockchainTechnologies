@@ -14,7 +14,6 @@ int main() {
 
     MiningSimulator mineSim(users);
     std::vector<Transaction *> processedTransactions{};
-    mineSim.getGenesisBlock();
     for (int i = 0; i < 50; i++) {
         mineSim.mineBlockParallel(processedTransactions, HeadBlock::getInstance().getHeadBlock());
     }
@@ -33,8 +32,9 @@ int main() {
         TransactionQueue::freeMempoolFromMinedTransaction(mempool);
     }
 
-    for(auto &user : users) {
-        std::cout<<user->getPublicKey()<<" "<<UtxoSystem::getInstance().getBalanceOfPublicKey(user->getPublicKey())<<std::endl;
+    for (auto &user: users) {
+        std::cout << user->getPublicKey() << " " << UtxoSystem::getInstance().getBalanceOfPublicKey(
+            user->getPublicKey()) << std::endl;
     }
 
     return 0;
