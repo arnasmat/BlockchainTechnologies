@@ -27,14 +27,16 @@ The blockchain implementation simulates a blockchain network with the following 
 
 This part explains the current setup in the main.cpp code. All of the functionality can easily be tweaked by the user.
 
-Initial mining - at first the blockchain is empty, so miners have to create transactions by mining 50 blocks (including
-genesis block).
+Initial mining - at first the blockchain is empty, so miners have to create transactions and blocks by mining genesis block and
+additional 50 blocks (to create some currency in this economy).
+
+Due to the fact that initial mining reward is 100, and that mining reward decreases by half after 20 block, we have calculated that the limit of maximum amount of currency available in this economy is approaching 4000. 
 
 <img width="1228" alt="image" src="https://github.com/user-attachments/assets/92252066-eee1-4018-9a99-7e555450dfb8" />
 
 
 Afterwards 100000 transactions are created - note that only valid ones are added to the blockchain, while invalid ones
-are not.
+are not. For now, transaction generators runs until 100000 valid transactions are generated.
 
 Then the blockchain is continued indefinitely until user interrupts the program (Ctrl + C) adding the generated
 transactions to blocks.
@@ -44,11 +46,21 @@ transactions to blocks.
 ## Unique solutions
 
 - Parallelized mining was done using OpenMP. We felt it was the most appropriate and safest way to implement
-  multithreading for our project.
-- Certain "managers" use a singleton pattern to ensure only one instance exists. E.g. UTXOSystem, TransactionQueue,
-  HeadBlock are done this way
+  multithreading for our project. The region which was parallelized is used for mining new block: each miner tries
+  to add different nonce to a block, thus making it more effective. Only the first block mined over the same
+  batch of transactions is counted by using atomic<bool> value.
+- Certain "managers" use a singleton pattern to ensure only one instance exists. E.g. UTXOSystem, UserSystem,
+  HeadBlock are done this way. UTXOSystem stores and manages a map which associates all public keys with their respective
+  vectors of utxos, UserSystem stores and manages a map which asociates all public key to a pointer of a respective user class,
+  while HeadBlock is used for storing and updating the most recent block in the blockchain (head block). It ensures that
+  a new head block has not mutated its transactions via merkle root hash and also has a function which indirectly updates utxos
+  after mining new block (deletes old utxos, and create new ones).
 - Difficulty is automatically adjusted every 20 blocks based on the time taken to mine the previous 20 blocks, therefore
-  it auto adjusts to the speed of the system (simulated miners on the blockchain simulation)
+  it auto adjusts to the speed of the system (simulated miners on the blockchain simulation).
+- Each user's public key is a hash of their private key (id). This way we can check the validity of transasction signature.
+  Once the user has signed a transaction's content (curent time, amount of money, receivers public key), using UserSystem singleton we find the instance of this user's class and call method makeSignature, which adds hash(id) to the content ant hash everything. Keep in mind that even though only user knows their id (private key), the hash(id) is equal to the user's public key, accesible to anyone. Thus, while validating transactions in mempool we also check if the signature which is being stored on transaction object as transactionId, would really match the one made by the user (instead of hash(id) we can simply use its public key to verify that). If yes, we can be sure it was really the user who made the transaction. Similar strategy is used to verify utxos, here user must provide their hash(id) to verify that certain utxo really belongs to him. These verifications make the mining and generation of new transaction significantly more slow, yet much more secure and realistic.
+- Mempool was achieved using two strategies. Firstly we generate lots of transactions. Then we find which transactions would 
+  cause overspending by looping over transactions and summing the amount of money each user is spending. Once we find that some user wants to spend more money, than they have balance over their all available utxos, we do delete all other transactions of this user. In the end we have only those transaction, which would not cause the overspending of any user. Since we are using utxo model we must also embrace the fact that they are atomic, thus to include them in block we associate utxos with every transaction. To avoid double spending we reserve them after associating, thus no utxo is associated with more than one transaction. We perform association of utxos and transactions to select a batch of transactions which follow the size of specified number of transactions we want in our block (if this number cannot be achieved, we take maximum number of transactions). There might be situation, where some transactions would not have enough utxos associated with them due to the atomicity of utxos. However, it is not a problem as long as we not implement any fees for transactions, since we can be sure that by satisfying the equation sum(utxos) >= sum(amountToBeSpent), all of senders' transactions will eventually get utxos, which would cover the cost (when an user uses utxo to pay for other user, the change is being sent back as another utxo).
 
 ## Instructions
 
@@ -67,8 +79,8 @@ If you'd like to try it out, see `feature/blockchain-cli` branch.
 
 ## AI Assistance
 
-AI was primarily used for assistance and help understanding certain functionality such as UTXOs in bitcoin, not for code
-generation.
+AI was primarily used for assistance and help understanding certain functionality such as UTXOs in bitcoin as well as 
+c++ paradigms like atomic<bool> fields in mutlithreading or singletons, but not for code generation.
 
 ---
 

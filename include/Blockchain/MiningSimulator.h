@@ -37,15 +37,15 @@ private:
                 << "Reward " << newBlock->calculateBlockReward() << "\n";
         const auto txs = newBlock->getTransactions();
         ss << "This block contains the following "<<txs.size()<<" transactions: \n";
-        // for (const auto &tx: txs) {
-        //     ss << "\nTransaction " << tx->getTransactionId() << ": \n";
-        //     for (const auto &output: tx->getOutputs()) {
-        //         ss << "From: " << tx->getSenderPublicKey();
-        //         ss << ", To: " << output.second;
-        //         ss << ", Amount: " << output.first;
-        //         ss << "\n";
-        //     }
-        // }
+        for (const auto &tx: txs) {
+            ss << "\nTransaction " << tx->getTransactionId() << ": \n";
+            for (const auto &output: tx->getOutputs()) {
+                ss << "From: " << tx->getSenderPublicKey();
+                ss << ", To: " << output.second;
+                ss << ", Amount: " << output.first;
+                ss << "\n";
+            }
+        }
         ss << "\n----------------------\n";
 
         std::cout << ss.str();
