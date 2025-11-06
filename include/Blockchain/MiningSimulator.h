@@ -31,20 +31,21 @@ private:
         ss << "A new Block was mined by User " << newBlock->getMinerPublicKey() << "\n"
                 << "Hash " << newBlock->getBlockHash() << "\n"
                 << "Height " << newBlock->getHeight() << "\n"
+                << "Nonce " << newBlock->getNonce() << "\n"
                 << "Timestamp " << newBlock->getTimestamp() << "\n"
                 << "Difficulty " << newBlock->getDifficultyTarget() << "\n"
                 << "Reward " << newBlock->calculateBlockReward() << "\n";
         const auto txs = newBlock->getTransactions();
         ss << "This block contains the following "<<txs.size()<<" transactions: \n";
-        for (const auto &tx: txs) {
-            ss << "\nTransaction " << tx->getTransactionId() << ": \n";
-            for (const auto &output: tx->getOutputs()) {
-                ss << "From: " << tx->getSenderPublicKey();
-                ss << ", To: " << output.second;
-                ss << ", Amount: " << output.first;
-                ss << "\n";
-            }
-        }
+        // for (const auto &tx: txs) {
+        //     ss << "\nTransaction " << tx->getTransactionId() << ": \n";
+        //     for (const auto &output: tx->getOutputs()) {
+        //         ss << "From: " << tx->getSenderPublicKey();
+        //         ss << ", To: " << output.second;
+        //         ss << ", Amount: " << output.first;
+        //         ss << "\n";
+        //     }
+        // }
         ss << "\n----------------------\n";
 
         std::cout << ss.str();
@@ -75,26 +76,12 @@ public:
         Block *minedBlock = nullptr;
         std::atomic<bool> blockFound = false; //first to mine a block in a batch gets accepted
 
-#pragma omp parallel default(none) shared(blockFound, minedBlock, previousBlock, mempool, users, isMining)
+#pragma omp parallel
         {
             int threadId = omp_get_thread_num();
             const User *miner = users[threadId % users.size()]; // kzn random priskiriam zmogui
-            int nonce = threadId * 1000000;
-
-            std::vector<Transaction*> threadMempool{};
-            threadMempool.reserve(100);
-
-            static std::random_device rd;
-            std::mt19937 gen(rd() + threadId);
-            std::uniform_int_distribution<> distrib(0, users.size() - 1);
-
-            for(int i=0; i < mempool.size(); i++) {
-                Transaction *pendingTransaction = mempool[i];
-                threadMempool.push_back(pendingTransaction);
-            }  
-
-            Block *localBlock = new Block(previousBlock, miner->getPublicKey(), SYSTEM_VERSION, threadId,
-                                              threadMempool);
+          
+            Block *localBlock = new Block(previousBlock, miner->getPublicKey(), SYSTEM_VERSION, threadId, mempool);
 
             while(isMining) {
                 if (!localBlock->isBlockValid()) {
@@ -102,10 +89,15 @@ public:
                 } else {
                     bool expected = false;
                     if (blockFound.compare_exchange_strong(expected, true)) {
-                        minedBlock = localBlock;
-                        HeadBlock::getInstance().updateHeadBlock(minedBlock);
-                        announceNewBlock(minedBlock);
-                        isMining = false;
+                        if(HeadBlock::getInstance().validateMerkleRootInNewHeadBlock(localBlock)) {
+                            minedBlock = localBlock;
+                            HeadBlock::getInstance().updateHeadBlock(minedBlock);
+                            announceNewBlock(minedBlock);
+                            isMining = false;
+                        } else {
+                            delete localBlock;
+                        }
+                        break;
                     } else {
                         delete localBlock;
                         break;
@@ -121,7 +113,7 @@ public:
         //             [&minedTxs](Transaction* tx) {
         //                 return std::find(minedTxs.begin(), minedTxs.end(), tx) != minedTxs.end();
         //             }),
-        //         mempool.end()
+        //     mempool.end()
         //     );
         // }     
 

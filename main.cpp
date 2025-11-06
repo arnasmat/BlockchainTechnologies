@@ -7,7 +7,7 @@
 #include "Blockchain/HeadBlock.h"
 #include "Blockchain/TransactionQueue.h"
 
-constexpr unsigned int NUMBER_OF_USERS{10};
+constexpr unsigned int NUMBER_OF_USERS{1000};
 
 int main() {
     std::vector<User *> users{blockchainRandomGenerator::generateUsers(NUMBER_OF_USERS)};
@@ -24,26 +24,11 @@ int main() {
     }
 
     std::vector<Transaction *> mempool = blockchainRandomGenerator::generateValidTransactions(users, 100000);
-    // for (const auto *tx: mempool) {
-    //     std::cout << "Transaction: " << tx->getTransactionId() << "\n";
-    //     std::cout << "  From: " << tx->getSenderPublicKey() << "\n";
-
-    //     // Print outputs (amount -> recipient) and compute total transferred
-    //     double totalTransferred = 0.0;
-    //     const auto outputs = tx->getOutputs();
-    //     for (const auto &out: outputs) {
-    //         std::cout << "    To: " << out.second << ", Amount: " << out.first << "\n";
-    //         totalTransferred += out.first;
-    //     }
-    //     std::cout << "  Total amount to be transferred: " << totalTransferred << "\n";
-    // }
-
-    TransactionQueue::findPossibleMempoolTransaction(mempool);
     std::cout<<"Amount of transactions to be processed: "<<mempool.size()<<std::endl;
 
     while(mempool.size()) {
         std::vector<Transaction*> batchMempool = TransactionQueue::pickValidTransactions(mempool, MAX_TRANSACTIONS_IN_BLOCK);
-        std::cout << "batch size of transactions taken (without coinbase transaction): "<< batchMempool.size() <<", total transactions in mempool left: " << mempool.size() << std::endl;
+        //std::cout << "batch size of transactions taken (without coinbase transaction): "<< batchMempool.size() <<", total transactions in mempool left: " << mempool.size() << std::endl;
         mineSim.mineBlockParallel(batchMempool, HeadBlock::getInstance().getHeadBlock());
         TransactionQueue::freeMempoolFromMinedTransaction(mempool);
     }

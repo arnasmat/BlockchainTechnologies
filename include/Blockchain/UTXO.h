@@ -1,11 +1,13 @@
 #ifndef UTOX_H
 #define UTOX_H
-class Transaction;
 #include <atomic>
+#include "SystemAlgorithm.h"
+#include "Transaction.h"
 
 //i think its safer to have this class so amount and publicKey couldn't be mutated
-class Utxo {
+class Utxo : SystemAlgorithm{
 private:
+  std::string id;
   Transaction *transaction;
   unsigned int vout;
   double amount;
@@ -13,9 +15,7 @@ private:
   bool isReserved{false};
 
 public:
-  Utxo(Transaction *transaction, unsigned int vout, double amount, std::string publicKey) : transaction(transaction),
-    vout(vout), amount(amount), receiversPublicKey(publicKey) {
-  }
+  Utxo(Transaction *transaction, unsigned int vout, double amount, std::string publicKey);
 
   const Transaction *getTransaction() const {
     return transaction;
@@ -43,6 +43,10 @@ public:
 
   void unreserveUtxo() {
     isReserved = false;
+  }
+
+  std::string getId() const {
+    return id;
   }
 
 };

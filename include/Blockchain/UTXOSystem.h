@@ -3,6 +3,7 @@
 
 #include "UTXO.h"
 #include "SystemAlgorithm.h"
+#include "UserSystem.h"
 
 #include <vector>
 #include <algorithm>
@@ -25,38 +26,7 @@ public:
         return instance;
     }
 
-    std::vector<Utxo *> findUtxosThatSatisfySum(const std::string &sendersPK, double neededAmount) {
-        if (userUtxos.find(sendersPK) == userUtxos.end()) {
-            return {}; //treated as false
-        }
-
-        std::sort(userUtxos[sendersPK].begin(), userUtxos[sendersPK].end(), [](Utxo *x, Utxo *y) {
-            return x->getAmount() > y->getAmount();
-        });
-
-        std::vector<Utxo *> pendingUtxos{};
-        double achievedSum = 0;
-
-        for (auto &utxo: userUtxos[sendersPK]) {
-            if (achievedSum < neededAmount) {
-                if(utxo->reserveUtxo()) {
-                    achievedSum += utxo->getAmount();
-                    pendingUtxos.push_back(utxo);
-                }
-            } else {
-                break;
-            }
-        }
-
-        if (achievedSum < neededAmount) {
-            for(auto &utxo : pendingUtxos) {
-                utxo->unreserveUtxo();
-            }
-            return {}; //treated as false
-        }
-
-        return pendingUtxos;
-    }
+    std::vector<Utxo *> findUtxosThatSatisfySum(const std::string &sendersPK, double neededAmount);
 
     void addNewUtxos(const std::vector<std::pair<double, std::string> > &outputs, Transaction *transaction) {
         for (unsigned int i = 0; i < outputs.size(); i++) {

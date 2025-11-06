@@ -111,6 +111,14 @@ public:
         nonce += updateBy;
     }
 
+    int getNonce() const {
+        return nonce;
+    }
+
+    std::string getMerkleRootHash() const {
+        return merkleRootHash;
+    }
+
     bool finaliseBlock() {
         bool expected = false;
         return isFinal.compare_exchange_strong(expected, true);
